@@ -1,0 +1,698 @@
+> summary(ds)
+      tmin             cc         site_id   filt_width     hemisphere   group         tmax          enumber        depth          region  
+ Min.   :15.73   Min.   :0.1685   1:32    Min.   : 5.243   L:64       CML  :15   Min.   :20.97   1      :  4   Min.   : 750   NCM    :32  
+ 1st Qu.:15.73   1st Qu.:0.3903   2:32    1st Qu.: 7.864   R:64       CMM  :16   1st Qu.:23.59   2      :  4   1st Qu.:1100   CMM    :14  
+ Median :18.35   Median :0.4610   3:32    Median :10.486              HP   :17   Median :28.84   3      :  4   Median :1350   CML    :12  
+ Mean   :18.10   Mean   :0.4721   4:32    Mean   :10.772              L1/L3:21   Mean   :28.88   4      :  4   Mean   :1338   L2A    :12  
+ 3rd Qu.:18.35   3rd Qu.:0.5568           3rd Qu.:13.107              L2   :21   3rd Qu.:31.46   5      :  4   3rd Qu.:1538   L1     :11  
+ Max.   :34.08   Max.   :0.7564           Max.   :34.079              NCM  :38   Max.   :55.05   6      :  4   Max.   :1900   HP     : 7  
+                                                                                                 (Other):104                  (Other):40  
+
+
+-----------------------------
+Predicting cc
+-----------------------------
+
+=== Just hemisphere ===
+
+> m1 = glm(cc ~ hemisphere, family=gaussian())
+> summary(m)
+
+Call:
+glm(formula = cc ~ hemisphere, family = gaussian())
+
+Deviance Residuals: 
+     Min        1Q    Median        3Q       Max  
+-0.32844  -0.07200  -0.00990   0.08237   0.29414  
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.44722    0.01557  28.732   <2e-16 ***
+hemisphereR  0.04974    0.02201   2.259   0.0256 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 0.01550602)
+
+    Null deviance: 2.0329  on 127  degrees of freedom
+Residual deviance: 1.9538  on 126  degrees of freedom
+AIC: -166.08
+
+Number of Fisher Scoring iterations: 2
+
+> lrtest(m1)
+Likelihood ratio test
+
+Model 1: cc ~ hemisphere
+Model 2: cc ~ 1
+  #Df LogLik Df  Chisq Pr(>Chisq)  
+1   3 86.041                       
+2   2 83.500 -1 5.0838    0.02415 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+=== Just region ===
+
+> m2 = glm(cc ~group, family=gaussian())
+> summary(m2)
+
+Call:
+glm(formula = cc ~ group, family = gaussian())
+
+Deviance Residuals: 
+     Min        1Q    Median        3Q       Max  
+-0.32739  -0.06301   0.00240   0.05689   0.28037  
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.54055    0.02858  18.912  < 2e-16 ***
+groupCMM    -0.04173    0.03978  -1.049 0.296303    
+groupHP     -0.09845    0.03921  -2.511 0.013364 *  
+groupL1/L3   0.04221    0.03742   1.128 0.261523    
+groupL2     -0.11478    0.03742  -3.067 0.002663 ** 
+groupNCM    -0.12886    0.03375  -3.818 0.000213 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 0.01225386)
+
+    Null deviance: 2.0329  on 127  degrees of freedom
+Residual deviance: 1.4950  on 122  degrees of freedom
+AIC: -192.34
+
+Number of Fisher Scoring iterations: 2
+
+> lrtest(m2)
+Likelihood ratio test
+
+Model 1: cc ~ group
+Model 2: cc ~ 1
+  #Df LogLik Df  Chisq Pr(>Chisq)    
+1   7 103.17                         
+2   2  83.50 -5 39.343  2.026e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+==== Comparison of hemisphere vs group ====
+
+> lrtest(m1, m2)
+Likelihood ratio test
+
+Model 1: cc ~ hemisphere
+Model 2: cc ~ group
+  #Df  LogLik Df  Chisq Pr(>Chisq)    
+1   3  86.041                         
+2   7 103.171  4 34.259  6.594e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+=== Depth ===
+
+> m3 = glm(cc ~ depth, family=gaussian())
+> summary(m3)
+
+Call:
+glm(formula = cc ~ depth, family = gaussian())
+
+Deviance Residuals: 
+     Min        1Q    Median        3Q       Max  
+-0.35314  -0.06467  -0.01732   0.07013   0.25910  
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 0.3378940  0.0440158   7.677 3.93e-12 ***
+depth       0.0001003  0.0000319   3.145  0.00207 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 0.01495977)
+
+    Null deviance: 2.0329  on 127  degrees of freedom
+Residual deviance: 1.8849  on 126  degrees of freedom
+AIC: -170.67
+
+Number of Fisher Scoring iterations: 2
+
+> lrtest(m3)
+Likelihood ratio test
+
+Model 1: cc ~ depth
+Model 2: cc ~ 1
+  #Df LogLik Df  Chisq Pr(>Chisq)   
+1   3 88.337                        
+2   2 83.500 -1 9.6744   0.001869 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+==== Comparison of group vs. depth ====
+
+> lrtest(m1, m3)
+Likelihood ratio test
+
+Model 1: cc ~ hemisphere
+Model 2: cc ~ depth
+  #Df LogLik Df  Chisq Pr(>Chisq)    
+1   3 86.041                         
+2   3 88.337  0 4.5906  < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+
+=== Depth + Group ===
+
+> m4 = glm(cc ~ group + depth, family=gaussian())
+> summary(m4)
+
+Call:
+glm(formula = cc ~ group + depth, family = gaussian())
+
+Deviance Residuals: 
+      Min         1Q     Median         3Q        Max  
+-0.296022  -0.059804   0.002373   0.054298   0.259758  
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  4.190e-01  4.776e-02   8.772 1.34e-14 ***
+groupCMM    -6.422e-02  3.910e-02  -1.642  0.10313    
+groupHP     -7.812e-02  3.844e-02  -2.032  0.04430 *  
+groupL1/L3   4.267e-03  3.814e-02   0.112  0.91111    
+groupL2     -1.220e-01  3.623e-02  -3.368  0.00102 ** 
+groupNCM    -1.556e-01  3.371e-02  -4.614 9.89e-06 ***
+depth        1.024e-04  3.284e-05   3.119  0.00227 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 0.01143592)
+
+    Null deviance: 2.0329  on 127  degrees of freedom
+Residual deviance: 1.3837  on 121  degrees of freedom
+AIC: -200.24
+
+Number of Fisher Scoring iterations: 2
+
+> lrtest(m4)
+Likelihood ratio test
+
+Model 1: cc ~ group + depth
+Model 2: cc ~ 1
+  #Df LogLik Df  Chisq Pr(>Chisq)    
+1   8 108.12                         
+2   2  83.50 -6 49.239  6.679e-09 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+==== Comparison of Depth + Group vs. just Group or just Depth ====
+
+> lrtest(m2, m4)
+Likelihood ratio test
+
+Model 1: cc ~ group
+Model 2: cc ~ group + depth
+  #Df LogLik Df  Chisq Pr(>Chisq)   
+1   7 103.17                        
+2   8 108.12  1 9.8959   0.001656 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+> lrtest(m3, m4)
+Likelihood ratio test
+
+Model 1: cc ~ depth
+Model 2: cc ~ group + depth
+  #Df  LogLik Df  Chisq Pr(>Chisq)    
+1   3  88.337                         
+2   8 108.119  5 39.564  1.828e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+
+=== Filter max peak time ===
+
+> m5 = glm(cc ~ tmax, family=gaussian())
+> summary(m5)
+
+Call:
+glm(formula = cc ~ tmax, family = gaussian())
+
+Deviance Residuals: 
+      Min         1Q     Median         3Q        Max  
+-0.296329  -0.058360  -0.004724   0.068416   0.245760  
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 0.208942   0.047173   4.429 2.03e-05 ***
+tmax        0.009113   0.001596   5.708 7.74e-08 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 0.01281907)
+
+    Null deviance: 2.0329  on 127  degrees of freedom
+Residual deviance: 1.6152  on 126  degrees of freedom
+AIC: -190.44
+
+Number of Fisher Scoring iterations: 2
+
+> lrtest(m5)
+Likelihood ratio test
+
+Model 1: cc ~ tmax
+Model 2: cc ~ 1
+  #Df LogLik Df  Chisq Pr(>Chisq)    
+1   3  98.22                         
+2   2  83.50 -1 29.442  5.763e-08 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+==== Comparison of tmax vs just depth or just group ====
+
+> lrtest(m2, m5)
+Likelihood ratio test
+
+Model 1: cc ~ group
+Model 2: cc ~ tmax
+  #Df LogLik Df  Chisq Pr(>Chisq)  
+1   7 103.17                       
+2   3  98.22 -4 9.9013    0.04212 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+> lrtest(m3, m5)
+Likelihood ratio test
+
+Model 1: cc ~ depth
+Model 2: cc ~ tmax
+  #Df LogLik Df  Chisq Pr(>Chisq)    
+1   3 88.337                         
+2   3 98.220  0 19.767  < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+==== Comparison of tmax vs depth + group ====
+
+> lrtest(m5, m4)
+Likelihood ratio test
+
+Model 1: cc ~ tmax
+Model 2: cc ~ group + depth
+  #Df LogLik Df  Chisq Pr(>Chisq)   
+1   3  98.22                        
+2   8 108.12  5 19.797   0.001364 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+=== Depth + tmax + group ===
+
+> m6 = glm(cc ~ depth + group + tmax, family=gaussian())
+> summary(m6)
+
+Call:
+glm(formula = cc ~ depth + group + tmax, family = gaussian())
+
+Deviance Residuals: 
+      Min         1Q     Median         3Q        Max  
+-0.288333  -0.053369   0.005795   0.055061   0.236475  
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  2.924e-01  6.351e-02   4.604 1.04e-05 ***
+depth        7.749e-05  3.300e-05   2.348 0.020503 *  
+groupCMM    -6.297e-02  3.795e-02  -1.659 0.099680 .  
+groupHP     -7.786e-02  3.730e-02  -2.087 0.038975 *  
+groupL1/L3   5.485e-03  3.702e-02   0.148 0.882448    
+groupL2     -9.630e-02  3.624e-02  -2.657 0.008952 ** 
+groupNCM    -1.207e-01  3.484e-02  -3.465 0.000737 ***
+tmax         5.020e-03  1.722e-03   2.915 0.004246 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 0.01076871)
+
+    Null deviance: 2.0329  on 127  degrees of freedom
+Residual deviance: 1.2922  on 120  degrees of freedom
+AIC: -206.99
+
+Number of Fisher Scoring iterations: 2
+
+> lrtest(m6)
+Likelihood ratio test
+
+Model 1: cc ~ depth + group + tmax
+Model 2: cc ~ 1
+  #Df LogLik Df  Chisq Pr(>Chisq)    
+1   9  112.5                         
+2   2   83.5 -7 57.996  3.788e-10 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+==== Comparison of tmax + depth + group vs. depth + group ====
+
+> lrtest(m6, m4)
+Likelihood ratio test
+
+Model 1: cc ~ depth + group + tmax
+Model 2: cc ~ group + depth
+  #Df LogLik Df  Chisq Pr(>Chisq)   
+1   9 112.50                        
+2   8 108.12 -1 8.7569   0.003084 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+=== Model of group + tmax ===
+
+> m7 = glm(cc ~ group + tmax, family=gaussian())
+> summary(m7)
+
+Call:
+glm(formula = cc ~ group + tmax, family = gaussian())
+
+Deviance Residuals: 
+      Min         1Q     Median         3Q        Max  
+-0.276681  -0.057095   0.003664   0.059242   0.244632  
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.351764   0.059345   5.927 2.98e-08 ***
+groupCMM    -0.046833   0.038012  -1.232 0.220308    
+groupHP     -0.092147   0.037482  -2.458 0.015369 *  
+groupL1/L3   0.032517   0.035832   0.907 0.365959    
+groupL2     -0.085841   0.036632  -2.343 0.020743 *  
+groupNCM    -0.094563   0.033620  -2.813 0.005735 ** 
+tmax         0.006069   0.001694   3.582 0.000492 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 0.01117042)
+
+    Null deviance: 2.0329  on 127  degrees of freedom
+Residual deviance: 1.3516  on 121  degrees of freedom
+AIC: -203.24
+
+Number of Fisher Scoring iterations: 2
+
+> lrtest(m7)
+Likelihood ratio test
+
+Model 1: cc ~ group + tmax
+Model 2: cc ~ 1
+  #Df LogLik Df  Chisq Pr(>Chisq)    
+1   8 109.62                         
+2   2  83.50 -6 52.245  1.664e-09 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+==== Comparison of group + tmax vs group + depth ====
+
+> lrtest(m7, m4)
+Likelihood ratio test
+
+Model 1: cc ~ group + tmax
+Model 2: cc ~ group + depth
+  #Df LogLik Df  Chisq Pr(>Chisq)    
+1   8 109.62                         
+2   8 108.12  0 3.0067  < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+==== Comparison of group + tmax vs group + depth + tmax ====
+
+> lrtest(m7, m6)
+Likelihood ratio test
+
+Model 1: cc ~ group + tmax
+Model 2: cc ~ depth + group + tmax
+  #Df LogLik Df  Chisq Pr(>Chisq)  
+1   8 109.62                       
+2   9 112.50  1 5.7503    0.01649 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+-------------------------------------------
+Relationships between tmin, tmax and region
+-------------------------------------------
+
+
+=== tmin from group ===
+
+> m1 = glm(tmin ~ group, family=gaussian())
+> summary(m1)
+
+Call:
+glm(formula = tmin ~ group, family = gaussian())
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.9298  -1.4980  -0.2497   0.8968  15.4202  
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  18.3501     0.5583  32.865   <2e-16 ***
+groupCMM      0.9830     0.7772   1.265    0.208    
+groupHP       0.3084     0.7660   0.403    0.688    
+groupL1/L3    0.2497     0.7310   0.342    0.733    
+groupL2      -1.1235     0.7310  -1.537    0.127    
+groupNCM     -0.8968     0.6594  -1.360    0.176    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 4.676289)
+
+    Null deviance: 638.23  on 127  degrees of freedom
+Residual deviance: 570.51  on 122  degrees of freedom
+AIC: 568.54
+
+Number of Fisher Scoring iterations: 2
+
+> lrtest(m1)
+Likelihood ratio test
+
+Model 1: tmin ~ group
+Model 2: tmin ~ 1
+  #Df  LogLik Df  Chisq Pr(>Chisq)  
+1   7 -277.27                       
+2   2 -284.45 -5 14.359    0.01349 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+=== tmax from group ===
+
+> m2 = glm(tmax ~ group, family=gaussian())
+> summary(m2)
+
+Call:
+glm(formula = tmax ~ group, family = gaussian())
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-9.098  -2.746  -1.248   1.373  24.981  
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   31.108      1.458  21.330  < 2e-16 ***
+groupCMM       0.841      2.030   0.414  0.67938    
+groupHP       -1.038      2.001  -0.519  0.60477    
+groupL1/L3     1.598      1.909   0.837  0.40436    
+groupL2       -4.769      1.909  -2.497  0.01385 *  
+groupNCM      -5.652      1.722  -3.282  0.00135 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 31.90457)
+
+    Null deviance: 5030.1  on 127  degrees of freedom
+Residual deviance: 3892.4  on 122  degrees of freedom
+AIC: 814.33
+
+Number of Fisher Scoring iterations: 2
+
+> lrtest(m2)
+Likelihood ratio test
+
+Model 1: tmax ~ group
+Model 2: tmax ~ 1
+  #Df  LogLik Df  Chisq Pr(>Chisq)    
+1   7 -400.17                         
+2   2 -416.58 -5 32.821  4.084e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+=== tmin from hemisphere ===
+
+> m3 = glm(tmin ~ hemisphere, family=gaussian())
+> summary(m3)
+
+Call:
+glm(formula = tmin ~ hemisphere, family = gaussian())
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-3.0310  -1.7203  -0.4096   0.9011  16.6298  
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  17.4490     0.2689  64.881  < 2e-16 ***
+hemisphereR   1.3107     0.3803   3.446 0.000773 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 4.629021)
+
+    Null deviance: 638.23  on 127  degrees of freedom
+Residual deviance: 583.26  on 126  degrees of freedom
+AIC: 563.37
+
+Number of Fisher Scoring iterations: 2
+
+> lrtest(m3)
+Likelihood ratio test
+
+Model 1: tmin ~ hemisphere
+Model 2: tmin ~ 1
+  #Df  LogLik Df Chisq Pr(>Chisq)    
+1   3 -278.69                        
+2   2 -284.45 -1 11.53   0.000685 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+=== tmax from hemisphere ===
+
+> m4 = glm(tmax ~ hemisphere, family=gaussian())
+> summary(m4)
+
+Call:
+glm(formula = tmax ~ hemisphere, family = gaussian())
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-7.0451  -3.5226   0.8192   2.1504  27.9347  
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   27.116      0.758  35.774  < 2e-16 ***
+hemisphereR    3.523      1.072   3.286  0.00132 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 36.7697)
+
+    Null deviance: 5030.1  on 127  degrees of freedom
+Residual deviance: 4633.0  on 126  degrees of freedom
+AIC: 828.63
+
+Number of Fisher Scoring iterations: 2
+
+> lrtest(m4)
+Likelihood ratio test
+
+Model 1: tmax ~ hemisphere
+Model 2: tmax ~ 1
+  #Df  LogLik Df  Chisq Pr(>Chisq)   
+1   3 -411.32                        
+2   2 -416.58 -1 10.525   0.001177 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+=== tmin from hemisphere + group ====
+
+> m5 = glm(tmin ~ hemisphere + group, family=gaussian())
+> summary(m5)
+
+Call:
+glm(formula = tmin ~ hemisphere + group, family = gaussian())
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-3.1071  -1.2030  -0.0898   0.7533  15.6389  
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 17.68930    0.58397  30.291  < 2e-16 ***
+hemisphereR  1.23896    0.41280   3.001  0.00327 ** 
+groupCMM     0.71460    0.75817   0.943  0.34780    
+groupHP      0.75054    0.75656   0.992  0.32315    
+groupL1/L3  -0.09253    0.71730  -0.129  0.89757    
+groupL2     -0.75769    0.71859  -1.054  0.29380    
+groupNCM    -0.85551    0.63892  -1.339  0.18308    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 4.388247)
+
+    Null deviance: 638.23  on 127  degrees of freedom
+Residual deviance: 530.98  on 121  degrees of freedom
+AIC: 561.35
+
+Number of Fisher Scoring iterations: 2
+
+> lrtest(m5)
+Likelihood ratio test
+
+Model 1: tmin ~ hemisphere + group
+Model 2: tmin ~ 1
+  #Df  LogLik Df Chisq Pr(>Chisq)    
+1   8 -272.68                        
+2   2 -284.45 -6 23.55  0.0006318 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+==== tmin from hemisphere + group vs just hemisphere ====
+
+> lrtest(m5, m3)
+Likelihood ratio test
+
+Model 1: tmin ~ hemisphere + group
+Model 2: tmin ~ hemisphere
+  #Df  LogLik Df Chisq Pr(>Chisq)  
+1   8 -272.68                      
+2   3 -278.69 -5 12.02    0.03451 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+
+=== Regions are not equally sampled across hemispheres ===
+
+> table(group, hemisphere)
+       hemisphere
+group    L  R
+  CML    7  8
+  CMM    4 12
+  HP    14  3
+  L1/L3  4 17
+  L2    16  5
+  NCM   19 19
+
+
+-----------
+Conclusions
+-----------
+
+Depth is highly correlated to region, can't use depth, must use region instead
+Regions aren't sampled uniformly across hemisphere, use region in place of hemisphere
+tmax is better predicted by region than tmin, use tmax instead of tmin
+cc ratio is best predicted by region + tmax
+
+
+
+
+
+
+
+
+
+
+

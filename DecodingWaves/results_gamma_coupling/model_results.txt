@@ -1,0 +1,47 @@
+
+Silent Weights
+---------------
+
+                        Estimate Std. Error t value Pr(>|t|)    
+(Intercept)            6.885e-01  3.132e-02  21.983  < 2e-16 ***
+distance              -6.122e-04  3.859e-05 -15.865  < 2e-16 ***
+
+region1L1:region2CML   1.379e+00  1.668e-01   8.265 3.62e-16 ***
+region1L1:region2CMM   2.576e-01  9.308e-02   2.767  0.00574 **
+ 
+region1L2:region2CML   4.405e-01  7.673e-02   5.741 1.19e-08 ***
+region1L2:region2CMM   2.122e-01  7.718e-02   2.749  0.00606 ** 
+region1L2:region2L1    1.903e-01  6.772e-02   2.810  0.00503 ** 
+
+region1NCM:region2CML  2.190e-01  6.922e-02   3.164  0.00160 ** 
+region1NCM:region2CMM  2.129e-01  4.853e-02   4.387 1.25e-05 ***
+region1NCM:region2L1   1.728e-01  4.420e-02   3.909 9.80e-05 ***
+
+region1CMM:region2CMM  2.081e-01  1.038e-01   2.005  0.04516 *  
+region1CML:region2CML  8.461e-01  1.147e-01   7.374 3.05e-13 ***
+region1L2:region2L2    5.277e-01  9.560e-02   5.519 4.16e-08 ***
+
+
+Evoked Weights
+--------------
+
+                        Estimate Std. Error t value Pr(>|t|)    
+(Intercept)            7.787e-01  3.785e-02  20.576  < 2e-16 ***
+distance              -7.027e-04  4.664e-05 -15.068  < 2e-16 ***
+
+region1L1:region2CML   1.664e+00  2.016e-01   8.255 3.92e-16 ***
+region1L2:region2CML   5.655e-01  9.273e-02   6.098 1.44e-09 ***
+
+region1L1:region2CMM   3.084e-01  1.125e-01   2.742  0.00619 ** 
+
+region1L2:region2CMM   2.689e-01  9.326e-02   2.884  0.00400 ** 
+region1L2:region2L1    2.321e-01  8.184e-02   2.836  0.00464 ** 
+
+region1NCM:region2CML  2.723e-01  8.365e-02   3.255  0.00117 ** 
+region1NCM:region2CMM  2.609e-01  5.864e-02   4.448 9.45e-06 ***
+region1NCM:region2L1   2.242e-01  5.342e-02   4.198 2.90e-05 ***
+
+region1L2:region2L2    6.077e-01  1.155e-01   5.260 1.70e-07 ***
+region1CML:region2CML  9.752e-01  1.386e-01   7.034 3.34e-12 ***
+
+

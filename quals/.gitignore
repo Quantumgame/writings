@@ -1,0 +1,9 @@
+*~
+*.aux
+*.bbl
+*.log
+*.xml
+*.bcf
+*.blg
+.idea
+

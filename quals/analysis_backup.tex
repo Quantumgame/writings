@@ -1,0 +1,214 @@
+\section{Analysis}
+
+\subsection{Local Field Potentials}
+
+The local field potential (LFP) is a voltage signal that is thought to be related to the summed
+activity of electrical current flowing through synapses. As such, the LFP can be thought of as
+a proxy for the input population activity to a region. 
+
+\begin{enumerate}
+\item
+For a given neuron, can the prediction of spiking be enhanced in a NRF model when the LFP is included as input?
+\item
+How does correlation (cross-frequency coupling) between LFPs change as a function of physical
+separation distance and hemisphere?
+\item
+What are the correlations between the LFP and the stimulus envelope over the course of a recording?
+\item
+What is the variability in LFP when conditioned on stimulus?
+\item
+Novel decomposition techniques: applying independent components analysis (ICA) and the Hilbert-Huang
+transform and re-examining questions 1-4
+\end{enumerate}
+
+
+
+\subsection{Constructing Coupling Graphs}
+\label{sec:constructing_coupling_graphs}
+
+\subsubsection{Comparing Spike Trains and Population Codes}
+
+As mentioned, one goal of this work is to determine whether stimulus surprise is correlated with
+the spike train distance between the exemplar and deviant responses. This requires a measure of
+spike train distance, and the definition of such a distance is an unresolved problem in Computational
+Neuroscience. However, there are several published methods for computing spike train distances that
+will be compared \cite{Victor2005,Wu2012}. 
+
+Once a spike train distance metric is adopted, we will use it to characterize the spiking response
+of the population. Given spike trains from $N$ cells in response to a stimulus, we will construct a
+graph whose nodes are spike trains, and the undirected edges that connect two nodes has a weight given
+by the inverse of the distance between the two spike trains. We will attempt to use methods such as
+spectral graph theory (\cite{Azran2006}) to characterize the properties of the population code. Comparing
+two population codes then amounts to comparing two graphs, and their spectral properties.
+
+\subsubsection{The Composite Receptive Field}
+\label{sec:receptive_field}
+
+A spatio-temporal receptive field (STRF) is a linear mapping from a time-varying stimulus to a
+single neuron's response \cite{Theunissen2001}. STRFs can be quite successful in predicting
+neural activity in response to a stimulus, especially in the sensory periphery.
+
+We have evidence that neural responses don't end when the stimulus ends. In fact, there seems
+to be highly structured activity in the silence that follows the presentation of a stimulus
+(refer to figure). Traditional STRFs cannot accommodate this activity.
+
+Models that utilize both the stimulus and the activity of simultaneously recorded neurons may
+outperform the STRF. Such models, one of which is implemented in \cite{Pillow2008}, take
+advantage of the correlated firing of neurons in order to improve the prediction. I call the linear
+mapping from a population's spikes to a single neuron's response the neural receptive field (NRF).
+During periods of stimulus silence, a NRF should be assist in predicting a neuron's response when
+a STRF cannot.
+
+To better predict the output of single neurons, I plan to build a composite receptive field. The
+first stage will be a vanilla STRF. Repeated trials of stimuli will be averaged over in order to
+produce stimulus-conditioned PSTHs, and a linear model will be fit to predict the probability of
+spiking at a time $t$ as a function of the stimulus at time $t$, called $\bm{s}_t$:
+
+\begin{align}
+\hat{r}_{STRF}(t) = \bm{w}_{STRF}^T \bm{s}_t
+\end{align}
+
+$\bm{w}_{STRF}$ is the receptive field fit to a spectro-temporal representation of the auditory
+stimulus. In the next step, a linear model will be fit that predicts the response to the same
+neuron as a function of both $\hat{r}_{STRF}(t)$ and the simultaneously-recorded neural activity,
+written as the binary vector $\bm{n}_t$:
+
+\begin{align}
+\hat{r}(t) = \hat{r}_{STRF}(t) + \bm{w}_{NRF}^T \bm{n}_t
+\end{align}
+
+There are several questions to be explored from this model:
+
+\begin{enumerate}
+\item
+Does the NRF model predict spikes better than the STRF model during stimulus?
+\item
+What does the silence-conditioned PSTH look like? Is the population code during silence repeatable
+when following a given stimulus?
+\item
+Can the NRF model predict spikes during silent periods?
+\item
+Can the stimulus be decoded from the neural activity in the silent period following it?
+\end{enumerate}
+
+
+\subsection{Probabilistic Model of Birdsong}
+
+\subsubsection{Syllable and Sequence Representation}
+\label{sec:representation}
+
+Zebra Finch songs and calls are comprised of sequences of syllables. We will
+represent each syllable as a spectrotemporal object, and parameterize the probability
+distribution of seeing a spectrotemporal object given a preceding spectrotemporal object.
+In parallel, we want to model the probability of syllable onset, given the spectrotemporal properties
+of the preceding syllable and the duration of silence since that syllable ended.
+
+We will represent a syllable by a d-dimensional vector $\bm{x} \in \mathbb{R}^d$ that captures
+it's spectrotemporal properties, in a potentially dimensionally-reduced space. For example, we
+could apply PCA to the modulation power spectrum (MPS) of each syllable, and set $\bm{x}$ to be the
+projection of the MPS on the first $d$ principle components.
+
+Once the spectrotemporal representation of a syllable is computed, we can construct a probability
+density for the syllable transitions from time $t$ to $t+1$:
+
+\begin{align}
+p \left( \bm{x}_{t+1} | \bm{x}_{t} \right)
+\end{align}
+
+In this case we're making the explicit assumption that syllable transitions are Markov, i.e.
+they only are dependent on the previous syllable. We can model the syllable transition with
+a map $F:\mathbb{R}^d \rightarrow \mathbb{R}^d$, parameterized by a vector $\bm{\theta}$,
+corrupted by additive noise $\bm{\epsilon} \in \mathbb{R}^d$:
+
+\begin{align}
+\bm{x}_{t+1} = F_{\bm{\theta}}  \left( \bm{x}_{t} \right) + \bm{\epsilon}
+\end{align}
+
+The noise is assumed to be Gaussian with covariance matrix $\Gamma$, so the transition distribution is Gaussian:
+
+\begin{align}
+p \left( \bm{x}_{t+1} | \bm{x}_{t} \right) \sim \mathcal{N} \left( F_{\bm{\theta}} \left( \bm{x}_{t} \right), \Gamma \right)
+\end{align}
+
+The parameters $\bm{\theta}$ and $\Gamma$ will be determined by maximizing the likelihood of the
+observed syllable transitions in the data. As a first step we will assume $F$ is linear and fit
+a Kalman filter to the observed sequence of syllable transitions.
+
+The Markov transition probability is not enough to parameterize the full sequence, as mentioned
+above we need to model the distribution of inter-syllable intervals. To do this we will utilize
+a waiting time distribution, such as an exponential or gamma distribution.
+
+The rate parameter of the waiting-time distribution will be determined using a generalized linear model approach,
+computed as a weighted combination of the elements of $\bm{x}_t$. The weights will be determined
+by maximizing the likelihood of the observed inter-syllable intervals in the recorded song. Letting
+$\bm{\phi}$ represent the weights of the fit GLM, the probability density of a syllable onset $\tau$
+seconds following the end of a previous syllable that had spectrotemporal representation $\bm{x}_t$ is
+written as:
+
+\begin{align}
+p \left( \tau | \bm{x}_t \right) = g \left( \tau, \bm{\phi}^T \bm{x}_t \right)
+\end{align}
+
+Through this process we will have created a probabilistic model of syllable transitions that is dependent on the
+parameters $\bm{\theta}$, $\Gamma$, and a model of syllable onset that is dependent on $\bm{\phi}$. We can
+represent a song comprised of $m$ syllables as a sequence of $m$ spectro-temporal representations
+$\mathcal{S} = \{ \bm{x}_1, ..., \bm{x}_m \}$ along with their arrival times $\mathcal{T} = \{ t_1, ..., t_m \}$.
+The object $\{ \mathcal{S}, \mathcal{T} \}$ is called a marked point process \cite{Snyder1991}.
+The "model" $M$ for the song is the set of parameters that define the densities
+$p \left( \bm{x}_{t+1} | \bm{x}_{t} \right)$ and $p \left( \tau | \bm{x}_t \right)$, so
+$M = \{ \bm{\theta}, \Gamma, \bm{\phi} \}$.
+
+
+\subsection{Computing the Surprise of Deviants}
+
+\subsubsection{Quantifying and Computing Surprise}
+\label{sec:surprise}
+
+Let $D = \{ \mathcal{S}, \mathcal{T} \}$ be an observed song with syllables $\mathcal{S}$ and arrival
+times $\mathcal{T}$. The surprise of the observation of $D$ is given by the
+Kullback-Liebler distance between the posterior distribution $p(M|D)$ and prior
+distribution $p(M)$ \cite{Itti2009}:
+
+\begin{align}
+surprise = \int_\mathcal{M} p(M|D) log \left( \frac{p(M | D)}{p(M)} \right) dM \label{eq_surprise1}
+\end{align}
+
+Applying Bayes rule to the posterior $p(M|D)$ gives the following form for surprise:
+
+\begin{align}
+surprise = -\log \left( p(D) \right) + \frac{1}{p(D)} \int_\mathcal{M} p(D|M) p(M) \log \left( p(D | M) \right) dM \label{eq_surprise2}
+\end{align}
+
+The integral is over all possible models $\mathcal{M}$, and will be discussed in the next section with
+more detail. The likelihood $p(D|M)$ can be computed as:
+
+\begin{align}
+p(D|M) = p(\bm{x}_1) \prod_{i=2}^m p\left( \bm{x}_i | \bm{x}_{i-1} \right) p\left( t_i | \bm{x}_{i-1} \right)
+\end{align}
+
+\subsubsection{Exploring the Prior}
+\label{sec:prior}
+
+The surprise computation of equation \eqref{eq_surprise2} forces the choice of a form for the prior
+distribution $p(M)$. Assuming that $\bm{\theta}$, $\Gamma$, and $\bm{\phi}$ are independent,
+$p(M) = p(\bm{\theta}) p(\Gamma) p(\bm{\phi})$. Given a choice of distribution on each parameter,
+Markov-chain Monte Carlo methods \cite{Brooks2011} can be applied to sample from each density in order to compute
+the integral in equation \eqref{eq_surprise2}.
+
+I will use a parameteric empirical Bayesian approach \cite{Carlin2009} to compute $p(M)$. This method
+involves using a dataset of songs $\mathcal{D}$ to find the optimal parameters for
+$M=\{\bm{\theta}, \Gamma, \bm{\phi} \}$ \cite{Carlin2009}. The dataset used to construct the prior
+will be considered a free parameter that we will vary. As mentioned in the experimental protocol, we will
+collect data from the acoustic environment of the bird, the vocalizations of the parents, and the
+bird itself. To construct the dataset $\mathcal{D}$, we can aggregate acoustic environments across
+birds, within a single bird, and include or exclude vocalization from parents. Each dataset will
+produce a different prior, and thus a different value for surprise.
+
+Under the assumption that the auditory system is sensitive to stimulus surprise, we will examine the
+variation in priors as a function of datasets in an unbiased manner, and compare values of surprise
+for each. When a choice of dataset $\mathcal{D}$ produces a prior whose values of surprise correlate
+strongly to spike train distance between exemplar and deviant, it is more likely to be indicative of
+the actual prior distribution represented by the neural system being recorded.
+
+\subsubsection{Quantifying the Neural Response to Deviants}
+\label{sec:deviant_neural_response}
