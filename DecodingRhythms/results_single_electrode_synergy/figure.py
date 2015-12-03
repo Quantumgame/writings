@@ -1,12 +1,11 @@
+import operator
 import os
-import numpy as np
 
 import matplotlib.pyplot as plt
-import operator
-
-from zeebeez.aggregators.pairwise_decoders_single import AggregatePairwiseDecoder
+import numpy as np
 
 from utils import get_this_dir, set_font, add_region_info
+from zeebeez.aggregators.pairwise_decoders_single import AggregatePairwiseDecoder
 
 
 def filter_bad_points(df, exclude_regions=True):

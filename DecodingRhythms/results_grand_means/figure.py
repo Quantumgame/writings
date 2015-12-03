@@ -1,12 +1,12 @@
-from copy import deepcopy
 import os
-import numpy as np
+from copy import deepcopy
+
 import matplotlib.pyplot as plt
+import numpy as np
+
 from layerz.flda import FLDA
-
+from utils import log_transform, set_font, get_this_dir
 from zeebeez.aggregators.pairwise_cf import AggregatePairwiseCF
-
-from utils import log_transform, set_font, get_this_dir, get_freqs
 from zeebeez.utils import DECODER_CALL_TYPES, CALL_TYPE_COLORS
 
 

@@ -1,18 +1,15 @@
-import os
-import h5py
-import numpy as np
 import operator
-from numpy.fft import fftfreq
+import os
+
+import h5py
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
-import matplotlib.pyplot as plt
-from scipy.fftpack import fft
 from lasp.plots import custom_legend
 from utils import get_this_dir, set_font, add_region_info
-
 from zeebeez.aggregators.pairwise_decoders_single import AggregatePairwiseDecoder
-from zeebeez.utils import CALL_TYPES, REGION_NAMES_LONG, REGION_COLORS, DECODER_CALL_TYPES, REGION_NAMES, \
-    CALL_TYPE_COLORS
+from zeebeez.utils import DECODER_CALL_TYPES, REGION_NAMES
 
 
 def filter_bad_points(df, exclude_regions=True):

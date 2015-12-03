@@ -1,12 +1,10 @@
 import os
 
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import chi2
 
-import matplotlib.pyplot as plt
-
 from utils import get_freqs, set_font, get_this_dir
-
 from zeebeez.aggregators.pairwise_decoders_multi_freq import AggregatePairwiseDecoder
 
 

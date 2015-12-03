@@ -1,14 +1,12 @@
-import os
 import operator
-
-import numpy as np
+import os
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 from lasp.signal import break_envelope_into_events, correlation_function, coherency
 from utils import get_this_dir, set_font
 from zeebeez.aggregators.pairwise_decoders_single import AggregatePairwiseDecoder
-
 from zeebeez.core.experiment import Experiment
 from zeebeez.utils import ROSTRAL_CAUDAL_ELECTRODES_RIGHT, ROSTRAL_CAUDAL_ELECTRODES_LEFT, CALL_TYPES, \
     CALL_TYPE_SHORT_NAMES, DECODER_CALL_TYPES

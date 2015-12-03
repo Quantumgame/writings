@@ -1,14 +1,14 @@
-import os
 import operator
+import os
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 from lasp.plots import custom_legend
-from lasp.signal import correlation_function, coherency, break_envelope_into_events
+from lasp.signal import break_envelope_into_events
 from lasp.sound import plot_spectrogram, spec_colormap
 from utils import get_this_dir, set_font, compute_spectra_and_coherence_multi_electrode_single_trial, get_freqs, \
     get_lags_ms, get_psd_stats
-
 from zeebeez.core.experiment import Experiment
 from zeebeez.utils import ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT
 

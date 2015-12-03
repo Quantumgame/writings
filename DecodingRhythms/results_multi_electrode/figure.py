@@ -1,12 +1,11 @@
 import os
-import numpy as np
-import pandas as pd
 
 import matplotlib.pyplot as plt
-from utils import set_font, get_this_dir
+import numpy as np
 
+from utils import set_font, get_this_dir
 from zeebeez.aggregators.pairwise_decoders_multi import AggregatePairwiseDecoder
-from zeebeez.utils import DECODER_CALL_TYPES, CALL_TYPES, CALL_TYPE_SHORT_NAMES
+from zeebeez.utils import DECODER_CALL_TYPES, CALL_TYPE_SHORT_NAMES
 
 
 def plot_pcc_hist(agg, df):

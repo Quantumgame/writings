@@ -1,18 +1,15 @@
-import os
 import operator
-
-import numpy as np
+import os
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 from lasp.plots import custom_legend
-from lasp.signal import break_envelope_into_events, correlation_function, coherency
+from lasp.signal import break_envelope_into_events
 from lasp.sound import plot_spectrogram, spec_colormap
-
-from zeebeez.core.experiment import Experiment
-
 from utils import get_this_dir, set_font, compute_spectra_and_coherence_single_electrode, get_lags_ms, \
     compute_avg_and_ms, get_psd_stats
+from zeebeez.core.experiment import Experiment
 
 
 def draw_figures(bird, block, segment, hemi, e1, e2, stim_id, syllable_index, data_dir='/auto/tdrive/mschachter/data', exp=None):

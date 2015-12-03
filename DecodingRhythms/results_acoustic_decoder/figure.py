@@ -1,11 +1,10 @@
 import os
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import matplotlib.pyplot as plt
 from utils import set_font, get_this_dir, get_freqs
-
 from zeebeez.aggregators.acoustic_decoders import AggregateAcousticDecoder
 
 

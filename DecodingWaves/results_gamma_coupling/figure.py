@@ -1,8 +1,8 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from utils import set_font
 
+from utils import set_font
 from zeebeez.aggregators.pop_spike_and_lfp import AggregatePopSpikeAndLFP
 
 
