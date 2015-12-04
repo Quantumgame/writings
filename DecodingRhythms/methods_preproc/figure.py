@@ -3,10 +3,10 @@ from copy import deepcopy
 
 import numpy as np
 import matplotlib.pyplot as plt
-from lasp.spikes import compute_psth
 
-from lasp.colormaps import viridis, inferno
-
+from DecodingRhythms.utils import set_font, get_this_dir
+from lasp.spikes import compute_psth, psth_colormap
+from lasp.colormaps import viridis
 from lasp.sound import plot_spectrogram
 
 from zeebeez.transforms.biosound import BiosoundTransform
@@ -20,7 +20,7 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
     bdir = os.path.join(data_dir, bird)
     tdir = os.path.join(bdir, 'transforms')
 
-    aprops = ['meanspect', 'q1', 'q2', 'q3', 'sal', 'maxAmp', 'meantime', 'stdtime']
+    aprops = ['meanspect', 'q1', 'q2', 'q3', 'entropyspect', 'sal', 'maxAmp', 'meantime', 'stdtime']
 
     # load the BioSound
     bs_file = os.path.join(tdir, 'BiosoundTransform_%s.h5' % bird)
@@ -52,8 +52,9 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
 
     all_spike_psds = deepcopy(pcf.spike_psd)
     log_transform(all_spike_psds, dbnoise=80.)
-    all_spike_psds -= all_spike_psds.mean(axis=0)
-    all_spike_psds /= all_spike_psds.std(axis=0, ddof=1)
+
+    # all_spike_psds -= all_spike_psds.mean(axis=0)
+    # all_spike_psds /= all_spike_psds.std(axis=0, ddof=1)
 
     # get overall biosound stats
     bs_stats = dict()
@@ -136,7 +137,6 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
 
         # get the PSTH power spectra
         psth_psd = list()
-
         cell_i2e = list()
         for k,e in enumerate(electrode_order):
             i = (pcf.df.stim_id == stim_id) & (pcf.df.order == o) & (pcf.df.decomp == 'spike_psd') & \
@@ -172,6 +172,9 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
 
 def plot_full_data(d, syllable_index):
 
+    aprops_names = {'meanspect':"center\nfreq", 'q1':'freq\nq1', 'q2':'freq\nq2', 'q3':'freq\nq3', 'sal':'sal', 'maxAmp':'max\namp',
+                    'meantime':'time\nmean', 'stdtime':'time\nsd', 'entropyspect':'freq\nentropy'}
+
     syllable_start = d['syllable_props'][syllable_index]['start_time'] - 0.020
     syllable_end = d['syllable_props'][syllable_index]['end_time'] + 0.030
 
@@ -182,16 +185,18 @@ def plot_full_data(d, syllable_index):
     gs = plt.GridSpec(100, 100)
     left_width = 55
     top_height = 15
-    middle_height = 30
-    bottom_height = 45
+    middle_height = 35
+    bottom_height = 40
 
     # plot the spectrogram
     ax = plt.subplot(gs[:top_height+1, :left_width])
     spec = d['spec']
     spec[spec < np.percentile(spec, 15)] = 0
-    plot_spectrogram(d['spec_t'], d['spec_freq'], spec, ax=ax, colormap=plt.cm.afmhot_r, colorbar=False, ticks=True)
+    plot_spectrogram(d['spec_t'], d['spec_freq']*1e-3, spec, ax=ax, colormap=plt.cm.afmhot_r, colorbar=False, ticks=True)
     plt.axvline(syllable_start, c='k', linestyle='--', linewidth=3.0, alpha=0.7)
     plt.axvline(syllable_end, c='k', linestyle='--', linewidth=3.0, alpha=0.7)
+    plt.ylabel('Frequency (kHz)')
+    plt.xlabel('Time (s)')
 
     # plot the LFPs
     sr = d['lfp_sample_rate']
@@ -209,9 +214,10 @@ def plot_full_data(d, syllable_index):
     plt.axis('tight')
     ytick_locs = np.arange(nelectrodes) * voffset
     plt.yticks(ytick_locs, list(reversed(d['electrode_order'])))
-    plt.ylabel('Trial-averaged LFP (Electrode)')
+    plt.ylabel('Electrode')
     plt.axvline(syllable_start, c='k', linestyle='--', linewidth=3.0, alpha=0.7)
     plt.axvline(syllable_end, c='k', linestyle='--', linewidth=3.0, alpha=0.7)
+    plt.xlabel('Time (s)')
 
     # plot the PSTH
     gs_i = gs_e + 5
@@ -219,7 +225,7 @@ def plot_full_data(d, syllable_index):
     ax = plt.subplot(gs[gs_i:gs_e, :left_width])
     ncells = d['psth'].shape[0]
     plt.imshow(d['psth'], interpolation='nearest', aspect='auto', origin='upper', extent=(0, lfp_t.max(), ncells, 0),
-               cmap=plt.cm.bone_r)
+               cmap=psth_colormap(noise_level=0.1))
 
     cell_i2e = d['cell_index2electrode']
     print 'cell_i2e=',cell_i2e
@@ -235,7 +241,7 @@ def plot_full_data(d, syllable_index):
         emean = elocs.mean()
         ytick_locs.append(emean+0.5)
     plt.yticks(ytick_locs, d['electrode_order'])
-    plt.ylabel('PSTH (Electrode)')
+    plt.ylabel('Electrode')
 
     plt.axvline(syllable_start, c='k', linestyle='--', linewidth=3.0, alpha=0.7)
     plt.axvline(syllable_end, c='k', linestyle='--', linewidth=3.0, alpha=0.7)
@@ -250,7 +256,7 @@ def plot_full_data(d, syllable_index):
     plt.bar(range(len(aprops)), vals, color='#c0c0c0')
     plt.axis('tight')
     plt.ylim(-1.5, 1.5)
-    plt.xticks(np.arange(len(aprops))+0.5, aprops)
+    plt.xticks(np.arange(len(aprops))+0.5, [aprops_names[a] for a in aprops])
     plt.ylabel('Z-score')
 
     # plot the LFP power spectra
@@ -260,9 +266,11 @@ def plot_full_data(d, syllable_index):
     f = d['psd_freq']
     ax = plt.subplot(gs[gs_i:gs_e, (left_width+5):])
     plt.imshow(sprops['lfp_psd'], interpolation='nearest', aspect='auto', origin='upper',
-               extent=(f.min(), f.max(), nelectrodes, 0), cmap=plt.cm.bwr)
+               extent=(f.min(), f.max(), nelectrodes, 0), cmap=viridis, vmin=-2., vmax=2.)
+    plt.colorbar(label='Z-scored Log Power')
     plt.xlabel('Frequency (Hz)')
     plt.yticks(np.arange(nelectrodes)+0.5, d['electrode_order'])
+    plt.ylabel('Electrode')
 
     # plot the PSTH power spectra
     gs_i = gs_e + 5
@@ -270,17 +278,37 @@ def plot_full_data(d, syllable_index):
 
     ax = plt.subplot(gs[gs_i:gs_e, (left_width+5):])
     plt.imshow(sprops['psth_psd'], interpolation='nearest', aspect='auto', origin='upper',
-               extent=(f.min(), f.max(), ncells, 0), cmap=plt.cm.bwr)
+               extent=(f.min(), f.max(), ncells, 0), cmap=viridis)
+    plt.colorbar(label='Log Power')
     plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Electrode')
+
+    last_electrode = cell_i2e[0]
+    for k,e in enumerate(cell_i2e):
+        if e != last_electrode:
+            plt.axhline(k, c='w', alpha=0.9)
+            last_electrode = e
+
+    ytick_locs = list()
+    for e in d['electrode_order']:
+        elocs = np.array([k for k,el in enumerate(cell_i2e) if el == e])
+        emean = elocs.mean()
+        ytick_locs.append(emean+0.5)
+    plt.yticks(ytick_locs, d['electrode_order'])
+
+    fname = os.path.join(get_this_dir(), 'figure.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
 
 
 def draw_figures():
 
     d = get_full_data('GreBlu9508M', 'Site4', 'Call1', 'L', 268)
+    # d = get_full_data('GreBlu9508M', 'Site4', 'Call1', 'L', 277)
     plot_full_data(d, 1)
 
     plt.show()
 
 
 if __name__ == '__main__':
+    set_font()
     draw_figures()

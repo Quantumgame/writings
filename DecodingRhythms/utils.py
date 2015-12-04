@@ -7,14 +7,13 @@ import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 
-from lasp.coherence import coherence_jn
 from lasp.signal import coherency
 from lasp.timefreq import power_spectrum_jn
 from zeebeez.transforms.pairwise_cf import PairwiseCFTransform
 
 
 def set_font():
-    font = {'family':'normal', 'weight':'bold', 'size':22}
+    font = {'family':'normal', 'weight':'bold', 'size':16}
     matplotlib.rc('font', **font)
 
 
