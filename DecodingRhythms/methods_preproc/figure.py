@@ -7,8 +7,7 @@ import matplotlib.pyplot as plt
 from DecodingRhythms.utils import set_font, get_this_dir
 from lasp.spikes import compute_psth, psth_colormap
 from lasp.colormaps import viridis
-from lasp.sound import plot_spectrogram
-
+from lasp.sound import plot_spectrogram, spec_colormap
 from zeebeez.transforms.biosound import BiosoundTransform
 from zeebeez.transforms.pairwise_cf import PairwiseCFTransform
 from zeebeez.transforms.stim_event import StimEventTransform
@@ -192,7 +191,7 @@ def plot_full_data(d, syllable_index):
     ax = plt.subplot(gs[:top_height+1, :left_width])
     spec = d['spec']
     spec[spec < np.percentile(spec, 15)] = 0
-    plot_spectrogram(d['spec_t'], d['spec_freq']*1e-3, spec, ax=ax, colormap=plt.cm.afmhot_r, colorbar=False, ticks=True)
+    plot_spectrogram(d['spec_t'], d['spec_freq']*1e-3, spec, ax=ax, colormap='SpectroColorMap', colorbar=False, ticks=True)
     plt.axvline(syllable_start, c='k', linestyle='--', linewidth=3.0, alpha=0.7)
     plt.axvline(syllable_end, c='k', linestyle='--', linewidth=3.0, alpha=0.7)
     plt.ylabel('Frequency (kHz)')
@@ -310,5 +309,6 @@ def draw_figures():
 
 
 if __name__ == '__main__':
+    spec_colormap()
     set_font()
     draw_figures()
