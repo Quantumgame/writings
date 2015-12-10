@@ -6,6 +6,7 @@ import pandas as pd
 
 from utils import set_font, get_this_dir, get_freqs
 from zeebeez.aggregators.acoustic_decoders import AggregateAcousticDecoder
+from zeebeez.utils import ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT
 
 
 def get_adata(df, band, decomp='locked', order='self'):
@@ -156,11 +157,16 @@ def draw_weight_plots(agg, df, aprop):
 
     for (bird,block,segment,hemi),gdf in g:
 
+        if hemi == 'L':
+            electrode_order = ROSTRAL_CAUDAL_ELECTRODES_LEFT
+        else:
+            electrode_order = ROSTRAL_CAUDAL_ELECTRODES_RIGHT
+
         assert len(gdf) == 1
 
         cc = gdf['cc'][i].values[0]
         index = gdf['index'][i].values[0]
-        index2electrode = agg.index2electrode[index]
+        index2electrode = list(agg.index2electrode[index])
 
         wkey = ('self', 'locked', 0, False)
         wi = gdf.windex[i].values[0]
@@ -181,7 +187,10 @@ def draw_weight_plots(agg, df, aprop):
             lbl = '%d\n%s' % (e, reg)
             index2label.append(lbl)
 
+        # reshape the weights so they are an array of power spectra
         W = w.reshape([nelectrodes, nfreqs])
+
+        # reshape the weights so they're organized spatially
         nrows = 8
         ncols = 2
         Wgrid = np.zeros([nrows, ncols, nfreqs])
@@ -189,6 +198,31 @@ def draw_weight_plots(agg, df, aprop):
         for n,(row,col) in enumerate(index2coord):
             Wgrid[row, col, :] = W[n, :]
 
+        # plot the decoder weights by frequency
+        fig = plt.figure(figsize=(18, 13))
+        plt.subplots_adjust(top=0.95, bottom=0.05, left=0.05, right=0.99, hspace=0.30, wspace=0.20)
+
+        offset = np.percentile(np.abs(W).ravel(), 99)*1.
+        for e in electrode_order:
+            k = index2electrode.index(e)
+            w = W[k, :]
+            o = (nelectrodes-k)*offset
+            plt.axhline(o, c='k')
+            plt.plot(freqs, w + o, 'r-', linewidth=3.0, alpha=0.75)
+        plt.xlabel('Frequency (Hz)')
+        plt.ylabel('Electrode')
+        plt.axis('tight')
+
+        ytick_locs = (np.arange(nelectrodes) + 1)*offset
+        plt.yticks(ytick_locs, ['%d' % e for e in reversed(electrode_order)])
+        fname = '%s_%s_%s_%s_%s' % (aprop, bird, hemi, block, segment)
+        plt.suptitle('%s %0.2f' % (fname, cc))
+        fname = os.path.join(get_this_dir(), 'weights', 'flat_weights_%s.svg' % fname)
+        print 'Saving %s' % fname
+        plt.savefig(fname, facecolor='w', edgecolor='none')
+        plt.close('all')
+
+        # plot the decoder weights spatially
         fig = plt.figure(figsize=(24, 13))
         plt.subplots_adjust(top=0.95, bottom=0.05, left=0.05, right=0.99, hspace=0.30, wspace=0.20)
 
@@ -209,9 +243,9 @@ def draw_weight_plots(agg, df, aprop):
             plt.xticks([])
             plt.yticks([])
 
-        fname = '%s_%s_%s_%s_%s' % (aprop, bird, block, segment, hemi)
+        fname = '%s_%s_%s_%s_%s' % (aprop, bird, hemi, block, segment)
         plt.suptitle('%s %0.2f' % (fname, cc))
-        fname = os.path.join(get_this_dir(), 'weights_%s.svg' % fname)
+        fname = os.path.join(get_this_dir(), 'weights', 'weights_%s.svg' % fname)
         print 'Saving %s' % fname
         plt.savefig(fname, facecolor='w', edgecolor='none')
         plt.close('all')
@@ -225,12 +259,11 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
     df = agg.df
 
     aprops = ['meantime', 'stdtime', 'meanspect', 'stdspect', 'sal', 'q1', 'q2', 'q3', 'maxAmp']
-    draw_freq_plots(agg, df, aprops)
+    # draw_freq_plots(agg, df, aprops)
     # draw_perf_plots(agg, df, aprops)
 
-    # for aprop in aprops:
-    #     draw_weight_plots(agg, df, aprop)
-
+    for aprop in aprops:
+        draw_weight_plots(agg, df, aprop)
 
 if __name__ == '__main__':
 
