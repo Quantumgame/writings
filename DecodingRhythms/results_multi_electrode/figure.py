@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from utils import set_font, get_this_dir
-from zeebeez.aggregators.pairwise_decoders_multi import AggregatePairwiseDecoder
+from zeebeez.aggregators.lfp_and_spike_psd_decoders import AggregateLFPAndSpikePSDDecoder
 from zeebeez.utils import DECODER_CALL_TYPES, CALL_TYPE_SHORT_NAMES
 
 
@@ -228,7 +228,7 @@ def plot_psd_weights(agg, df):
 
 def draw_figures():
 
-    agg = AggregatePairwiseDecoder.load('/auto/tdrive/mschachter/data/aggregate/decoders_pairwise_coherence_multi.h5')
+    agg = AggregateLFPAndSpikePSDDecoder.load('/auto/tdrive/mschachter/data/aggregate/decoders_pairwise_coherence_multi.h5')
     agg.df.to_csv('/auto/tdrive/mschachter/data/aggregate/decoder_coherence_multi.csv', index=False)
 
     # plot_mean_confusion(agg, agg.df)
