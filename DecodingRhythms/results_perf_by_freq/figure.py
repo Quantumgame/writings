@@ -8,12 +8,21 @@ from lasp.plots import multi_plot
 from zeebeez.aggregators.lfp_and_spike_psd_decoders import AggregateLFPAndSpikePSDDecoder
 
 
+def clean_region(reg):
+    if '-' in reg:
+        return '?'
+    if reg.startswith('L2'):
+        return 'L2'
+    return reg
+
+
 def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     freqs = agg.freqs
     # read electrode data
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data.csv'))
 
+    # initialize multi electrode dataset dictionary
     multi_electrode_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'band':list()}
     anames = agg.acoustic_props + ['category']
     for aprop in anames:
@@ -21,8 +30,18 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
             multi_electrode_data['perf_%s_%s' % (aprop, t)] = list()
             multi_electrode_data['lkrat_%s_%s' % (aprop, t)] = list()
 
+    # initialize single electrode dataset dictionary
     single_electrode_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'electrode':list(),
-                             'region':list(), 'cell_index':list()}
+                             'region':list()}
+
+    anames = agg.acoustic_props + ['category']
+    for aprop in anames:
+        single_electrode_data['perf_%s' % aprop] = list()
+        single_electrode_data['lkrat_%s' % aprop] = list()
+
+    # initialize single cell dataset dictionary
+    cell_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'electrode':list(),
+                 'region':list(), 'cell_index':list()}
 
     nbands = len(freqs)
     g = agg.df.groupby(['bird', 'block', 'segment', 'hemi'])
@@ -33,6 +52,7 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
         index2electrode = agg.index2electrode[wtup]
         cell_index2electrode = agg.cell_index2electrode[wtup]
 
+        # collect multi-electrode multi-band dataset
         band0_perfs = None
         for b in range(nbands+1):
 
@@ -80,8 +100,60 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                         lkrat = 2*(leave_one_out_likelihood - full_likelihood)
                         multi_electrode_data['lkrat_%s_%s' % (aprop, t)].append(lkrat)
 
+        # collect single electrode dataset
+        for e in index2electrode:
+
+            # get LFP performance data for this electrode, with and without leave-one-out (the variable "exel")
+            perfs = dict()
+            perfs_exel = dict()
+            anames = agg.acoustic_props + ['category']
+            for aprop in anames:
+                for exel in [True, False]:
+                    p = perfs
+                    if exel:
+                        p = perfs_exel
+                    # get multielectrode LFP decoder performance
+                    i = (gdf.e1 == e) & (gdf.e2 == e) & (gdf.cell_index == -1) & (gdf.band == 0) & (gdf.exfreq == False) & \
+                        (gdf.exel == exel) & (gdf.aprop == aprop) & (gdf.decomp == 'locked')
+                    assert i.sum() == 1, "Zero or more than 1 result for (%s, %s, %s, %s), decomp=locked, e=%d: i.sum()=%d" % (bird, block, segment, hemi, e, i.sum())
+                    if aprop == 'category':
+                        p['perf_%s' % aprop] = gdf.pcc[i].values[0]
+                    else:
+                        p['perf_%s' % aprop] = gdf.r2[i].values[0]
+
+                    lk = gdf.likelihood[i].values[0]
+                    if aprop == 'category':
+                        nsamps = gdf.num_samps[i].values[0]
+                        lk *= nsamps
+                    p['lk_%s' % aprop] = lk
+
+            # get the region for this electrode
+            i = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == e)
+            assert i.sum() == 1
+            region = clean_region(edata.region[i].values[0])
+
+            # append the single electrode performances and likelihood ratios to the single electrode dataset
+            single_electrode_data['bird'].append(bird)
+            single_electrode_data['block'].append(block)
+            single_electrode_data['segment'].append(segment)
+            single_electrode_data['hemi'].append(hemi)
+            single_electrode_data['electrode'].append(e)
+            single_electrode_data['region'].append(region)
+
+            for aprop in anames:
+                # append single electrode peformance
+                single_electrode_data['perf_%s' % aprop].append(perfs['perf_%s' % aprop])
+                # append likelihood ratio
+                full_likelihood = band0_perfs['lk_%s_%s' % (aprop, 'lfp')]
+                leave_one_out_likelihood = perfs_exel['lk_%s' % aprop]
+                lkrat = 2*(leave_one_out_likelihood - full_likelihood)
+                single_electrode_data['lkrat_%s' % aprop].append(lkrat)
+
     df_me = pd.DataFrame(multi_electrode_data)
     df_me.to_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'), index=False)
+
+    df_se = pd.DataFrame(single_electrode_data)
+    df_se.to_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'), index=False)
 
     return df_me
 
@@ -91,24 +163,19 @@ def draw_perf_hists(agg, df_me):
     assert isinstance(agg, AggregateLFPAndSpikePSDDecoder)
     freqs = agg.freqs
 
+    aprops_to_display = ['category', 'maxAmp', 'meanspect', 'stdspect', 'q1', 'q2', 'q3', 'skewspect', 'kurtosisspect',
+                         'sal', 'entropyspect', 'meantime', 'stdtime', 'entropytime']
+
     # make histograms of performances across sites for each acoustic property
     perf_list = list()
     i = (df_me.band == 0)
-    for aprop in agg.acoustic_props:
+    for aprop in aprops_to_display:
         lfp_perf = df_me[i]['perf_%s_%s' % (aprop, 'lfp')].values
         spike_perf = df_me[i]['perf_%s_%s' % (aprop, 'spike')].values
 
         perf_list.append({'lfp_perf':lfp_perf, 'spike_perf':spike_perf,
                           'lfp_mean':lfp_perf.mean(), 'spike_mean':spike_perf.mean(),
                           'aprop':aprop})
-
-    # get performance for category decoding
-    lfp_perf = df_me[i]['perf_%s_%s' % ('category', 'lfp')].values
-    spike_perf = df_me[i]['perf_%s_%s' % ('category', 'spike')].values
-
-    perf_list.append({'lfp_perf':lfp_perf, 'spike_perf':spike_perf,
-                      'lfp_mean':lfp_perf.mean(), 'spike_mean':spike_perf.mean(),
-                      'aprop':'category'})
 
     # make plots
     print 'len(perf_list)=%d' % len(perf_list)
@@ -125,25 +192,31 @@ def draw_perf_hists(agg, df_me):
             plt.xlabel('R2')
         plt.axis('tight')
 
-    multi_plot(perf_list, _plot_hist, nrows=4, ncols=6, hspace=0.30, wspace=0.30)
+    multi_plot(perf_list, _plot_hist, nrows=3, ncols=5, hspace=0.30, wspace=0.30)
 
     def _plot_scatter(pdata, ax):
         # pmax = max(pdata['lfp_perf'].max(), pdata['spike_perf'].max())
         pmax = 0.8
         plt.sca(ax)
         plt.plot(np.linspace(0, pmax, 20), np.linspace(0, pmax, 20), 'k-')
-        plt.plot(pdata['lfp_perf'], pdata['spike_perf'], 'ko', alpha=0.7)
+        plt.plot(pdata['lfp_perf'], pdata['spike_perf'], 'ko', alpha=0.7, markersize=10.)
         plt.title(pdata['aprop'])
-        plt.xlabel('LFP Perf')
-        plt.ylabel('Spike Perf')
+        pstr = 'R2'
+        if pdata['aprop'] == 'category':
+            pstr = 'PCC'
+        plt.xlabel('LFP %s' % pstr)
+        plt.ylabel('Spike %s' % pstr)
         plt.axis('tight')
         plt.xlim(0, pmax)
         plt.ylim(0, pmax)
 
-    multi_plot(perf_list, _plot_scatter, nrows=4, ncols=6, hspace=0.30, wspace=0.30)
+    multi_plot(perf_list, _plot_scatter, nrows=3, ncols=5, hspace=0.30, wspace=0.30)
 
 
 def draw_freq_lkrats(agg, df_me):
+
+    aprops_to_display = ['category', 'maxAmp', 'meanspect', 'stdspect', 'q1', 'q2', 'q3', 'skewspect', 'kurtosisspect',
+                         'sal', 'entropyspect', 'meantime', 'stdtime', 'entropytime']
 
     assert isinstance(agg, AggregateLFPAndSpikePSDDecoder)
     freqs = agg.freqs
@@ -151,7 +224,7 @@ def draw_freq_lkrats(agg, df_me):
 
     # make histograms of performances across sites for each acoustic property
     perf_list = list()
-    for aprop in (agg.acoustic_props + ['category']):
+    for aprop in aprops_to_display:
 
         lkrat_by_band_lfp = np.zeros([len(freqs)])
         lkrat_by_band_spike = np.zeros([len(freqs)])
@@ -182,7 +255,7 @@ def draw_freq_lkrats(agg, df_me):
         plt.plot(pdata['freqs'], pdata['lkrat_lfp'], 'k-', linewidth=3.0, alpha=0.7)
         plt.plot(pdata['freqs'], pdata['lkrat_spike'], 'k--', linewidth=3.0, alpha=0.7)
         plt.xlabel('Frequency (Hz)')
-        plt.ylabel('lkrat')
+        plt.ylabel('Likelihood Ratio')
         plt.legend(['LFP', 'Spike'], fontsize='x-small')
         plt.title(pdata['aprop'])
         plt.axis('tight')
@@ -193,7 +266,7 @@ def draw_freq_lkrats(agg, df_me):
             plt.axhline(0, c='k')
             plt.ylim(0, 50)
 
-    multi_plot(perf_list, _plot_freqs, nrows=4, ncols=6, hspace=0.30, wspace=0.30)
+    multi_plot(perf_list, _plot_freqs, nrows=3, ncols=5, hspace=0.30, wspace=0.30)
 
 
 def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
@@ -202,10 +275,25 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
     agg = AggregateLFPAndSpikePSDDecoder.load(agg_file)
 
     # df_me = export_dfs(agg)
-    df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
+    # df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
+    df_se = pd.read_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'))
 
-    draw_perf_hists(agg, df_me)
-    draw_freq_lkrats(agg, df_me)
+    plist = list()
+    g = df_se.groupby(['bird', 'block', 'segment', 'hemi'])
+    for gkey,gdf in g:
+        plist.append({'perf':gdf.perf_q2, 'lkrat':gdf.lkrat_q2, 't':'_'.join(gkey)})
+
+    def _plot_scat(pdata, ax):
+        plt.sca(ax)
+        cc = np.corrcoef(pdata['perf'], pdata['lkrat'])[0, 1]
+        plt.plot(pdata['perf'], pdata['lkrat'], 'co')
+        plt.title('cc=%0.2f, %s' % (cc, pdata['t']), fontsize=8)
+        plt.axis('tight')
+
+    multi_plot(plist, _plot_scat, nrows=5, ncols=7)
+
+    # draw_perf_hists(agg, df_me)
+    # draw_freq_lkrats(agg, df_me)
     plt.show()
 
 if __name__ == '__main__':
