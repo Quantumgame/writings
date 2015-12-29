@@ -3,8 +3,11 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from lasp.plots import multi_plot
+from scipy.stats import chi2
 
+from DecodingRhythms.utils import set_font
+from lasp.plots import multi_plot, custom_legend, grouped_boxplot
+from utils import get_this_dir
 from zeebeez.aggregators.lfp_and_spike_psd_decoders import AggregateLFPAndSpikePSDDecoder
 
 
@@ -13,6 +16,8 @@ def clean_region(reg):
         return '?'
     if reg.startswith('L2'):
         return 'L2'
+    if reg == 'CM':
+        return '?'
     return reg
 
 
@@ -42,6 +47,9 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
     # initialize single cell dataset dictionary
     cell_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'electrode':list(),
                  'region':list(), 'cell_index':list()}
+    for aprop in anames:
+        cell_data['perf_%s' % aprop] = list()
+        cell_data['lkrat_%s' % aprop] = list()
 
     nbands = len(freqs)
     g = agg.df.groupby(['bird', 'block', 'segment', 'hemi'])
@@ -51,6 +59,13 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
         wtup = (bird,block,segment,hemi)
         index2electrode = agg.index2electrode[wtup]
         cell_index2electrode = agg.cell_index2electrode[wtup]
+
+        # get the region by electrode
+        electrode2region = dict()
+        for e in index2electrode:
+            i = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == e)
+            assert i.sum() == 1
+            electrode2region[e] = clean_region(edata.region[i].values[0])
 
         # collect multi-electrode multi-band dataset
         band0_perfs = None
@@ -127,18 +142,13 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                         lk *= nsamps
                     p['lk_%s' % aprop] = lk
 
-            # get the region for this electrode
-            i = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == e)
-            assert i.sum() == 1
-            region = clean_region(edata.region[i].values[0])
-
             # append the single electrode performances and likelihood ratios to the single electrode dataset
             single_electrode_data['bird'].append(bird)
             single_electrode_data['block'].append(block)
             single_electrode_data['segment'].append(segment)
             single_electrode_data['hemi'].append(hemi)
             single_electrode_data['electrode'].append(e)
-            single_electrode_data['region'].append(region)
+            single_electrode_data['region'].append(electrode2region[e])
 
             for aprop in anames:
                 # append single electrode peformance
@@ -149,13 +159,111 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                 lkrat = 2*(leave_one_out_likelihood - full_likelihood)
                 single_electrode_data['lkrat_%s' % aprop].append(lkrat)
 
+        # collect single cell dataset
+        for e in index2electrode:
+
+            # count the number of cells and get their indices
+            i = (gdf.e1 == e) & (gdf.e2 == e) & (gdf.cell_index != -1) & (gdf.band == 0) & (gdf.exfreq == False) & \
+                    (gdf.exel == False) & (gdf.decomp == 'spike_psd')
+            if i.sum() == 0:
+                print 'No cells for (%s, %s, %s, %s), e=%d' % (bird, block, segment, hemi, e)
+                continue
+
+            cell_indices = sorted(gdf[i].cell_index.unique())
+            for ci in cell_indices:
+
+                missing_data = False
+                # get cell performance data for this electrode, with and without leave-one-out (the variable "exel")
+                perfs = dict()
+                perfs_exel = dict()
+                anames = agg.acoustic_props + ['category']
+                for aprop in anames:
+                    for exel in [True, False]:
+                        p = perfs
+                        if exel:
+                            p = perfs_exel
+
+                        # get multielectrode LFP decoder performance
+                        i = (gdf.e1 == e) & (gdf.e2 == e) & (gdf.cell_index == ci) & (gdf.band == 0) & (gdf.exfreq == False) & \
+                            (gdf.exel == exel) & (gdf.aprop == aprop) & (gdf.decomp == 'spike_psd')
+                        if i.sum() == 0:
+                            print "No result for (%s, %s, %s, %s), decomp=spike_psd, e=%d, ci=%d: i.sum()=%d" % (bird, block, segment, hemi, e, ci, i.sum())
+                            missing_data = True
+                            continue
+                        if i.sum() > 1:
+                            print "More than 1 result for (%s, %s, %s, %s), decomp=spike_psd, e=%d, ci=%d: i.sum()=%d" % (bird, block, segment, hemi, e, ci, i.sum())
+                            missing_data = True
+                            continue
+
+                        if aprop == 'category':
+                            p['perf_%s' % aprop] = gdf.pcc[i].values[0]
+                        else:
+                            p['perf_%s' % aprop] = gdf.r2[i].values[0]
+
+                        lk = gdf.likelihood[i].values[0]
+                        if aprop == 'category':
+                            nsamps = gdf.num_samps[i].values[0]
+                            lk *= nsamps
+                        p['lk_%s' % aprop] = lk
+
+                if missing_data:
+                    print 'Skipping cell %d on electrode %d for (%s, %s, %s, %s)' % (ci, e, bird, block, segment, hemi)
+                    continue
+
+                # append the single electrode performances and likelihood ratios to the single electrode dataset
+                cell_data['bird'].append(bird)
+                cell_data['block'].append(block)
+                cell_data['segment'].append(segment)
+                cell_data['hemi'].append(hemi)
+                cell_data['electrode'].append(e)
+                cell_data['region'].append(electrode2region[e])
+                cell_data['cell_index'].append(ci)
+
+                for aprop in anames:
+                    # append single electrode peformance
+                    cell_data['perf_%s' % aprop].append(perfs['perf_%s' % aprop])
+                    # append likelihood ratio
+                    full_likelihood = band0_perfs['lk_%s_%s' % (aprop, 'spike')]
+                    leave_one_out_likelihood = perfs_exel['lk_%s' % aprop]
+                    lkrat = 2*(leave_one_out_likelihood - full_likelihood)
+                    cell_data['lkrat_%s' % aprop].append(lkrat)
+
     df_me = pd.DataFrame(multi_electrode_data)
     df_me.to_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'), index=False)
 
     df_se = pd.DataFrame(single_electrode_data)
     df_se.to_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'), index=False)
 
-    return df_me
+    df_cell = pd.DataFrame(cell_data)
+    df_cell.to_csv(os.path.join(data_dir, 'aggregate', 'cell_perfs.csv'), index=False)
+
+    return df_me,df_se,df_cell
+
+
+def draw_acoustic_perf_boxplots(agg, df_me):
+
+    aprops_to_display = ['maxAmp', 'sal', 'meanspect', 'q1', 'q2', 'q3',
+                         'entropyspect', 'meantime', 'entropytime']
+
+    df0 = df_me[df_me.band == 0]
+
+    bp_data = dict()
+    for aprop in aprops_to_display:
+        lfp_perfs = df0['perf_%s_lfp' % aprop].values
+        spike_perfs = df0['perf_%s_spike' % aprop].values
+        bp_data[aprop] = [lfp_perfs, spike_perfs]
+
+    figsize = (24, 10)
+    fig = plt.figure(figsize=figsize)
+    plt.subplots_adjust(top=0.95, bottom=0.05, left=0.05, right=0.99, hspace=0.40, wspace=0.20)
+
+    grouped_boxplot(bp_data, group_names=aprops_to_display, subgroup_names=['LFP', 'Spike'],
+                    subgroup_colors=['#0068A5', '#F0DB00'], box_spacing=1.5)
+    plt.xlabel('Acoustic Feature')
+    plt.ylabel('Decoder R2')
+
+    fname = os.path.join(get_this_dir(), 'perf_boxplots.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
 
 
 def draw_perf_hists(agg, df_me):
@@ -222,6 +330,12 @@ def draw_freq_lkrats(agg, df_me):
     freqs = agg.freqs
     nbands = len(freqs)
 
+    x = np.linspace(1, 150, 1000)
+    dof = 16
+    p = chi2.pdf(x, dof)
+    sig_thresh = min(x[p > 0.01])
+    print 'sig_thresh=%f' % sig_thresh
+
     # make histograms of performances across sites for each acoustic property
     perf_list = list()
     for aprop in aprops_to_display:
@@ -252,11 +366,14 @@ def draw_freq_lkrats(agg, df_me):
         else:
             plt.axhline(0, c='k')
 
-        plt.plot(pdata['freqs'], pdata['lkrat_lfp'], 'k-', linewidth=3.0, alpha=0.7)
-        plt.plot(pdata['freqs'], pdata['lkrat_spike'], 'k--', linewidth=3.0, alpha=0.7)
+        gray = '#3c3c3c'
+        plt.plot(pdata['freqs'], pdata['lkrat_lfp'], 'k-', linewidth=3.0, alpha=0.9)
+        plt.plot(pdata['freqs'], pdata['lkrat_spike'], '--', c=gray, linewidth=3.0, alpha=0.9)
+        plt.axhline(sig_thresh, c='k', alpha=1.0, linestyle='-', linewidth=2.0)
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('Likelihood Ratio')
-        plt.legend(['LFP', 'Spike'], fontsize='x-small')
+        leg = custom_legend(['k', gray], ['LFP', 'Spike'], linestyles=['solid', 'dashed'])
+        plt.legend(handles=leg, fontsize='x-small')
         plt.title(pdata['aprop'])
         plt.axis('tight')
 
@@ -274,28 +391,19 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
     agg_file = os.path.join(data_dir, 'aggregate', 'lfp_and_spike_psd_decoders.h5')
     agg = AggregateLFPAndSpikePSDDecoder.load(agg_file)
 
-    # df_me = export_dfs(agg)
-    # df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
+    g = agg.df.groupby(['bird', 'block', 'segment', 'hemi'])
+    print '# of groups: %d' % len(g)
+
+    # df_me,df_se,df_cell = export_dfs(agg)
+    df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
     df_se = pd.read_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'))
-
-    plist = list()
-    g = df_se.groupby(['bird', 'block', 'segment', 'hemi'])
-    for gkey,gdf in g:
-        plist.append({'perf':gdf.perf_q2, 'lkrat':gdf.lkrat_q2, 't':'_'.join(gkey)})
-
-    def _plot_scat(pdata, ax):
-        plt.sca(ax)
-        cc = np.corrcoef(pdata['perf'], pdata['lkrat'])[0, 1]
-        plt.plot(pdata['perf'], pdata['lkrat'], 'co')
-        plt.title('cc=%0.2f, %s' % (cc, pdata['t']), fontsize=8)
-        plt.axis('tight')
-
-    multi_plot(plist, _plot_scat, nrows=5, ncols=7)
 
     # draw_perf_hists(agg, df_me)
     # draw_freq_lkrats(agg, df_me)
+    draw_acoustic_perf_boxplots(agg, df_me)
     plt.show()
 
 if __name__ == '__main__':
+    set_font()
     draw_figures()
 
