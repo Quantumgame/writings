@@ -9,6 +9,7 @@ from DecodingRhythms.utils import set_font
 from lasp.plots import multi_plot, custom_legend, grouped_boxplot
 from utils import get_this_dir
 from zeebeez.aggregators.lfp_and_spike_psd_decoders import AggregateLFPAndSpikePSDDecoder
+from zeebeez.utils import CALL_TYPE_SHORT_NAMES, DECODER_CALL_TYPES
 
 
 def clean_region(reg):
@@ -240,6 +241,66 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
     return df_me,df_se,df_cell
 
 
+def draw_category_perf_and_confusion(agg, df_me):
+    df0 = df_me[df_me.band == 0]
+
+    lfp_perfs = df0['perf_category_lfp'].values
+    spike_perfs = df0['perf_category_spike'].values
+    bp_data = {'Vocalization Type':[lfp_perfs, spike_perfs]}
+
+    cmats = dict()
+
+    for decomp in ['locked', 'spike_psd']:
+        # compute average confusion matrix for spikes and LFP
+        i = (agg.df.e1 == -1) & (agg.df.e2 == -1) & (agg.df.decomp == decomp) & (agg.df.band == 0) & \
+            (agg.df.aprop == 'category') & (agg.df.exfreq == False) & (agg.df.exel == False)
+        print '%s, i.sum()=%d' % (decomp, i.sum())
+
+        df = agg.df[i]
+        ci = df.cmat_index.values
+        C = agg.confusion_matrices[ci, :, :]
+        Cmean = C.mean(axis=0)
+
+        cmats[decomp] = Cmean
+
+    figsize = (24, 6)
+    fig = plt.figure(figsize=figsize)
+    plt.subplots_adjust(top=0.95, bottom=0.05, left=0.05, right=0.99, hspace=0.40, wspace=0.20)
+
+    gs = plt.GridSpec(1, 100)
+
+    # make a boxplot
+    ax = plt.subplot(gs[0, :15])
+    grouped_boxplot(bp_data, subgroup_names=['LFP', 'Spike'],
+                    subgroup_colors=['#0068A5', '#F0DB00'], box_spacing=1.5, ax=ax)
+    plt.xticks([])
+    plt.ylabel('PCC')
+    plt.title('Vocalization Type Deocder Performance')
+
+    # plot the mean LFP confusion matrix
+    ax = plt.subplot(gs[0, 20:55])
+    plt.imshow(cmats['locked'], origin='lower', interpolation='nearest', aspect='auto', vmin=0, vmax=1, cmap=plt.cm.afmhot)
+
+    xtks = [CALL_TYPE_SHORT_NAMES[ct] for ct in DECODER_CALL_TYPES]
+    plt.xticks(range(len(DECODER_CALL_TYPES)), xtks)
+    plt.yticks(range(len(DECODER_CALL_TYPES)), xtks)
+    plt.colorbar(label='PCC')
+    plt.title('Mean LFP Decoder Confusion Matrix')
+
+    # plot the mean spike confusion matrix
+    ax = plt.subplot(gs[0, 60:95])
+    plt.imshow(cmats['spike_psd'], origin='lower', interpolation='nearest', aspect='auto', vmin=0, vmax=1, cmap=plt.cm.afmhot)
+
+    xtks = [CALL_TYPE_SHORT_NAMES[ct] for ct in DECODER_CALL_TYPES]
+    plt.xticks(range(len(DECODER_CALL_TYPES)), xtks)
+    plt.yticks(range(len(DECODER_CALL_TYPES)), xtks)
+    plt.colorbar(label='PCC')
+    plt.title('Mean Spike Decoder Confusion Matrix')
+
+    fname = os.path.join(get_this_dir(), 'perf_boxplots_category.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
+
+
 def draw_acoustic_perf_boxplots(agg, df_me):
 
     aprops_to_display = ['maxAmp', 'sal', 'meanspect', 'q1', 'q2', 'q3',
@@ -400,7 +461,10 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
 
     # draw_perf_hists(agg, df_me)
     # draw_freq_lkrats(agg, df_me)
-    draw_acoustic_perf_boxplots(agg, df_me)
+
+    # draw_acoustic_perf_boxplots(agg, df_me)
+    draw_category_perf_and_confusion(agg, df_me)
+
     plt.show()
 
 if __name__ == '__main__':
