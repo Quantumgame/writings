@@ -261,7 +261,16 @@ def draw_category_perf_and_confusion(agg, df_me):
         C = agg.confusion_matrices[ci, :, :]
         Cmean = C.mean(axis=0)
 
-        cmats[decomp] = Cmean
+        cnames = agg.stim_class_names[ci][0]
+
+        # reorder confusion matrix
+        Cro = np.zeros_like(Cmean)
+        for k,cname1 in enumerate(cnames):
+            for j,cname2 in enumerate(cnames):
+                i1 = DECODER_CALL_TYPES.index(cname1)
+                i2 = DECODER_CALL_TYPES.index(cname2)
+                Cro[i1, i2] = Cmean[k, j]
+        cmats[decomp] = Cro
 
     figsize = (24, 6)
     fig = plt.figure(figsize=figsize)
