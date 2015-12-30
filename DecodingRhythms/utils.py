@@ -12,6 +12,9 @@ from lasp.timefreq import power_spectrum_jn
 from zeebeez.transforms.pairwise_cf import PairwiseCFTransform
 
 
+COLOR_BLUE_LFP = '#0068A5'
+COLOR_YELLOW_SPIKE = '#F0DB00'
+
 def set_font():
     font = {'family':'normal', 'weight':'bold', 'size':16}
     matplotlib.rc('font', **font)
