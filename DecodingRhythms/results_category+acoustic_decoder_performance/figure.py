@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from lasp.colormaps import magma
 from scipy.stats import chi2
 
 from DecodingRhythms.utils import set_font, COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE
@@ -61,6 +62,28 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
         index2electrode = agg.index2electrode[wtup]
         cell_index2electrode = agg.cell_index2electrode[wtup]
 
+        # compute the number of cells, use it to compute significance thresholds for the likelihood ratios
+        i = (gdf.e1 != -1) & (gdf.e1 == gdf.e2) & (gdf.cell_index != -1) & (gdf.decomp == 'spike_psd') & \
+            (gdf.exel == False) & (gdf.exfreq == False) & (gdf.aprop == 'q2')
+        ncells = i.sum()
+        # print '%s,%s,%s,%s # of cells: %d' % (bird, block, segment, hemi, ncells)
+
+        x = np.linspace(1, 150, 1000)
+        # compute significance threshold for LFP when frequency bands are held out
+        dof = 16
+        p = chi2.pdf(x, dof)
+        sig_thresh_lfp_freq = min(x[p > 0.01])
+
+        # compute significance threshold for spikes when frequency bands are held out
+        dof = ncells
+        p = chi2.pdf(x, dof)
+        sig_thresh_spikes_freq = min(x[p > 0.01])
+
+        # compute significance threshold for LFP or spikes when an electrode or cell is held out
+        dof = len(freqs)
+        p = chi2.pdf(x, dof)
+        sig_thresh_electrode_or_cell = min(x[p > 0.01])
+
         # get the region by electrode
         electrode2region = dict()
         for e in index2electrode:
@@ -114,6 +137,10 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                         full_likelihood = band0_perfs['lk_%s_%s' % (aprop, t)]
                         leave_one_out_likelihood = perfs['lk_%s_%s' % (aprop, t)]
                         lkrat = 2*(leave_one_out_likelihood - full_likelihood)
+                        if t == 'lfp':
+                            lkrat /= sig_thresh_lfp_freq
+                        else:
+                            lkrat /= sig_thresh_spikes_freq
                         multi_electrode_data['lkrat_%s_%s' % (aprop, t)].append(lkrat)
 
         # collect single electrode dataset
@@ -158,6 +185,7 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                 full_likelihood = band0_perfs['lk_%s_%s' % (aprop, 'lfp')]
                 leave_one_out_likelihood = perfs_exel['lk_%s' % aprop]
                 lkrat = 2*(leave_one_out_likelihood - full_likelihood)
+                lkrat /= sig_thresh_electrode_or_cell
                 single_electrode_data['lkrat_%s' % aprop].append(lkrat)
 
         # collect single cell dataset
@@ -227,6 +255,7 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                     full_likelihood = band0_perfs['lk_%s_%s' % (aprop, 'spike')]
                     leave_one_out_likelihood = perfs_exel['lk_%s' % aprop]
                     lkrat = 2*(leave_one_out_likelihood - full_likelihood)
+                    lkrat /= sig_thresh_electrode_or_cell
                     cell_data['lkrat_%s' % aprop].append(lkrat)
 
     df_me = pd.DataFrame(multi_electrode_data)
@@ -486,9 +515,10 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
     # df_me,df_se,df_cell = export_dfs(agg)
     df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
     df_se = pd.read_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'))
+    df_cell = pd.read_csv(os.path.join(data_dir, 'aggregate', 'cell_perfs.csv'))
 
     # draw_perf_hists(agg, df_me)
-    draw_freq_lkrats(agg, df_me)
+    # draw_freq_lkrats(agg, df_me)
 
     # draw_acoustic_perf_boxplots(agg, df_me)
     # draw_category_perf_and_confusion(agg, df_me)
