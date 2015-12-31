@@ -356,3 +356,12 @@ if __name__ == '__main__':
     sample_rate = 381.4697265625
     print 'freqs=',get_freqs(sample_rate)
 
+
+def clean_region(reg):
+    if '-' in reg:
+        return '?'
+    if reg.startswith('L2'):
+        return 'L2'
+    if reg == 'CM':
+        return '?'
+    return reg

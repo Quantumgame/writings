@@ -1,26 +1,15 @@
 import os
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from lasp.colormaps import magma
 from scipy.stats import chi2
 
-from DecodingRhythms.utils import set_font, COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE
+from DecodingRhythms.utils import set_font, COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, clean_region
 from lasp.plots import multi_plot, custom_legend, grouped_boxplot
 from utils import get_this_dir
 from zeebeez.aggregators.lfp_and_spike_psd_decoders import AggregateLFPAndSpikePSDDecoder
 from zeebeez.utils import CALL_TYPE_SHORT_NAMES, DECODER_CALL_TYPES
-
-
-def clean_region(reg):
-    if '-' in reg:
-        return '?'
-    if reg.startswith('L2'):
-        return 'L2'
-    if reg == 'CM':
-        return '?'
-    return reg
 
 
 def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):

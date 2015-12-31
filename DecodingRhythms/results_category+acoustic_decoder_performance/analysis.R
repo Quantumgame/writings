@@ -132,3 +132,59 @@ summary(m_cat_r2)
 # No, doesn't appear as though category decoding performance
 # covaries by region.
 
+
+
+###############################
+# Weight analysis
+##############################
+
+d = read.csv('/auto/tdrive/mschachter/data/aggregate/weight_data.csv')
+d$region = relevel(d$region, ref="HP")
+d$electrode = as.factor(d$electrode)
+
+d = subset(d, d$region != '?')
+d = subset(d, abs(d$weight) > 0.005)
+
+
+####################
+# what parameters influence spectral quantiles?
+i = d$aprop == 'q1'
+m_q1 = lm(weight ~ row + col +  region + f, data=d[i,])
+
+i = d$aprop == 'q2'
+m_q2 = lm(weight ~ row + col +  region + f, data=d[i,])
+
+i = d$aprop == 'q3'
+m_q3 = lm(weight ~ row + col +  region + f, data=d[i,])
+
+Anova(m_q1)
+Anova(m_q2)
+Anova(m_q3)
+
+
+summary(m_q1)
+summary(m_q2)
+summary(m_q3)
+
+# Weights are positive and higher for medial electrodes, higher frequencies, more negative
+# moving caudally, and higher for CMM. No effect from hemisphere (removed from regression),
+# when regions that are "?" are taken out of regression, effect of medial/lateral goes away.
+
+
+#################
+# what parameters influence salience weights?
+i = d$aprop == 'sal'
+m_sal = lm(weight ~ row + col + hemi + region + f, data=d[i,])
+
+Anova(m_sal)
+summary(m_sal)
+
+# Effects from row, region, frequency. L1 and L3 tend to have negative weights. Caudal
+# has more negative weights than rostral. Weights get more negative as frequency goes up.
+
+
+
+
+
+
+
