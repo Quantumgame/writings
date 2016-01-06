@@ -14,6 +14,7 @@ from zeebeez.transforms.pairwise_cf import PairwiseCFTransform
 
 COLOR_BLUE_LFP = '#0068A5'
 COLOR_YELLOW_SPIKE = '#F0DB00'
+COLOR_RED_SPIKE_RATE = '#E90027'
 
 def set_font():
     font = {'family':'normal', 'weight':'bold', 'size':16}

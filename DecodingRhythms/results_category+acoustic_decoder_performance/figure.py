@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import chi2
 
-from DecodingRhythms.utils import set_font, COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, clean_region
+from DecodingRhythms.utils import set_font, COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, clean_region, COLOR_RED_SPIKE_RATE
 from lasp.plots import multi_plot, custom_legend, grouped_boxplot
 from utils import get_this_dir
 from zeebeez.aggregators.lfp_and_spike_psd_decoders import AggregateLFPAndSpikePSDDecoder
@@ -22,9 +22,10 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
     multi_electrode_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'band':list()}
     anames = agg.acoustic_props + ['category']
     for aprop in anames:
-        for t in ['lfp', 'spike']:
+        for t in ['lfp', 'spike', 'spike_rate']:
             multi_electrode_data['perf_%s_%s' % (aprop, t)] = list()
-            multi_electrode_data['lkrat_%s_%s' % (aprop, t)] = list()
+            if t != 'spike_rate':
+                multi_electrode_data['lkrat_%s_%s' % (aprop, t)] = list()
 
     # initialize single electrode dataset dictionary
     single_electrode_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'electrode':list(),
@@ -43,7 +44,8 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
         cell_data['lkrat_%s' % aprop] = list()
 
     nbands = len(freqs)
-    g = agg.df.groupby(['bird', 'block', 'segment', 'hemi'])
+    i = agg.df.bird != 'BlaBro09xxF'
+    g = agg.df[i].groupby(['bird', 'block', 'segment', 'hemi'])
 
     for (bird,block,segment,hemi),gdf in g:
 
@@ -57,21 +59,37 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
         ncells = i.sum()
         # print '%s,%s,%s,%s # of cells: %d' % (bird, block, segment, hemi, ncells)
 
-        x = np.linspace(1, 150, 1000)
-        # compute significance threshold for LFP when frequency bands are held out
+        x = np.linspace(1, 500, 5000)
+        # compute significance threshold for LFP when frequency bands are held out, for acoustic decoder
         dof = 16
         p = chi2.pdf(x, dof)
-        sig_thresh_lfp_freq = min(x[p > 0.01])
+        sig_thresh_lfp_freq_acoustic = min(x[p > 0.01])
 
-        # compute significance threshold for spikes when frequency bands are held out
+        # compute significance threshold for LFP when frequency bands are held out, for category decoder
+        dof = 16*8
+        p = chi2.pdf(x, dof)
+        sig_thresh_lfp_freq_cat = min(x[p > 0.01])
+        print 'sig_thresh_lfp_freq_cat=%f' % sig_thresh_lfp_freq_cat
+
+        # compute significance threshold for spikes when frequency bands are held out, for acoustic decoder
         dof = ncells
         p = chi2.pdf(x, dof)
-        sig_thresh_spikes_freq = min(x[p > 0.01])
+        sig_thresh_spikes_freq_acoustic = min(x[p > 0.01])
 
-        # compute significance threshold for LFP or spikes when an electrode or cell is held out
+        # compute significance threshold for spikes when frequency bands are held out, for category decoder
+        dof = ncells*8
+        p = chi2.pdf(x, dof)
+        sig_thresh_spikes_freq_cat = min(x[p > 0.01])
+
+        # compute significance threshold for LFP or spikes when an electrode or cell is held out, for acoustic decoder
         dof = len(freqs)
         p = chi2.pdf(x, dof)
-        sig_thresh_electrode_or_cell = min(x[p > 0.01])
+        sig_thresh_electrode_or_cell_acoustic = min(x[p > 0.01])
+
+        # compute significance threshold for LFP or spikes when an electrode or cell is held out, for category decoder
+        dof = len(freqs)*8
+        p = chi2.pdf(x, dof)
+        sig_thresh_electrode_or_cell_cat = min(x[p > 0.01])
 
         # get the region by electrode
         electrode2region = dict()
@@ -89,11 +107,20 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
             perfs = dict()
             anames = agg.acoustic_props + ['category']
             for aprop in anames:
-                for t,decomp in [('lfp', 'locked'), ('spike', 'spike_psd')]:
+                for t,decomp in [('lfp', 'locked'), ('spike', 'spike_psd'), ('spike_rate', 'spike_rate')]:
+
+                    if decomp == 'spike_rate' and b > 0:
+                        perfs['perf_%s_%s' % (aprop, t)] = 0
+                        continue
+
                     # get multielectrode LFP decoder performance
                     i = (gdf.e1 == -1) & (gdf.e2 == -1) & (gdf.cell_index == -1) & (gdf.band == b) & (gdf.exfreq == exfreq) & \
                         (gdf.exel == False) & (gdf.aprop == aprop) & (gdf.decomp == decomp)
-                    assert i.sum() == 1, "Zero or more than 1 result for (%s, %s, %s, %s), decomp=locked, band=%d: i.sum()=%d" % (bird, block, segment, hemi, b, i.sum())
+
+                    if i.sum() != 1:
+                        print "Zero or more than 1 result for (%s, %s, %s, %s), decomp=locked, band=%d: i.sum()=%d" % (bird, block, segment, hemi, b, i.sum())
+                        continue
+
                     if aprop == 'category':
                         perfs['perf_%s_%s' % (aprop, t)] = gdf.pcc[i].values[0]
                     else:
@@ -104,6 +131,11 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                         nsamps = gdf.num_samps[i].values[0]
                         lk *= nsamps
                     perfs['lk_%s_%s' % (aprop, t)] = lk
+
+            nperfs = np.sum([k.startswith('perf') for k in perfs.keys()])
+            if nperfs != len(anames)*3:
+                print 'nperfs=%d, b=%d (%s,%s,%s,%s), skipping...' % (nperfs, b, bird, block, segment, hemi)
+                continue
 
             multi_electrode_data['bird'].append(bird)
             multi_electrode_data['block'].append(block)
@@ -126,12 +158,18 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                         full_likelihood = band0_perfs['lk_%s_%s' % (aprop, t)]
                         leave_one_out_likelihood = perfs['lk_%s_%s' % (aprop, t)]
                         lkrat = 2*(leave_one_out_likelihood - full_likelihood)
-                        if t == 'lfp':
-                            lkrat /= sig_thresh_lfp_freq
+                        if t == 'lfp' and aprop != 'category':
+                            lkrat /= sig_thresh_lfp_freq_acoustic
+                        elif t == 'lfp' and aprop == 'category':
+                            lkrat /= sig_thresh_lfp_freq_cat
+                        elif t == 'spike' and aprop != 'category':
+                            lkrat /= sig_thresh_spikes_freq_acoustic
                         else:
-                            lkrat /= sig_thresh_spikes_freq
+                            lkrat /= sig_thresh_spikes_freq_cat
+
                         multi_electrode_data['lkrat_%s_%s' % (aprop, t)].append(lkrat)
 
+        """
         # collect single electrode dataset
         for e in index2electrode:
 
@@ -174,7 +212,7 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                 full_likelihood = band0_perfs['lk_%s_%s' % (aprop, 'lfp')]
                 leave_one_out_likelihood = perfs_exel['lk_%s' % aprop]
                 lkrat = 2*(leave_one_out_likelihood - full_likelihood)
-                lkrat /= sig_thresh_electrode_or_cell
+                lkrat /= sig_thresh_electrode_or_cell_acoustic
                 single_electrode_data['lkrat_%s' % aprop].append(lkrat)
 
         # collect single cell dataset
@@ -244,19 +282,23 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                     full_likelihood = band0_perfs['lk_%s_%s' % (aprop, 'spike')]
                     leave_one_out_likelihood = perfs_exel['lk_%s' % aprop]
                     lkrat = 2*(leave_one_out_likelihood - full_likelihood)
-                    lkrat /= sig_thresh_electrode_or_cell
+                    lkrat /= sig_thresh_electrode_or_cell_acoustic
                     cell_data['lkrat_%s' % aprop].append(lkrat)
+        """
 
     df_me = pd.DataFrame(multi_electrode_data)
     df_me.to_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'), index=False)
 
+    """
     df_se = pd.DataFrame(single_electrode_data)
     df_se.to_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'), index=False)
 
     df_cell = pd.DataFrame(cell_data)
     df_cell.to_csv(os.path.join(data_dir, 'aggregate', 'cell_perfs.csv'), index=False)
+    """
 
-    return df_me,df_se,df_cell
+    # return df_me,df_se,df_cell
+    return None,None,None
 
 
 def draw_category_perf_and_confusion(agg, df_me):
@@ -264,11 +306,12 @@ def draw_category_perf_and_confusion(agg, df_me):
 
     lfp_perfs = df0['perf_category_lfp'].values
     spike_perfs = df0['perf_category_spike'].values
-    bp_data = {'Vocalization Type':[lfp_perfs, spike_perfs]}
+    spike_rate_perfs = df0['perf_category_spike_rate'].values
+    bp_data = {'Vocalization Type':[lfp_perfs, spike_perfs, spike_rate_perfs]}
 
     cmats = dict()
 
-    for decomp in ['locked', 'spike_psd']:
+    for decomp in ['locked', 'spike_psd', 'spike_rate']:
         # compute average confusion matrix for spikes and LFP
         i = (agg.df.e1 == -1) & (agg.df.e2 == -1) & (agg.df.decomp == decomp) & (agg.df.band == 0) & \
             (agg.df.aprop == 'category') & (agg.df.exfreq == False) & (agg.df.exel == False)
@@ -290,22 +333,23 @@ def draw_category_perf_and_confusion(agg, df_me):
                 Cro[i1, i2] = Cmean[k, j]
         cmats[decomp] = Cro
 
-    figsize = (24, 6)
+    figsize = (16, 12)
     fig = plt.figure(figsize=figsize)
     plt.subplots_adjust(top=0.95, bottom=0.05, left=0.05, right=0.99, hspace=0.40, wspace=0.20)
 
-    gs = plt.GridSpec(1, 100)
+    # gs = plt.GridSpec(1, 100)
+    gs = plt.GridSpec(2, 2)
 
     # make a boxplot
-    ax = plt.subplot(gs[0, :15])
-    grouped_boxplot(bp_data, subgroup_names=['LFP', 'Spike'],
-                    subgroup_colors=[COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE], box_spacing=1.5, ax=ax)
+    ax = plt.subplot(gs[0, 0])
+    grouped_boxplot(bp_data, subgroup_names=['LFP', 'Spike PSD', 'Spike Rate'],
+                    subgroup_colors=[COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, COLOR_RED_SPIKE_RATE], box_spacing=1.5, ax=ax)
     plt.xticks([])
     plt.ylabel('PCC')
-    plt.title('Vocalization Type Deocder Performance')
+    plt.title('Vocalization Type Decoder Performance')
 
     # plot the mean LFP confusion matrix
-    ax = plt.subplot(gs[0, 20:55])
+    ax = plt.subplot(gs[0, 1])
     plt.imshow(cmats['locked'], origin='lower', interpolation='nearest', aspect='auto', vmin=0, vmax=1, cmap=plt.cm.afmhot)
 
     xtks = [CALL_TYPE_SHORT_NAMES[ct] for ct in DECODER_CALL_TYPES]
@@ -315,14 +359,27 @@ def draw_category_perf_and_confusion(agg, df_me):
     plt.title('Mean LFP Decoder Confusion Matrix')
 
     # plot the mean spike confusion matrix
-    ax = plt.subplot(gs[0, 60:95])
+    ax = plt.subplot(gs[1, 0])
     plt.imshow(cmats['spike_psd'], origin='lower', interpolation='nearest', aspect='auto', vmin=0, vmax=1, cmap=plt.cm.afmhot)
 
     xtks = [CALL_TYPE_SHORT_NAMES[ct] for ct in DECODER_CALL_TYPES]
     plt.xticks(range(len(DECODER_CALL_TYPES)), xtks)
     plt.yticks(range(len(DECODER_CALL_TYPES)), xtks)
     plt.colorbar(label='PCC')
-    plt.title('Mean Spike Decoder Confusion Matrix')
+    plt.title('Mean Spike PSD Decoder Confusion Matrix')
+
+    fname = os.path.join(get_this_dir(), 'perf_boxplots_category.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
+
+    # plot the mean spike rate confusion matrix
+    ax = plt.subplot(gs[1, 1])
+    plt.imshow(cmats['spike_rate'], origin='lower', interpolation='nearest', aspect='auto', vmin=0, vmax=1, cmap=plt.cm.afmhot)
+
+    xtks = [CALL_TYPE_SHORT_NAMES[ct] for ct in DECODER_CALL_TYPES]
+    plt.xticks(range(len(DECODER_CALL_TYPES)), xtks)
+    plt.yticks(range(len(DECODER_CALL_TYPES)), xtks)
+    plt.colorbar(label='PCC')
+    plt.title('Mean Spike Rate Decoder Confusion Matrix')
 
     fname = os.path.join(get_this_dir(), 'perf_boxplots_category.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
@@ -339,14 +396,16 @@ def draw_acoustic_perf_boxplots(agg, df_me):
     for aprop in aprops_to_display:
         lfp_perfs = df0['perf_%s_lfp' % aprop].values
         spike_perfs = df0['perf_%s_spike' % aprop].values
-        bp_data[aprop] = [lfp_perfs, spike_perfs]
+        spike_rate_perfs = df0['perf_%s_spike_rate' % aprop].values
+        bp_data[aprop] = [lfp_perfs, spike_perfs, spike_rate_perfs]
 
     figsize = (24, 10)
     fig = plt.figure(figsize=figsize)
     plt.subplots_adjust(top=0.95, bottom=0.05, left=0.05, right=0.99, hspace=0.40, wspace=0.20)
 
-    grouped_boxplot(bp_data, group_names=aprops_to_display, subgroup_names=['LFP', 'Spike'],
-                    subgroup_colors=[COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE], box_spacing=1.5)
+    grouped_boxplot(bp_data, group_names=aprops_to_display, subgroup_names=['LFP', 'Spike PSD', 'Spike Rate'],
+                    subgroup_colors=[COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, COLOR_RED_SPIKE_RATE], box_spacing=1.5)
+
     plt.xlabel('Acoustic Feature')
     plt.ylabel('Decoder R2')
 
@@ -422,7 +481,8 @@ def draw_freq_lkrats(agg, df_me):
     nbands = len(freqs)
 
     # compute the significance threshold for each site, use it to normalize the likelihood ratio
-    g = agg.df.groupby(['bird', 'block', 'segment', 'hemi'])
+    i = agg.df.bird != 'BlaBro09xxF'
+    g = agg.df[i].groupby(['bird', 'block', 'segment', 'hemi'])
 
     num_sites = len(g)
 
@@ -433,21 +493,11 @@ def draw_freq_lkrats(agg, df_me):
         normed_lkrat_spike[aprop] = np.zeros([num_sites, nbands])
 
     for k,((bird,block,segment,hemi),gdf) in enumerate(g):
+
         i = (gdf.e1 != -1) & (gdf.e1 == gdf.e2) & (gdf.cell_index != -1) & (gdf.decomp == 'spike_psd') & \
             (gdf.exel == False) & (gdf.exfreq == False) & (gdf.aprop == 'q2')
         ncells = i.sum()
         # print '%s,%s,%s,%s # of cells: %d' % (bird, block, segment, hemi, ncells)
-
-        x = np.linspace(1, 150, 1000)
-        # compute significance threshold for LFP
-        dof = 16
-        p = chi2.pdf(x, dof)
-        sig_thresh_lfp = min(x[p > 0.01])
-
-        # compute significance threshold for spikes
-        dof = ncells
-        p = chi2.pdf(x, dof)
-        sig_thresh_spikes = min(x[p > 0.01])
 
         # get the likelihood ratios and normalize them by threshold
         for aprop in aprops_to_display:
@@ -455,10 +505,12 @@ def draw_freq_lkrats(agg, df_me):
             for b in range(1, nbands+1):
                 i = (df_me.bird == bird) & (df_me.block == block) & (df_me.segment == segment) & (df_me.hemi == hemi) & \
                     (df_me.band == b)
+                if i.sum() != 1:
+                    print 'i.sum()=%d, b=%d, (%s,%s,%s,%s)' % (i.sum(), b, bird, block, segment, hemi)
                 assert i.sum() == 1
 
-                lkrats_lfp = df_me[i]['lkrat_%s_%s' % (aprop, 'lfp')].values[0] / sig_thresh_lfp
-                lkrats_spike = df_me[i]['lkrat_%s_%s' % (aprop, 'spike')].values[0] / sig_thresh_spikes
+                lkrats_lfp = df_me[i]['lkrat_%s_%s' % (aprop, 'lfp')].values[0]
+                lkrats_spike = df_me[i]['lkrat_%s_%s' % (aprop, 'spike')].values[0]
 
                 normed_lkrat_lfp[aprop][k, b-1] = lkrats_lfp
                 normed_lkrat_spike[aprop][k, b-1] = lkrats_spike
@@ -501,10 +553,10 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
     g = agg.df.groupby(['bird', 'block', 'segment', 'hemi'])
     print '# of groups: %d' % len(g)
 
-    # df_me,df_se,df_cell = export_dfs(agg)
-    df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
-    df_se = pd.read_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'))
-    df_cell = pd.read_csv(os.path.join(data_dir, 'aggregate', 'cell_perfs.csv'))
+    df_me,df_se,df_cell = export_dfs(agg)
+    # df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
+    # df_se = pd.read_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'))
+    # df_cell = pd.read_csv(os.path.join(data_dir, 'aggregate', 'cell_perfs.csv'))
 
     # draw_perf_hists(agg, df_me)
     # draw_freq_lkrats(agg, df_me)

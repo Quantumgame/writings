@@ -141,9 +141,10 @@ summary(m_cat_r2)
 d = read.csv('/auto/tdrive/mschachter/data/aggregate/weight_data.csv')
 d$region = relevel(d$region, ref="HP")
 d$electrode = as.factor(d$electrode)
+d$f = as.factor(round(d$f))
 
 d = subset(d, d$region != '?')
-d = subset(d, abs(d$weight) > 0.005)
+d = subset(d, abs(d$weight) > 0.05) # filter by 2 standard deviations
 
 
 ####################
@@ -166,9 +167,14 @@ summary(m_q1)
 summary(m_q2)
 summary(m_q3)
 
-# Weights are positive and higher for medial electrodes, higher frequencies, more negative
-# moving caudally, and higher for CMM. No effect from hemisphere (removed from regression),
-# when regions that are "?" are taken out of regression, effect of medial/lateral goes away.
+# Weights are positive and higher for medial electrodes, more negative moving caudally, and higher for CMM,
+# with no other regional effects. No effect from hemisphere (removed from regression). Top 5 contributors
+# to decrease in weight are 17Hz, 33Hz, 50Hz, 182Hz. Average R2 = 0.11
+
+# When weights below 2SD are removed:
+# q1: R2 = 0.53, and only 33-50Hz are significant
+# q2: R2 = 0.48, 17-66Hz, and 182Hz are signficant. L2, L3, NCM are significant
+# q3: R2 = 0.53, 17-66Hz, and 182Hz are significant
 
 
 #################
@@ -178,12 +184,24 @@ m_sal = lm(weight ~ row + col + hemi + region + f, data=d[i,])
 
 Anova(m_sal)
 summary(m_sal)
+hist(d$weight[i])
 
-# Effects from row, region, frequency. L1 and L3 tend to have negative weights. Caudal
-# has more negative weights than rostral. Weights get more negative as frequency goes up.
+# Effects from rostral-caudal axis, region, frequency. L1 and L3 tend to have negative weights,
+# higher in magnitude than other significant regions (L2, CML). Caudal
+# has lower weight than rostral. Top 5 contributors to decrease in weight
+# are 33Hz, 50Hz, 116Hz, and 182Hz. R2 = 0.09
 
 
+#################
+# what parameters influence maxAmp?
+i = d$aprop == 'maxAmp'
+m_amp = lm(weight ~ row + col + hemi + region + f, data=d[i,])
 
+Anova(m_amp)
+summary(m_amp)
+
+# No effect from rostral-caudal axis, some from medial/lateral, region, and frequency. Increase
+# in weight for medial, and region L. Only significant frequencies are 17Hz and 182Hz. 
 
 
 
