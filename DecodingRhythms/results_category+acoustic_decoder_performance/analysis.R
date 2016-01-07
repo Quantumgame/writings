@@ -150,7 +150,7 @@ d = subset(d, abs(d$weight) > 0.05) # filter by 2 standard deviations
 ####################
 # what parameters influence spectral quantiles?
 i = d$aprop == 'q1'
-m_q1 = lm(weight ~ row + col +  region + f, data=d[i,])
+m_q1 = lm(weight ~ row + col +region + f, data=d[i,])
 
 i = d$aprop == 'q2'
 m_q2 = lm(weight ~ row + col +  region + f, data=d[i,])

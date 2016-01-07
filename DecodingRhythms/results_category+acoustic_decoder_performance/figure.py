@@ -66,7 +66,8 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
         sig_thresh_lfp_freq_acoustic = min(x[p > 0.01])
 
         # compute significance threshold for LFP when frequency bands are held out, for category decoder
-        dof = 16*8
+        num_effective_classes = 4
+        dof = 16*num_effective_classes
         p = chi2.pdf(x, dof)
         sig_thresh_lfp_freq_cat = min(x[p > 0.01])
         print 'sig_thresh_lfp_freq_cat=%f' % sig_thresh_lfp_freq_cat
@@ -77,7 +78,7 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
         sig_thresh_spikes_freq_acoustic = min(x[p > 0.01])
 
         # compute significance threshold for spikes when frequency bands are held out, for category decoder
-        dof = ncells*8
+        dof = ncells*num_effective_classes
         p = chi2.pdf(x, dof)
         sig_thresh_spikes_freq_cat = min(x[p > 0.01])
 
@@ -87,7 +88,7 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
         sig_thresh_electrode_or_cell_acoustic = min(x[p > 0.01])
 
         # compute significance threshold for LFP or spikes when an electrode or cell is held out, for category decoder
-        dof = len(freqs)*8
+        dof = len(freqs)*num_effective_classes
         p = chi2.pdf(x, dof)
         sig_thresh_electrode_or_cell_cat = min(x[p > 0.01])
 
@@ -536,13 +537,12 @@ def draw_freq_lkrats(agg, df_me):
         plt.legend(handles=leg, fontsize='x-small')
         plt.title(pdata['aprop'])
         plt.axis('tight')
+        plt.ylim(0, 7)
 
-        if pdata['aprop'] == 'category':
-            plt.ylim(0, 16)
-        else:
-            plt.ylim(0, 7)
-
-    multi_plot(plist, _plot_freqs, nrows=2, ncols=5, hspace=0.30, wspace=0.30, facecolor='w')
+    figsize = (24, 7.5)
+    multi_plot(plist, _plot_freqs, nrows=2, ncols=5, hspace=0.30, wspace=0.30, facecolor='w', figsize=figsize)
+    fname = os.path.join(get_this_dir(), 'perf_by_freq.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
 
 
 def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
@@ -553,13 +553,13 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
     g = agg.df.groupby(['bird', 'block', 'segment', 'hemi'])
     print '# of groups: %d' % len(g)
 
-    df_me,df_se,df_cell = export_dfs(agg)
-    # df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
+    # df_me,df_se,df_cell = export_dfs(agg)
+    df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
     # df_se = pd.read_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'))
     # df_cell = pd.read_csv(os.path.join(data_dir, 'aggregate', 'cell_perfs.csv'))
 
     # draw_perf_hists(agg, df_me)
-    # draw_freq_lkrats(agg, df_me)
+    draw_freq_lkrats(agg, df_me)
 
     # draw_acoustic_perf_boxplots(agg, df_me)
     # draw_category_perf_and_confusion(agg, df_me)
