@@ -22,9 +22,9 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
     multi_electrode_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'band':list()}
     anames = agg.acoustic_props + ['category']
     for aprop in anames:
-        for t in ['lfp', 'spike', 'spike_rate']:
+        for t in ['lfp', 'spike', 'spike_rate', 'locked_pca_1', 'locked_pca_2', 'spike_psd_pca_1', 'spike_psd_pca_2']:
             multi_electrode_data['perf_%s_%s' % (aprop, t)] = list()
-            if t != 'spike_rate':
+            if t not in ['spike_rate', 'locked_pca_1', 'locked_pca_2', 'spike_psd_pca_1', 'spike_psd_pca_2']:
                 multi_electrode_data['lkrat_%s_%s' % (aprop, t)] = list()
 
     # initialize single electrode dataset dictionary
@@ -108,9 +108,11 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
             perfs = dict()
             anames = agg.acoustic_props + ['category']
             for aprop in anames:
-                for t,decomp in [('lfp', 'locked'), ('spike', 'spike_psd'), ('spike_rate', 'spike_rate')]:
+                for t,decomp in [('lfp', 'locked'), ('spike', 'spike_psd'), ('spike_rate', 'spike_rate'),
+                                 ('locked_pca_1', 'locked_pca_1'), ('locked_pca_2', 'locked_pca_2'),
+                                 ('spike_psd_pca_1', 'spike_psd_pca_1'), ('spike_psd_pca_2', 'spike_psd_pca_2')]:
 
-                    if decomp == 'spike_rate' and b > 0:
+                    if decomp in ['spike_rate', 'locked_pca_1', 'locked_pca_2', 'spike_psd_pca_1', 'spike_psd_pca_2'] and b > 0:
                         perfs['perf_%s_%s' % (aprop, t)] = 0
                         continue
 
@@ -118,8 +120,25 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                     i = (gdf.e1 == -1) & (gdf.e2 == -1) & (gdf.cell_index == -1) & (gdf.band == b) & (gdf.exfreq == exfreq) & \
                         (gdf.exel == False) & (gdf.aprop == aprop) & (gdf.decomp == decomp)
 
+                    """
+                    print '------------'
+                    print 'decomp=%s' % decomp
+                    print 'unique decomps:',gdf.decomp.unique()
+                    iii = (gdf.e1 == -1) & (gdf.e2 == -1) & (gdf.cell_index == -1) & (gdf.band == b)
+                    print 'iii.sum()=%d' % iii.sum()
+                    iiii = (gdf.e1 == -1) & (gdf.e2 == -1) & (gdf.cell_index == -1) & (gdf.band == b) & (gdf.decomp == decomp)
+                    print 'iiii.sum()=%d' % iiii.sum()
+                    iiiii = (gdf.e1 == -1) & (gdf.e2 == -1) & (gdf.cell_index == -1) & (gdf.band == b) & (gdf.aprop == aprop)
+                    print 'iiiii.sum()=%d' % iiiii.sum()
+                    iiiiii = (gdf.e1 == -1) & (gdf.e2 == -1) & (gdf.cell_index == -1) & (gdf.band == b) & (gdf.aprop == aprop) & (gdf.decomp == decomp)
+                    print 'iiiiii.sum()=%d' % iiiiii.sum()
+                    """
+
                     if i.sum() != 1:
-                        print "Zero or more than 1 result for (%s, %s, %s, %s), decomp=locked, band=%d: i.sum()=%d" % (bird, block, segment, hemi, b, i.sum())
+                        print 'len(gdf)=%d' % len(gdf)
+                        print gdf
+                        print "Zero or more than 1 result for (%s, %s, %s, %s), decomp=%s, band=%d, aprop=%s, exfreq=%d, exel=%d: i.sum()=%d" % (bird, block, segment, hemi, decomp, b, aprop, exfreq, False, i.sum())
+                        return
                         continue
 
                     if aprop == 'category':
@@ -134,7 +153,7 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                     perfs['lk_%s_%s' % (aprop, t)] = lk
 
             nperfs = np.sum([k.startswith('perf') for k in perfs.keys()])
-            if nperfs != len(anames)*3:
+            if nperfs != len(anames)*7:
                 print 'nperfs=%d, b=%d (%s,%s,%s,%s), skipping...' % (nperfs, b, bird, block, segment, hemi)
                 continue
 
@@ -553,13 +572,13 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
     g = agg.df.groupby(['bird', 'block', 'segment', 'hemi'])
     print '# of groups: %d' % len(g)
 
-    # df_me,df_se,df_cell = export_dfs(agg)
-    df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
+    df_me,df_se,df_cell = export_dfs(agg)
+    # df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
     # df_se = pd.read_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'))
     # df_cell = pd.read_csv(os.path.join(data_dir, 'aggregate', 'cell_perfs.csv'))
 
     # draw_perf_hists(agg, df_me)
-    draw_freq_lkrats(agg, df_me)
+    # draw_freq_lkrats(agg, df_me)
 
     # draw_acoustic_perf_boxplots(agg, df_me)
     # draw_category_perf_and_confusion(agg, df_me)
