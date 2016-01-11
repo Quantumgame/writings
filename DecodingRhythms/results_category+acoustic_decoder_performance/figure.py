@@ -18,13 +18,25 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
     # read electrode data
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data.csv'))
 
+    decomp_list = ['lfp', 'spike', 'spike_rate']
+    no_lkrat_list = ['spike_rate']
+    pair_list = [('lfp', 'locked'), ('spike', 'spike_psd'), ('spike_rate', 'spike_rate')]
+
+    for ncomp in range(1, 12):
+        decomp_list.append('locked_pca_%d' % ncomp)
+        decomp_list.append('spike_psd_pca_%d' % ncomp)
+        no_lkrat_list.append('locked_pca_%d' % ncomp)
+        no_lkrat_list.append('spike_psd_pca_%d' % ncomp)
+        pair_list.append( ('locked_pca_%d' % ncomp, 'locked_pca_%d' % ncomp) )
+        pair_list.append( ('spike_psd_pca_%d' % ncomp, 'spike_psd_pca_%d' % ncomp) )
+
     # initialize multi electrode dataset dictionary
     multi_electrode_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'band':list()}
     anames = agg.acoustic_props + ['category']
     for aprop in anames:
-        for t in ['lfp', 'spike', 'spike_rate', 'locked_pca_1', 'locked_pca_2', 'spike_psd_pca_1', 'spike_psd_pca_2']:
+        for t in decomp_list:
             multi_electrode_data['perf_%s_%s' % (aprop, t)] = list()
-            if t not in ['spike_rate', 'locked_pca_1', 'locked_pca_2', 'spike_psd_pca_1', 'spike_psd_pca_2']:
+            if t not in no_lkrat_list:
                 multi_electrode_data['lkrat_%s_%s' % (aprop, t)] = list()
 
     # initialize single electrode dataset dictionary
@@ -108,11 +120,8 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
             perfs = dict()
             anames = agg.acoustic_props + ['category']
             for aprop in anames:
-                for t,decomp in [('lfp', 'locked'), ('spike', 'spike_psd'), ('spike_rate', 'spike_rate'),
-                                 ('locked_pca_1', 'locked_pca_1'), ('locked_pca_2', 'locked_pca_2'),
-                                 ('spike_psd_pca_1', 'spike_psd_pca_1'), ('spike_psd_pca_2', 'spike_psd_pca_2')]:
-
-                    if decomp in ['spike_rate', 'locked_pca_1', 'locked_pca_2', 'spike_psd_pca_1', 'spike_psd_pca_2'] and b > 0:
+                for t,decomp in pair_list:
+                    if decomp in no_lkrat_list and b > 0:
                         perfs['perf_%s_%s' % (aprop, t)] = 0
                         continue
 
@@ -151,11 +160,6 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                         nsamps = gdf.num_samps[i].values[0]
                         lk *= nsamps
                     perfs['lk_%s_%s' % (aprop, t)] = lk
-
-            nperfs = np.sum([k.startswith('perf') for k in perfs.keys()])
-            if nperfs != len(anames)*7:
-                print 'nperfs=%d, b=%d (%s,%s,%s,%s), skipping...' % (nperfs, b, bird, block, segment, hemi)
-                continue
 
             multi_electrode_data['bird'].append(bird)
             multi_electrode_data['block'].append(block)
@@ -223,7 +227,7 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
             single_electrode_data['segment'].append(segment)
             single_electrode_data['hemi'].append(hemi)
             single_electrode_data['electrode'].append(e)
-            single_electrode_data['region'].append(electrode2region[e])
+            single_electrode_data['region].append(electrode2region[e])
 
             for aprop in anames:
                 # append single electrode peformance
