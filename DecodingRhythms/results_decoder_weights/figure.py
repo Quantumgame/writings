@@ -13,9 +13,13 @@ from zeebeez.utils import ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRO
 def get_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     # construct a dataset for the weights
-    weight_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'electrode':list(),
-                   'row':list(), 'col':list(), 'region':list(), 'weight':list(), 'r2':list(), 'aprop':list(),
-                   'f':list()}
+    lfp_weight_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'electrode':list(),
+                       'row':list(), 'col':list(), 'region':list(), 'weight':list(), 'r2':list(), 'aprop':list(),
+                       'f':list()}
+
+    cell_weight_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'electrode':list(),
+                        'row':list(), 'col':list(), 'region':list(), 'weight':list(), 'r2':list(), 'aprop':list(),
+                        'f':list(), 'cell_index':list(), 'electrode_weight':list()}
 
     # read electrode data
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data.csv'))
@@ -123,6 +127,32 @@ def get_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
                             Wro[the_index, :] = W[k, :]
                             the_index += 1
 
+                    for k,e in enumerate(cell_i2e):
+
+                        for b,f in enumerate(agg.freqs):
+
+                            cell_weight_data['bird'].append(bird)
+                            cell_weight_data['block'].append(block)
+                            cell_weight_data['segment'].append(segment)
+                            cell_weight_data['hemi'].append(hemi)
+                            cell_weight_data['electrode'].append(e)
+                            cell_weight_data['row'].append(row + 1)
+
+                            col_name = 'medial'
+                            if hemi == 'L' and col == 0:
+                                col_name = 'lateral'
+                            if hemi == 'R' and col == 1:
+                                col_name = 'lateral'
+
+                            cell_weight_data['col'].append(col_name)
+                            cell_weight_data['region'].append(clean_region(reg))
+                            cell_weight_data['r2'].append(r2)
+                            cell_weight_data['aprop'].append(aprop)
+                            cell_weight_data['f'].append(f)
+                            cell_weight_data['weight'].append(W[k, b])
+                            cell_weight_data['cell_index'].append(k)
+                            cell_weight_data['electrode_weight'].append(0)
+
                 elif decomp == 'locked':
                     # reshape matrix into (row,col,band)
                     Wrs = np.zeros([8, 2, nbands])
@@ -145,12 +175,12 @@ def get_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
                             # if b+1 not in good_bands:
                             #    continue
 
-                            weight_data['bird'].append(bird)
-                            weight_data['block'].append(block)
-                            weight_data['segment'].append(segment)
-                            weight_data['hemi'].append(hemi)
-                            weight_data['electrode'].append(e)
-                            weight_data['row'].append(row + 1)
+                            lfp_weight_data['bird'].append(bird)
+                            lfp_weight_data['block'].append(block)
+                            lfp_weight_data['segment'].append(segment)
+                            lfp_weight_data['hemi'].append(hemi)
+                            lfp_weight_data['electrode'].append(e)
+                            lfp_weight_data['row'].append(row + 1)
 
                             col_name = 'medial'
                             if hemi == 'L' and col == 0:
@@ -158,20 +188,36 @@ def get_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
                             if hemi == 'R' and col == 1:
                                 col_name = 'lateral'
 
-                            weight_data['col'].append(col_name)
+                            lfp_weight_data['col'].append(col_name)
 
-                            weight_data['region'].append(clean_region(reg))
-                            weight_data['r2'].append(r2)
-                            weight_data['aprop'].append(aprop)
-                            weight_data['f'].append(f)
-                            weight_data['weight'].append(W[k, b])
+                            lfp_weight_data['region'].append(clean_region(reg))
+                            lfp_weight_data['r2'].append(r2)
+                            lfp_weight_data['aprop'].append(aprop)
+                            lfp_weight_data['f'].append(f)
+                            lfp_weight_data['weight'].append(W[k, b])
 
                 all_weights[(bird, block, segment, hemi, aprop, decomp)] = (Wro, Wrs, electrode_order, index2electrode, cell_i2e, index2coord, index2label, r2)
 
-    df_weight = pd.DataFrame(weight_data)
-    df_weight.to_csv(os.path.join(data_dir, 'aggregate', 'weight_data.csv'), index=False)
+    df_lfp = pd.DataFrame(lfp_weight_data)
+    df_lfp.to_csv(os.path.join(data_dir, 'aggregate', 'lfp_weight_data.csv'), index=False)
 
-    return all_weights, df_weight
+    # set the electrode weight in the cell dataset from data in the LFP dataset
+    eweights = dict()
+    g = df_lfp.groupby(['bird', 'block', 'segment', 'hemi', 'electrode', 'f', 'aprop'])
+    for (bird,block,segment,hemi,electrode,f,aprop),gdf in g:
+        if len(gdf) > 1:
+            print gdf
+        assert len(gdf) == 1
+        eweights[(bird,block,segment,hemi,electrode,f,aprop)] = gdf['weight'].values[0]
+
+    cell_iter = zip(cell_weight_data['bird'], cell_weight_data['block'], cell_weight_data['segment'], cell_weight_data['hemi'], cell_weight_data['electrode'], cell_weight_data['f'], cell_weight_data['aprop'])
+    for k,(bird,block,segment,hemi,electrode,f,aprop) in enumerate(cell_iter):
+        cell_weight_data['electrode_weight'][k] = eweights[(bird,block,segment,hemi,electrode,f,aprop)]
+
+    df_cell = pd.DataFrame(cell_weight_data)
+    df_cell.to_csv(os.path.join(data_dir, 'aggregate', 'cell_weight_data.csv'), index=False)
+
+    return all_weights, df_lfp, df_cell
 
 
 def draw_some_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
@@ -179,7 +225,7 @@ def draw_some_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
     birds = ['GreBlu9508M', 'YelBlu6903F', 'WhiWhi4522M']
     aprops = ['maxAmp', 'sal', 'meanspect', 'meantime', 'entropytime', 'q1', 'q2', 'q3', 'entropyspect']
 
-    all_weights,df_weights = get_weights(agg, data_dir)
+    all_weights,df_lfp,df_cell = get_weights(agg, data_dir)
 
     weights_by_bird_and_hemi = dict()
 
@@ -280,7 +326,7 @@ def draw_some_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
 
 def draw_all_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
 
-    all_weights,df_weights = get_weights(agg, data_dir)
+    all_weights,df_lfp,df_cell = get_weights(agg, data_dir)
 
     for (bird,block,segment,hemi,aprop),(Wro, Wrs, electrode_order, index2electrode, index2coord, index2label, r2) in all_weights.items():
 

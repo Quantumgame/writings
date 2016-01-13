@@ -135,10 +135,10 @@ summary(m_cat_r2)
 
 
 ###############################
-# Weight analysis
+# LFP Weight analysis
 ##############################
 
-d = read.csv('/auto/tdrive/mschachter/data/aggregate/weight_data.csv')
+d = read.csv('/auto/tdrive/mschachter/data/aggregate/lfp_weight_data.csv')
 d$region = relevel(d$region, ref="HP")
 d$electrode = as.factor(d$electrode)
 d$f = as.factor(round(d$f))
@@ -204,5 +204,34 @@ summary(m_amp)
 # in weight for medial, and region L. Only significant frequencies are 17Hz and 182Hz. 
 
 
+##########################
+# Cell Weight Analysis
 
+d = read.csv('/auto/tdrive/mschachter/data/aggregate/cell_weight_data.csv')
+d$region = relevel(d$region, ref="HP")
+d$electrode = as.factor(d$electrode)
+d$f = as.factor(round(d$f))
+
+d = subset(d, d$region != '?')
+d = subset(d, abs(d$weight) > sd(abs(d$weight))) # filter by a standard deviation
+
+# is the cell weight related to the electrode weight for the quantiles?
+i = d$aprop == 'q1'
+m_q1 = lm(weight ~ row + region + f + electrode_weight, data=d[i,])
+
+i = d$aprop == 'q2'
+m_q2 = lm(weight ~ row + region + f + electrode_weight, data=d[i,])
+
+i = d$aprop == 'q3'
+m_q3 = lm(weight ~ row + region + f + electrode_weight, data=d[i,])
+
+Anova(m_q1)
+Anova(m_q2)
+Anova(m_q3)
+
+summary(m_q1)
+summary(m_q2)
+summary(m_q3)
+
+# cell weight is most influenced by electrode weight
 
