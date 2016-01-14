@@ -229,12 +229,13 @@ def draw_some_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     weights_by_bird_and_hemi = dict()
 
+    electrode_order_by_hemi = {'R':ROSTRAL_CAUDAL_ELECTRODES_RIGHT, 'L':ROSTRAL_CAUDAL_ELECTRODES_LEFT}
+
     for (bird,block,segment,hemi,aprop,decomp),(Wro, Wrs, electrode_order, index2electrode, cell_i2e, index2coord, index2label, r2) in all_weights.items():
         if (bird, hemi, aprop,decomp) not in weights_by_bird_and_hemi:
             weights_by_bird_and_hemi[(bird, hemi, aprop,decomp)] = list()
         weights_by_bird_and_hemi[(bird, hemi, aprop, decomp)].append(Wro)
 
-    """
     decomp = 'locked'
     for aprop in aprops:
         fig = plt.figure(figsize=(24, 12))
@@ -258,12 +259,18 @@ def draw_some_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
                        vmin=-absmax, vmax=absmax, extent=[agg.freqs.min(), agg.freqs.max(), 0, 16])
             plt.ylabel(bird)
             plt.xlabel('Frequency (Hz)')
+            ylbls = ['%d' % e for e in reversed(electrode_order_by_hemi['L'])]
+            ylocs = np.arange(len(ylbls)) + 0.5
+            plt.yticks(ylocs, ylbls)
             plt.title('Left Hemisphere')
 
             ax = plt.subplot(gs[k, 1])
             plt.imshow(Wright, interpolation='nearest', aspect='auto', cmap=plt.cm.seismic, origin='upper',
                        vmin=-absmax, vmax=absmax, extent=[agg.freqs.min(), agg.freqs.max(), 0, 16])
             plt.ylabel(bird)
+            ylbls = ['%d' % e for e in reversed(electrode_order_by_hemi['R'])]
+            ylocs = np.arange(len(ylbls)) + 0.5
+            plt.yticks(ylocs, ylbls)
             plt.xlabel('Frequency (Hz)')
             plt.title('Right Hemisphere')
 
@@ -273,8 +280,8 @@ def draw_some_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
         print 'Saving %s' % fname
         plt.savefig(fname)
         plt.close('all')
-    """
 
+    """
     decomp = 'spike_psd'
     for k,bird in enumerate(birds):
 
@@ -322,7 +329,7 @@ def draw_some_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
             print 'Saving %s' % fname
             plt.savefig(fname)
             plt.close('all')
-
+    """
 
 def draw_all_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
 
