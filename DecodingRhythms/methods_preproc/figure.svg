@@ -15,8 +15,8 @@
    viewBox="0 0 1920.5907 811.26636"
    width="1920.5907pt"
    id="svg2"
-   inkscape:version="0.48.5 r10040"
-   sodipodi:docname="figure.orig.svg"
+   inkscape:version="0.91 r"
+   sodipodi:docname="figure.svg"
    inkscape:export-filename="/auto/fhome/mschachter/code/writings/DecodingRhythms/methods_preproc/figure.png"
    inkscape:export-xdpi="150"
    inkscape:export-ydpi="150">
@@ -28,7 +28,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -46,7 +46,7 @@
      id="namedview5961"
      showgrid="false"
      inkscape:zoom="0.55"
-     inkscape:cx="951.49576"
+     inkscape:cx="1175.1892"
      inkscape:cy="671.24576"
      inkscape:window-x="0"
      inkscape:window-y="27"
@@ -18195,15 +18195,15 @@
      sodipodi:linespacing="125%"
      transform="matrix(0,-0.99999991,1.0000001,0,0,0)"><tspan
        sodipodi:role="line"
-       id="tspan18134-8"
        style="font-weight:bold;font-size:25.00000191px;text-align:center;text-anchor:middle;stroke-linecap:butt;stroke-linejoin:round"
        x="-311.17108"
-       y="24.104349">Local Field</tspan><tspan
+       y="24.104349"
+       id="tspan18154">Trial-Avg</tspan><tspan
        sodipodi:role="line"
        style="font-weight:bold;font-size:25.00000191px;text-align:center;text-anchor:middle;stroke-linecap:butt;stroke-linejoin:round"
        x="-311.17108"
        y="55.354351"
-       id="tspan18154">Potential</tspan></text>
+       id="tspan7831">LFP</tspan></text>
   <text
      xml:space="preserve"
      style="font-style:normal;font-weight:normal;font-size:3.20000005px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -18356,7 +18356,7 @@
        style="font-weight:bold;font-size:25.00000191px;text-align:center;text-anchor:middle;stroke-linecap:butt;stroke-linejoin:round"
        x="627.29755"
        y="-1901.1082"
-       id="tspan18282-8-9">Spike Power</tspan><tspan
+       id="tspan18282-8-9">PSTH Power</tspan><tspan
        sodipodi:role="line"
        style="font-weight:bold;font-size:25.00000191px;text-align:center;text-anchor:middle;stroke-linecap:butt;stroke-linejoin:round"
        x="627.29755"
