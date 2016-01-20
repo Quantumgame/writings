@@ -71,38 +71,7 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
         ncells = i.sum()
         # print '%s,%s,%s,%s # of cells: %d' % (bird, block, segment, hemi, ncells)
 
-        x = np.linspace(1, 500, 5000)
-        # compute significance threshold for LFP when frequency bands are held out, for acoustic decoder
-        dof = 16
-        p = chi2.pdf(x, dof)
-        sig_thresh_lfp_freq_acoustic = min(x[p > 0.01])
-
-        # compute significance threshold for LFP when frequency bands are held out, for category decoder
-        num_effective_classes = 4
-        dof = 16*num_effective_classes
-        p = chi2.pdf(x, dof)
-        sig_thresh_lfp_freq_cat = min(x[p > 0.01])
-        print 'sig_thresh_lfp_freq_cat=%f' % sig_thresh_lfp_freq_cat
-
-        # compute significance threshold for spikes when frequency bands are held out, for acoustic decoder
-        dof = ncells
-        p = chi2.pdf(x, dof)
-        sig_thresh_spikes_freq_acoustic = min(x[p > 0.01])
-
-        # compute significance threshold for spikes when frequency bands are held out, for category decoder
-        dof = ncells*num_effective_classes
-        p = chi2.pdf(x, dof)
-        sig_thresh_spikes_freq_cat = min(x[p > 0.01])
-
-        # compute significance threshold for LFP or spikes when an electrode or cell is held out, for acoustic decoder
-        dof = len(freqs)
-        p = chi2.pdf(x, dof)
-        sig_thresh_electrode_or_cell_acoustic = min(x[p > 0.01])
-
-        # compute significance threshold for LFP or spikes when an electrode or cell is held out, for category decoder
-        dof = len(freqs)*num_effective_classes
-        p = chi2.pdf(x, dof)
-        sig_thresh_electrode_or_cell_cat = min(x[p > 0.01])
+        chi2_x = np.linspace(0, 100, 10000)
 
         # get the region by electrode
         electrode2region = dict()
@@ -156,10 +125,13 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                         perfs['perf_%s_%s' % (aprop, t)] = gdf.r2[i].values[0]
 
                     lk = gdf.likelihood[i].values[0]
-                    if aprop == 'category':
-                        nsamps = gdf.num_samps[i].values[0]
-                        lk *= nsamps
+                    # if aprop == 'category':
+                    #     nsamps = gdf.num_samps[i].values[0]
+                    #     lk *= nsamps
                     perfs['lk_%s_%s' % (aprop, t)] = lk
+
+                    eff_dof = gdf.effective_dof[i].values[0]
+                    perfs['dof_%s_%s' % (aprop, t)] = eff_dof
 
             multi_electrode_data['bird'].append(bird)
             multi_electrode_data['block'].append(block)
@@ -179,18 +151,39 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                 # compute the likelihood ratio for each acoustic property on this band
                 for aprop in anames:
                     for t in ['lfp', 'spike']:
+                        # compute the likelihood ratio
                         full_likelihood = band0_perfs['lk_%s_%s' % (aprop, t)]
                         leave_one_out_likelihood = perfs['lk_%s_%s' % (aprop, t)]
                         lkrat = 2*(leave_one_out_likelihood - full_likelihood)
-                        if t == 'lfp' and aprop != 'category':
-                            lkrat /= sig_thresh_lfp_freq_acoustic
-                        elif t == 'lfp' and aprop == 'category':
-                            lkrat /= sig_thresh_lfp_freq_cat
-                        elif t == 'spike' and aprop != 'category':
-                            lkrat /= sig_thresh_spikes_freq_acoustic
-                        else:
-                            lkrat /= sig_thresh_spikes_freq_cat
 
+                        # grab the effective degrees of freedom and compute the chi2 significant threshold
+                        full_dof = band0_perfs['dof_%s_%s' % (aprop, t)]
+                        loo_dof = perfs['dof_%s_%s' % (aprop, t)]
+                        if aprop != 'category':
+                            if t == 'lfp':
+                                dof = 16
+                            elif t == 'spike':
+                                dof = ncells
+                            p = chi2.pdf(chi2_x, dof)
+                            pi = p > 0.01
+                            if pi.sum() == 0:
+                                """
+                                plt.figure()
+                                plt.plot(chi2_x, p, 'k-')
+                                plt.axis('tight')
+                                plt.title('aprop=%s, full_dof=%0.2f, loo_dof=%0.2f' % (aprop, full_dof, loo_dof))
+                                plt.show()
+                                """
+                                print '**** No thresh for aprop=%s, lkrat=%0.3f, full_dof=%0.2f, loo_dof=%0.2f' % (aprop, lkrat, full_dof, loo_dof)
+                                sig_thresh = 1.
+                            else:
+                                sig_thresh = min(chi2_x[pi])
+                            # print 'aprop=%s, t=%s, lkrat=%0.3f, full_dof=%0.2f, loo_dof=%0.2f, sig_thresh=%0.6f' % \
+                            #       (aprop, t, lkrat, full_dof, loo_dof, sig_thresh)
+                        else:
+                            sig_thresh = 1.
+
+                        lkrat /= sig_thresh
                         multi_electrode_data['lkrat_%s_%s' % (aprop, t)].append(lkrat)
 
         """
@@ -411,8 +404,8 @@ def draw_category_perf_and_confusion(agg, df_me):
 
 def draw_acoustic_perf_boxplots(agg, df_me):
 
-    aprops_to_display = ['maxAmp', 'sal', 'meanspect', 'q1', 'q2', 'q3',
-                         'entropyspect', 'meantime', 'entropytime']
+    # aprops_to_display = ['maxAmp', 'sal', 'entropytime', 'meanspect', 'q1', 'q2', 'q3', 'entropyspect']
+    aprops_to_display = ['maxAmp', 'sal', 'q1', 'q2', 'q3']
 
     df0 = df_me[df_me.band == 0]
 
@@ -423,11 +416,11 @@ def draw_acoustic_perf_boxplots(agg, df_me):
         spike_rate_perfs = df0['perf_%s_spike_rate' % aprop].values
         bp_data[aprop] = [lfp_perfs, spike_perfs, spike_rate_perfs]
 
-    figsize = (24, 10)
+    figsize = (24, 3.5)
     fig = plt.figure(figsize=figsize)
     plt.subplots_adjust(top=0.95, bottom=0.05, left=0.05, right=0.99, hspace=0.40, wspace=0.20)
 
-    grouped_boxplot(bp_data, group_names=aprops_to_display, subgroup_names=['LFP', 'Spike PSD', 'Spike Rate'],
+    grouped_boxplot(bp_data, group_names=aprops_to_display, subgroup_names=['LFP PSD', 'Spike PSD', 'Spike Rate'],
                     subgroup_colors=[COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, COLOR_RED_SPIKE_RATE], box_spacing=1.5)
 
     plt.xlabel('Acoustic Feature')
@@ -497,8 +490,11 @@ def draw_freq_lkrats(agg, df_me):
     # aprops_to_display = ['category', 'maxAmp', 'meanspect', 'stdspect', 'q1', 'q2', 'q3', 'skewspect', 'kurtosisspect',
     #                      'sal', 'entropyspect', 'meantime', 'stdtime', 'entropytime']
 
-    aprops_to_display = ['category', 'maxAmp', 'sal', 'meantime', 'entropytime',
-                         'meanspect', 'q1', 'q2', 'q3', 'entropyspect', ]
+    #aprops_to_display = ['category', 'maxAmp', 'sal',
+    #                     'entropytime', 'meanspect', 'entropyspect',
+    #                     'q1', 'q2', 'q3']
+    aprops_to_display = ['category', 'maxAmp', 'sal',
+                         'q1', 'q2', 'q3']
 
     assert isinstance(agg, AggregateLFPAndSpikePSDDecoder)
     freqs = agg.freqs
@@ -547,23 +543,32 @@ def draw_freq_lkrats(agg, df_me):
     def _plot_freqs(pdata, ax):
         plt.sca(ax)
 
+        nsamps_lfp = len(pdata['lfp'])
         lkrat_lfp_mean = pdata['lfp'].mean(axis=0)
-        lkrat_spike_mean = pdata['spike'].mean(axis=0)
+        lkrat_lfp_std = pdata['lfp'].std(axis=0, ddof=1) / np.sqrt(nsamps_lfp)
 
-        plt.axhline(1.0, c='k', linestyle='dashed', alpha=0.7, linewidth=2.0)
-        plt.plot(pdata['freqs'], lkrat_lfp_mean, '-', c=COLOR_BLUE_LFP, linewidth=7.0, alpha=0.9)
-        plt.plot(pdata['freqs'], lkrat_spike_mean, '-', c=COLOR_YELLOW_SPIKE, linewidth=7.0, alpha=0.9)
+        nsamps_spike = len(pdata['spike'])
+        lkrat_spike_mean = pdata['spike'].mean(axis=0)
+        lkrat_spike_std = pdata['spike'].std(axis=0, ddof=1) / np.sqrt(nsamps_spike)
+
+        if pdata['aprop'] != 'category':
+            plt.axhline(1.0, c='k', linestyle='dashed', alpha=0.7, linewidth=2.0)
+        plt.errorbar(pdata['freqs'], lkrat_lfp_mean, yerr=lkrat_lfp_std, c=COLOR_BLUE_LFP, linewidth=7.0, alpha=0.9, ecolor='k', elinewidth=2.0)
+        plt.errorbar(pdata['freqs']+2., lkrat_spike_mean, yerr=lkrat_spike_std, c=COLOR_YELLOW_SPIKE, linewidth=7.0, alpha=0.9, ecolor='k', elinewidth=2.0)
 
         plt.xlabel('Frequency (Hz)')
-        plt.ylabel('Normalized Likelihood Ratio')
+        plt.ylabel('Normalized LR')
         leg = custom_legend([COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE], ['LFP', 'Spike'])
         plt.legend(handles=leg, fontsize='x-small')
         plt.title(pdata['aprop'])
         plt.axis('tight')
-        plt.ylim(0, 7)
+        if pdata['aprop'] != 'category':
+            plt.ylim(0, 5)
+        else:
+            plt.axis('tight')
 
-    figsize = (24, 7.5)
-    multi_plot(plist, _plot_freqs, nrows=2, ncols=5, hspace=0.30, wspace=0.30, facecolor='w', figsize=figsize)
+    figsize = (24, 9)
+    multi_plot(plist, _plot_freqs, nrows=2, ncols=3, hspace=0.45, wspace=0.45, facecolor='w', figsize=figsize)
     fname = os.path.join(get_this_dir(), 'perf_by_freq.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
 
@@ -576,13 +581,13 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
     g = agg.df.groupby(['bird', 'block', 'segment', 'hemi'])
     print '# of groups: %d' % len(g)
 
-    df_me,df_se,df_cell = export_dfs(agg)
-    # df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
+    # df_me,df_se,df_cell = export_dfs(agg)
+    df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
     # df_se = pd.read_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'))
     # df_cell = pd.read_csv(os.path.join(data_dir, 'aggregate', 'cell_perfs.csv'))
 
     # draw_perf_hists(agg, df_me)
-    # draw_freq_lkrats(agg, df_me)
+    draw_freq_lkrats(agg, df_me)
 
     # draw_acoustic_perf_boxplots(agg, df_me)
     # draw_category_perf_and_confusion(agg, df_me)
