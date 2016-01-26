@@ -23,8 +23,18 @@ def plot_psds(psd_file, data_dir='/auto/tdrive/mschachter/data'):
     pcf = AggregatePairwiseCF.load(pcf_file)
     pcf.zscore_within_site()
 
+    g = pcf.df.groupby(['bird', 'block', 'segment', 'electrode'])
+    nsamps_electrodes = len(g)
+
+    i = pcf.df.cell_index != -1
+    g = pcf.df[i].groupby(['bird', 'block', 'segment', 'electrode', 'cell_index'])
+    nsamps_cells = len(g)
+
+    print '# of electrodes: %d' % nsamps_electrodes
+    print '# of cells: %d' % nsamps_cells
     print '# of lfp samples: %d' % (pcf.lfp_psds.shape[0])
     print '# of spike psd samples: %d' % (pcf.spike_psds.shape[0])
+    return
 
     # get the LFP PSDs
     indices = pcf.df['lfp_index'].unique()
