@@ -6,6 +6,8 @@ import h5py
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from lasp.plots import custom_legend
+
 from lasp.colormaps import magma
 from sklearn.covariance import LedoitWolf
 
@@ -188,10 +190,68 @@ def plot_psds(psd_file, data_dir='/auto/tdrive/mschachter/data'):
     fname = os.path.join(get_this_dir(), 'crcns_data.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
 
+
+def draw_spike_rate_vs_power(data_dir='/auto/tdrive/mschachter/data'):
+
+    # read PairwiseCF file
+    pcf_file = os.path.join(data_dir, 'aggregate', 'pairwise_cf.h5')
+    pcf = AggregatePairwiseCF.load(pcf_file)
+
+    # concatenate the lfp and spike psds
+    nfreqs = len(pcf.freqs)
+    lfp_and_spike_psds = np.zeros([len(pcf.df), nfreqs*2 + 1])
+    nz = np.zeros(len(pcf.df), dtype='bool')
+    for k,(lfp_index,spike_index) in enumerate(zip(pcf.df['lfp_index'], pcf.df['spike_index'])):
+        lpsd = pcf.lfp_psds[lfp_index, :]
+        spsd = pcf.spike_psds[spike_index, :]
+        srate,sstd = pcf.spike_rates[spike_index, :]
+        nz[k] = np.abs(lpsd).sum() > 0 and np.abs(spsd).sum() > 0
+        lfp_and_spike_psds[k, :nfreqs] = lpsd
+        lfp_and_spike_psds[k, nfreqs:-1] = spsd
+        lfp_and_spike_psds[k, -1] = np.log(srate)
+
+    # throw some bad data points out
+    lfp_sum = lfp_and_spike_psds[:, :nfreqs].sum(axis=1)
+    spike_sum =  lfp_and_spike_psds[:, nfreqs:-1].sum(axis=1)
+    nz = ~np.isinf(lfp_and_spike_psds[:, -1]) & (lfp_sum > 0) & (spike_sum > 0) & ~np.isnan(spike_sum) & ~np.isnan(lfp_sum)
+    print '# of good data points: %d out of %d' % (nz.sum(), lfp_and_spike_psds.shape[0])
+
+    # zscore the concatenated matrix
+    lfp_and_spike_psds = lfp_and_spike_psds[nz, :]
+    lfp_and_spike_psds -= lfp_and_spike_psds.mean(axis=0)
+    lfp_and_spike_psds /= lfp_and_spike_psds.std(axis=0, ddof=1)
+
+    # compute CC between spike rate and power
+    lfp_spike_rate_cc = np.zeros(len(pcf.freqs))
+    spike_spike_rate_cc = np.zeros(len(pcf.freqs))
+
+    for k,f in enumerate(pcf.freqs):
+        lfp_spike_rate_cc[k] = np.corrcoef(lfp_and_spike_psds[:, k], lfp_and_spike_psds[:, -1])[0, 1]
+        spike_spike_rate_cc[k] = np.corrcoef(lfp_and_spike_psds[:, k+len(pcf.freqs)], lfp_and_spike_psds[:, -1])[0, 1]
+
+    fig = plt.figure(figsize=(12, 7))
+    plt.axhline(0, c='k')
+    plt.plot(pcf.freqs, lfp_spike_rate_cc, '-', linewidth=7.0, alpha=0.7, c=COLOR_BLUE_LFP)
+    plt.plot(pcf.freqs, spike_spike_rate_cc, '-', linewidth=7.0, alpha=0.7, c=COLOR_YELLOW_SPIKE)
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Correlation Coefficient')
+    plt.title('CC Between Log Spike Rate and Spectral Power')
+    plt.axis('tight')
+    plt.ylim(-0.1, 0.6)
+    leg = custom_legend([COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE], ['LFP PSD', 'Spike PSD'])
+    plt.legend(handles=leg, fontsize='x-small')
+
+    fname = os.path.join(get_this_dir(), 'power_vs_rate.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
+
+    plt.show()
+
+
 def draw_figures():
     crcns_dir='/auto/tdrive/mschachter/data/crcns'
     psd_file = os.path.join(crcns_dir, 'cell_psd.h5')
-    plot_psds(psd_file)
+    # plot_psds(psd_file)
+    draw_spike_rate_vs_power()
 
     plt.show()
 
