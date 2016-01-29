@@ -1,5 +1,49 @@
 library(car)
 library(nlme)
+library(effects)
+
+############################
+# GLM Analysis of Peformance
+############################
+
+d = read.csv('/auto/tdrive/mschachter/data/aggregate/multi_electrode_perfs_for_glm.csv')
+
+# narrow focus to 3 top decomps
+i = (d$decomp == 'spike_psd') | (d$decomp == 'locked') | (d$decomp == 'spike_rate')
+d = d[i,]
+d$decomp = factor(d$decomp)
+d$decomp = relevel(d$decomp, 'spike_rate')
+
+# aprop = 'category'
+aprop = 'maxAmp'
+
+run_analysis = function(ds, aprop)
+{
+  print(sprintf('#################################'))
+  print(sprintf('Running Analysis for %s', aprop))
+  print(sprintf('#################################'))
+  
+  i = ds$aprop == aprop
+  d_sub = subset(d, i) 
+  
+  m_sub = lm(perf ~ decomp, data=d_sub)
+  print(summary(m_sub))
+  print(Anova(m_sub))
+  
+  effect("decomp", m_sub)
+}
+
+aprops = c('maxAmp', 'sal', 'q1', 'q2', 'q3')
+for (a in aprops)
+{
+  run_analysis(d, a)  
+}
+
+
+
+#########################
+# Multielectrode analysis
+#########################
 
 d = read.csv('/auto/tdrive/mschachter/data/aggregate/multi_electrode_perfs.csv')
 d0 = subset(d, d$band == 0)
@@ -11,6 +55,10 @@ hist(perf_category_spike)
 hist(perf_q2_lfp)
 hist(perf_q2_spike)
 
+
+################################
+# Single Electrode Analysis
+################################
 
 d = read.csv('/auto/tdrive/mschachter/data/aggregate/single_electrode_perfs.csv')
 attach(d)

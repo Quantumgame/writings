@@ -39,6 +39,10 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
             if t not in no_lkrat_list:
                 multi_electrode_data['lkrat_%s_%s' % (aprop, t)] = list()
 
+    # initialize multielectrode performance dictionary (a little bit different than the dataset dictionary
+    me_perf_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(),
+                    'perf':list(), 'decomp':list(), 'aprop':list()}
+
     # initialize single electrode dataset dictionary
     single_electrode_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'electrode':list(),
                              'region':list()}
@@ -120,9 +124,10 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
                         continue
 
                     if aprop == 'category':
-                        perfs['perf_%s_%s' % (aprop, t)] = gdf.pcc[i].values[0]
+                        mperf = gdf.pcc[i].values[0]
                     else:
-                        perfs['perf_%s_%s' % (aprop, t)] = gdf.r2[i].values[0]
+                        mperf = gdf.r2[i].values[0]
+                    perfs['perf_%s_%s' % (aprop, t)] = mperf
 
                     lk = gdf.likelihood[i].values[0]
                     # if aprop == 'category':
@@ -132,6 +137,15 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
 
                     eff_dof = gdf.effective_dof[i].values[0]
                     perfs['dof_%s_%s' % (aprop, t)] = eff_dof
+
+                    if b == 0:
+                        me_perf_data['bird'].append(bird)
+                        me_perf_data['block'].append(block)
+                        me_perf_data['segment'].append(segment)
+                        me_perf_data['hemi'].append(hemi)
+                        me_perf_data['perf'].append(mperf)
+                        me_perf_data['aprop'].append(aprop)
+                        me_perf_data['decomp'].append(decomp)
 
             multi_electrode_data['bird'].append(bird)
             multi_electrode_data['block'].append(block)
@@ -306,6 +320,9 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
     df_me = pd.DataFrame(multi_electrode_data)
     df_me.to_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'), index=False)
 
+    df_me_perf = pd.DataFrame(me_perf_data)
+    df_me_perf.to_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs_for_glm.csv'), index=False)
+
     """
     df_se = pd.DataFrame(single_electrode_data)
     df_se.to_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'), index=False)
@@ -313,9 +330,6 @@ def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
     df_cell = pd.DataFrame(cell_data)
     df_cell.to_csv(os.path.join(data_dir, 'aggregate', 'cell_perfs.csv'), index=False)
     """
-
-    # return df_me,df_se,df_cell
-    return None,None,None
 
 
 def draw_category_perf_and_confusion(agg, df_me):
@@ -581,13 +595,13 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
     g = agg.df.groupby(['bird', 'block', 'segment', 'hemi'])
     print '# of groups: %d' % len(g)
 
-    # df_me,df_se,df_cell = export_dfs(agg)
-    df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
+    export_dfs(agg)
+    # df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
     # df_se = pd.read_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'))
     # df_cell = pd.read_csv(os.path.join(data_dir, 'aggregate', 'cell_perfs.csv'))
 
     # draw_perf_hists(agg, df_me)
-    draw_freq_lkrats(agg, df_me)
+    # draw_freq_lkrats(agg, df_me)
 
     # draw_acoustic_perf_boxplots(agg, df_me)
     # draw_category_perf_and_confusion(agg, df_me)
