@@ -31,9 +31,24 @@ run_analysis = function(ds, aprop)
   print(Anova(m_sub))
   
   effect("decomp", m_sub)
+  
+  i_lfp = d_sub$decomp == 'locked'
+  i_spike_psd = d_sub$decomp == 'spike_psd'
+  i_spike_rate = d_sub$decomp == 'spike_rate'
+  
+  # locked vs spike psd
+  print(t.test(d_sub$perf[i_lfp],  d_sub$perf[i_spike_psd], paired=FALSE))
+  
+  # locked vs spike rate
+  print(t.test(d_sub$perf[i_lfp],  d_sub$perf[i_spike_rate], paired=FALSE))
+  
+  # spike psd vs spike rate
+  print(t.test(d_sub$perf[i_spike_psd],  d_sub$perf[i_spike_rate], paired=FALSE))
+  
 }
 
-aprops = c('maxAmp', 'sal', 'q1', 'q2', 'q3')
+# aprops = c('maxAmp', 'sal', 'q1', 'q2', 'q3')
+aprops = c('category')
 for (a in aprops)
 {
   run_analysis(d, a)  
