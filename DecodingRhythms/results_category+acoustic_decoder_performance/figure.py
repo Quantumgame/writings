@@ -5,11 +5,12 @@ import numpy as np
 import pandas as pd
 from scipy.stats import chi2
 
-from DecodingRhythms.utils import set_font, COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, clean_region, COLOR_RED_SPIKE_RATE
+from DecodingRhythms.utils import set_font, COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, clean_region, COLOR_RED_SPIKE_RATE, \
+    COLOR_PURPLE_LFP_CROSS
 from lasp.plots import multi_plot, custom_legend, grouped_boxplot
 from utils import get_this_dir
 from zeebeez.aggregators.lfp_and_spike_psd_decoders import AggregateLFPAndSpikePSDDecoder
-from zeebeez.utils import CALL_TYPE_SHORT_NAMES, DECODER_CALL_TYPES
+from zeebeez.utils import CALL_TYPE_SHORT_NAMES, DECODER_CALL_TYPES, REDUCED_ACOUSTIC_PROPS
 
 
 def export_dfs(agg, data_dir='/auto/tdrive/mschachter/data'):
@@ -418,24 +419,33 @@ def draw_category_perf_and_confusion(agg, df_me):
 
 def draw_acoustic_perf_boxplots(agg, df_me):
 
-    # aprops_to_display = ['maxAmp', 'sal', 'entropytime', 'meanspect', 'q1', 'q2', 'q3', 'entropyspect']
-    aprops_to_display = ['maxAmp', 'sal', 'q1', 'q2', 'q3']
+    aprops_to_display = ['sal', 'maxAmp', 'meanspect', 'entropyspect', 'q2', 'entropytime']
 
-    df0 = df_me[df_me.band == 0]
+    decomps = ['self_locked', 'self_spike_psd', 'self_spike_rate', 'self+cross_locked']
+    sub_names = ['LFP PSD', 'Spike PSD', 'Spike Rate', 'LFP Pairwise']
+    sub_clrs = [COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, COLOR_RED_SPIKE_RATE, COLOR_PURPLE_LFP_CROSS]
+
+    # decomps = ['self_locked', 'self_spike_psd', 'self_spike_rate']
+    # sub_names = ['LFP PSD', 'Spike PSD', 'Spike Rate']
+    # sub_clrs = [COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, COLOR_RED_SPIKE_RATE]
 
     bp_data = dict()
+
     for aprop in aprops_to_display:
-        lfp_perfs = df0['perf_%s_lfp' % aprop].values
-        spike_perfs = df0['perf_%s_spike' % aprop].values
-        spike_rate_perfs = df0['perf_%s_spike_rate' % aprop].values
-        bp_data[aprop] = [lfp_perfs, spike_perfs, spike_rate_perfs]
+
+        bd = list()
+        for decomp in decomps:
+            i = (df_me.decomp == decomp) & (df_me.aprop == aprop)
+            perfs = df_me.r2[i].values
+            bd.append(perfs)
+        bp_data[aprop] = bd
 
     figsize = (24, 3.5)
     fig = plt.figure(figsize=figsize)
     plt.subplots_adjust(top=0.95, bottom=0.05, left=0.05, right=0.99, hspace=0.40, wspace=0.20)
 
-    grouped_boxplot(bp_data, group_names=aprops_to_display, subgroup_names=['LFP PSD', 'Spike PSD', 'Spike Rate'],
-                    subgroup_colors=[COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, COLOR_RED_SPIKE_RATE], box_spacing=1.5)
+    grouped_boxplot(bp_data, group_names=aprops_to_display, subgroup_names=sub_names,
+                    subgroup_colors=sub_clrs, box_spacing=1.5)
 
     plt.xlabel('Acoustic Feature')
     plt.ylabel('Decoder R2')
@@ -595,15 +605,15 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
     g = agg.df.groupby(['bird', 'block', 'segment', 'hemi'])
     print '# of groups: %d' % len(g)
 
-    export_dfs(agg)
-    # df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'multi_electrode_perfs.csv'))
+    # export_dfs(agg)
+    df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'pard_decoders.csv'))
     # df_se = pd.read_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_perfs.csv'))
     # df_cell = pd.read_csv(os.path.join(data_dir, 'aggregate', 'cell_perfs.csv'))
 
     # draw_perf_hists(agg, df_me)
     # draw_freq_lkrats(agg, df_me)
 
-    # draw_acoustic_perf_boxplots(agg, df_me)
+    draw_acoustic_perf_boxplots(agg, df_me)
     # draw_category_perf_and_confusion(agg, df_me)
 
     plt.show()
