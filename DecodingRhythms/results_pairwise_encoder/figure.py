@@ -4,12 +4,13 @@ import h5py
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from lasp.plots import multi_plot
 
 from zeebeez.aggregators.pard import PARDAggregator
 from zeebeez.utils import ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, REDUCED_ACOUSTIC_PROPS
 
 
-def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder_pairwise'):
+def draw_encoder_perfs(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder_pairwise'):
 
     #TODO: hack
     # read the lags
@@ -126,6 +127,62 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
         print 'Saving %s...' % fname
         plt.savefig(fname, facecolor='w')
         plt.close('all')
+
+
+def draw_lags_vs_perf(data_dir='/auto/tdrive/mschachter/data'):
+
+    pfile = os.path.join(data_dir, 'GreBlu9508M', 'transforms', 'PairwiseCF_GreBlu9508M_Site4_Call1_L_raw.h5')
+    hf = h5py.File(pfile, 'r')
+    full_lags_ms = hf.attrs['lags']
+    hf.close()
+
+    max_lag = full_lags_ms.max()
+
+    agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
+    agg = PARDAggregator.load(agg_file)
+
+    print 'keys=',agg.df.keys()
+
+    lag_bnds = [ (-1., 1.), (-6., 6.), (-13., 13.), (-18., 18), (-23., 23), (-28., 28.), (-34., 34), (None,None)]
+    perfs_by_bound = list()
+    for lb,ub in lag_bnds:
+        if lb is None:
+            decomp = 'self+cross_locked'
+        else:
+            decomp = 'self+cross_locked_lim_%d_%d' % (lb, ub)
+
+        i = agg.df.decomp == decomp
+        print 'decomp=%s, i.sum()=%d' % (decomp, i.sum())
+        wkeys = agg.df.wkey[i].values
+
+        dperfs = np.array([agg.decoder_perfs[wkey] for wkey in wkeys])
+        perfs_by_bound.append(dperfs)
+
+    perfs_by_bound = np.array(perfs_by_bound)
+
+    pbb_mean = perfs_by_bound.mean(axis=1)
+    pbb_std = perfs_by_bound.std(axis=1)
+
+    plist = list()
+    for k,aprop in enumerate(REDUCED_ACOUSTIC_PROPS):
+        plist.append({'aprop':aprop, 'mean':pbb_mean[:, k], 'std':pbb_std[:, k]})
+
+    def _plot_pbb(pdata, ax):
+        _lagw = [2*x[1] for x in lag_bnds if x[1] is not None]
+        _lagw.append(max_lag*2)
+        plt.plot(_lagw, pdata['mean'], 'k-', linewidth=3.0, alpha=0.7)
+        plt.xlabel('Lag Width (ms)')
+        plt.ylabel('R2')
+        plt.axis('tight')
+        plt.title(pdata['aprop'])
+
+    multi_plot(plist, _plot_pbb, nrows=3, ncols=4)
+    plt.show()
+
+
+def draw_figures():
+    draw_encoder_perfs()
+    # draw_lags_vs_perf()
 
 
 if __name__ == '__main__':
