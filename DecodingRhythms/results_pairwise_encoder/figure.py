@@ -181,8 +181,8 @@ def draw_lags_vs_perf(data_dir='/auto/tdrive/mschachter/data'):
 
 
 def draw_figures():
-    draw_encoder_perfs()
-    # draw_lags_vs_perf()
+    # draw_encoder_perfs()
+    draw_lags_vs_perf()
 
 
 if __name__ == '__main__':

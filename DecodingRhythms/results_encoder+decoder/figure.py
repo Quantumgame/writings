@@ -41,42 +41,51 @@ def draw_encoder_perfs(agg):
         wkey = agg.df[ii]['wkey'].values[0]
         lfp_eperf = agg.encoder_perfs[wkey]
 
-        ii = i & (agg.df.decomp == 'self_spike_psd')
-        assert ii.sum() == 1
-        wkey = agg.df[ii]['wkey'].values[0]
-        spike_eperf = agg.encoder_perfs[wkey]
+        lfp_decoder_weights = agg.decoder_weights[wkey]
+        print 'lfp_decoder_weights.shape=',lfp_decoder_weights.shape
+        lfp_sal_weights = lfp_decoder_weights[:, :, REDUCED_ACOUSTIC_PROPS.index('sal')]
+        lfp_q2_weights = lfp_decoder_weights[:, :, REDUCED_ACOUSTIC_PROPS.index('q2')]
 
-        weights.append( (lfp_eperf, spike_eperf) )
+        weights.append( (lfp_eperf, lfp_sal_weights, lfp_q2_weights) )
 
     figsize = (24, 13)
     fig = plt.figure(figsize=figsize)
     fig.subplots_adjust(top=0.95, bottom=0.02, right=0.97, left=0.03, hspace=0.25, wspace=0.25)
     nrows = 3
-    ncols = 2
+    ncols = 3
 
-    for k,(lfp_eperf,spike_eperf) in enumerate(weights):
+    for k,(lfp_eperf,lfp_sal_weights,lfp_q2_weights) in enumerate(weights):
 
         index2electrode = electrodes[k]
 
         ax = plt.subplot(nrows, ncols, k*ncols + 1)
         plt.imshow(lfp_eperf, interpolation='nearest', aspect='auto', vmin=0, cmap=magma)
         plt.yticks(range(len(index2electrode)), ['%d' % e for e in index2electrode])
-        plt.xticks(range(len(freqs)), ['%d' % f for f in freqs])
+        plt.xticks(range(len(freqs)), ['%d' % f for f in freqs], rotation=45)
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('Electrode')
         plt.colorbar(label='Encoder R2')
 
         ax = plt.subplot(nrows, ncols, k*ncols + 2)
-        plt.imshow(spike_eperf, interpolation='nearest', aspect='auto', vmin=0, cmap=magma)
-        plt.xticks(range(len(freqs)), ['%d' % f for f in freqs])
+        absmax = np.abs(lfp_sal_weights).max()
+        plt.imshow(lfp_sal_weights, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
+        plt.yticks(range(len(index2electrode)), ['%d' % e for e in index2electrode])
+        plt.xticks(range(len(freqs)), ['%d' % f for f in freqs], rotation=45)
         plt.xlabel('Frequency (Hz)')
-        plt.ylabel('Cell #')
-        plt.colorbar(label='Encoder R2')
+        plt.ylabel('Electrode')
+        plt.colorbar(label='Decoder Weight')
+
+        ax = plt.subplot(nrows, ncols, k*ncols + 3)
+        absmax = np.abs(lfp_sal_weights).max()
+        plt.imshow(lfp_q2_weights, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
+        plt.yticks(range(len(index2electrode)), ['%d' % e for e in index2electrode])
+        plt.xticks(range(len(freqs)), ['%d' % f for f in freqs], rotation=45)
+        plt.xlabel('Frequency (Hz)')
+        plt.ylabel('Electrode')
+        plt.colorbar(label='Decoder Weight')
 
     fname = os.path.join(get_this_dir(), 'encoder_weights.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
-
-    plt.show()
 
 
 def draw_encoder_weights(agg):
@@ -146,8 +155,8 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
     agg = PARDAggregator.load(agg_file)
 
-    # draw_encoder_perfs(agg)
-    draw_encoder_weights(agg)
+    draw_encoder_perfs(agg)
+    # draw_encoder_weights(agg)
 
     """
     for (bird,block,segment,hemi,decomp),gdf in agg.df.groupby(['bird', 'block', 'segment','hemi','decomp']):
