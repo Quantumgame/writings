@@ -66,9 +66,11 @@ def draw_encoder_perfs(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/t
 
                     ax = plt.subplot(gs[i, j])
                     for li,er2 in enumerate(eperf):
-                        a = (er2 / r2_max)*0.7
+                        a = (er2 / r2_max)*0.85
                         plt.axvline(lags_ms[li], c='r', alpha=a, linewidth=2.0)
-                    plt.axvline(0, c='k', alpha=0.5)
+                    plt.axvline(0, c='k', alpha=0.9)
+                    # plt.axvline(-5., c='k', alpha=0.5)
+                    # plt.axvline(5., c='k', alpha=0.5)
                     plt.axhline(0, c='k', alpha=0.5)
                     plt.plot(lags_ms, w, 'k-', linewidth=3.0, alpha=0.8)
                     plt.axis('tight')
@@ -88,9 +90,9 @@ def draw_encoder_perfs(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/t
 
             fname = '%s_%s_%s_%s_decoder_%s' % (bird, block, segment, hemi, aprop)
             plt.suptitle('%s (R2=%0.2f)' % (fname, dperfs[k]))
-            fname = os.path.join(fig_dir, '%s.png' % fname)
-            print 'Saving %s...' % fname
-            plt.savefig(fname, facecolor='w')
+            fpath = os.path.join(fig_dir, '%s.svg' % fname)
+            print 'Saving %s...' % fpath
+            plt.savefig(fpath, facecolor='w')
             plt.close('all')
 
         # make a figure for encoder performance
@@ -180,11 +182,14 @@ def draw_lags_vs_perf(data_dir='/auto/tdrive/mschachter/data'):
     plt.show()
 
 
+def build_graph(bird='GreBlu9058M', block='Site4', segment='Call1', hemi='L', aprop='sal'):
+    pass
+
+
 def draw_figures():
-    # draw_encoder_perfs()
-    draw_lags_vs_perf()
+    draw_encoder_perfs()
+    # draw_lags_vs_perf()
 
 
 if __name__ == '__main__':
-
     draw_figures()
