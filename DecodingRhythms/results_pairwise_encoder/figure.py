@@ -184,7 +184,7 @@ def draw_lags_vs_perf(data_dir='/auto/tdrive/mschachter/data'):
     plt.show()
 
 
-def build_graph(bird='GreBlu9508M', block='Site4', segment='Call1', hemi='L', aprop='sal'):
+def build_graph(bird='GreBlu9508M', block='Site4', segment='Call1', hemi='L', aprop='q2'):
 
     # map electrodes to positions
     df = pd.read_csv('/auto/tdrive/mschachter/data/aggregate/electrode_data+dist.csv')
@@ -259,8 +259,8 @@ def build_graph(bird='GreBlu9508M', block='Site4', segment='Call1', hemi='L', ap
             cright = np.sum(cf[lags_short >= 0]) # goes from e1 to e2
 
             # add edges to the graph
-            g.add_edge(e2, e1, weight=float(abs(cleft)))
-            g.add_edge(e1, e2, weight=float(abs(cright)))
+            g.add_edge(e2, e1, weight=float((cleft)))
+            g.add_edge(e1, e2, weight=float((cright)))
 
     # plot the edge weights
     ewts = np.array([g.edge[e1][e2]['weight'] for e1,e2 in g.edges()])
