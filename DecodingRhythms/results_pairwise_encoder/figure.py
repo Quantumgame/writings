@@ -3,7 +3,9 @@ import h5py
 
 import numpy as np
 import pandas as pd
+import networkx as nx
 import matplotlib.pyplot as plt
+
 from lasp.plots import multi_plot
 
 from zeebeez.aggregators.pard import PARDAggregator
@@ -182,13 +184,105 @@ def draw_lags_vs_perf(data_dir='/auto/tdrive/mschachter/data'):
     plt.show()
 
 
-def build_graph(bird='GreBlu9058M', block='Site4', segment='Call1', hemi='L', aprop='sal'):
-    pass
+def build_graph(bird='GreBlu9508M', block='Site4', segment='Call1', hemi='L', aprop='sal'):
+
+    # map electrodes to positions
+    df = pd.read_csv('/auto/tdrive/mschachter/data/aggregate/electrode_data+dist.csv')
+    i = (df.bird == bird) & (df.block == block) & (df.hemisphere == hemi)
+    g = df[i].groupby('electrode')
+    electrode_props = dict()
+    for e,gdf in g:
+        assert len(gdf) == 1
+        reg = str(gdf.region.values[0])
+        if reg.startswith('CM'):
+            reg = 'CM'
+        elif 'NCM' in reg:
+            reg = 'NCM'
+        elif reg in ['L', 'L2A', 'L2B', 'L2', 'L1', 'L3']:
+            reg = 'L'
+        electrode_props[e] = {'dist_midline':float(gdf.dist_midline.values[0]),
+                              'dist_l2a':float(gdf.dist_l2a.values[0]),
+                              'region':reg
+                              }
+
+    #TODO get the lags in a less hacky way
+    data_dir = '/auto/tdrive/mschachter/data'
+    pfile = os.path.join(data_dir, 'GreBlu9508M', 'transforms', 'PairwiseCF_GreBlu9508M_Site4_Call1_L_raw.h5')
+    hf = h5py.File(pfile, 'r')
+    lags_ms = hf.attrs['lags']
+    hf.close()
+
+    lags_absmax = 6.
+    lags_i = np.abs(lags_ms) < lags_absmax
+    lags_short = lags_ms[lags_i]
+
+    # read the aggregator file
+    agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
+    agg = PARDAggregator.load(agg_file)
+
+    i = (agg.df.decomp == 'self+cross_locked_lim_-%d_%d' % (int(lags_absmax), int(lags_absmax))) & (agg.df.bird == bird) & (agg.df.block == block) & \
+        (agg.df.segment == segment) & (agg.df.hemi == hemi)
+    print 'i.sum()=%d' % i.sum()
+    assert i.sum() == 1, 'i.sum()=%d' % i.sum()
+
+    # get decoder weights
+    electrode_order = ROSTRAL_CAUDAL_ELECTRODES_RIGHT
+    if hemi == 'L':
+        electrode_order = ROSTRAL_CAUDAL_ELECTRODES_LEFT
+    electrode_order = [int(x) for x in electrode_order]
+
+    # get segment/decomp props
+    wkey = agg.df[i].wkey.values[0]
+    iindex = agg.df[i].iindex.values[0]
+
+    # get decoder weights
+    decoder_weights = agg.decoder_weights[wkey]
+    W = decoder_weights[:, :, :, REDUCED_ACOUSTIC_PROPS.index(aprop)]
+
+    # create a directed graph
+    g = nx.DiGraph()
+
+    # add a node for each electrode
+    for e in electrode_order:
+        g.add_node(e, dist_midline=electrode_props[e]['dist_midline'], dist_l2a=electrode_props[e]['dist_l2a'],
+                   region=electrode_props[e]['region'], electrode=e)
+
+    # connect up the nodes
+    for k,e1 in enumerate(electrode_order):
+        for j in range(k):
+            e2 = electrode_order[j]
+
+            # get the coherency function and reduce it to a left and right side
+            cf = W[k, j, :]
+            assert len(cf) == len(lags_short)
+            cleft = np.sum(cf[lags_short <= 0]) # goes from e2 to e1
+            cright = np.sum(cf[lags_short >= 0]) # goes from e1 to e2
+
+            # add edges to the graph
+            g.add_edge(e2, e1, weight=float(abs(cleft)))
+            g.add_edge(e1, e2, weight=float(abs(cright)))
+
+    # plot the edge weights
+    ewts = np.array([g.edge[e1][e2]['weight'] for e1,e2 in g.edges()])
+
+    plt.figure()
+    plt.hist(ewts, bins=20, color='c')
+    plt.xlabel('Edge Weight')
+    plt.show()
+
+    # threshold out the edges with low weights
+    wthresh = 0.3
+    for e1,e2 in [(e1,e2) for e1,e2 in g.edges() if abs(g.edge[e1][e2]['weight']) < wthresh]:
+        g.remove_edge(e1, e2)
+
+    # write the graph to a file
+    nx.write_gexf(g, '/tmp/%s_graph.gexf' % aprop)
 
 
 def draw_figures():
-    draw_encoder_perfs()
+    # draw_encoder_perfs()
     # draw_lags_vs_perf()
+    build_graph()
 
 
 if __name__ == '__main__':
