@@ -11,7 +11,7 @@ from lasp.sound import plot_spectrogram, spec_colormap
 from zeebeez.transforms.biosound import BiosoundTransform
 from zeebeez.transforms.pairwise_cf import PairwiseCFTransform
 from zeebeez.transforms.stim_event import StimEventTransform
-from zeebeez.utils import ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT
+from zeebeez.utils import ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, DISPLAYED_ACOUSTIC_PROPS
 
 
 def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/mschachter/data'):
@@ -19,7 +19,7 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
     bdir = os.path.join(data_dir, bird)
     tdir = os.path.join(bdir, 'transforms')
 
-    aprops = ['meanspect', 'q1', 'q2', 'q3', 'entropyspect', 'sal', 'maxAmp', 'meantime', 'stdtime']
+    aprops = DISPLAYED_ACOUSTIC_PROPS
 
     # load the BioSound
     bs_file = os.path.join(tdir, 'BiosoundTransform_%s.h5' % bird)
@@ -171,8 +171,7 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
 
 def plot_full_data(d, syllable_index):
 
-    aprops_names = {'meanspect':"center\nfreq", 'q1':'freq\nq1', 'q2':'freq\nq2', 'q3':'freq\nq3', 'sal':'sal', 'maxAmp':'max\namp',
-                    'meantime':'time\nmean', 'stdtime':'time\nsd', 'entropyspect':'freq\nentropy'}
+    aprops_names = {'sal':'sal', 'meanspect':'freq\nmean', 'entropyspect':'freq\nentropy', 'q2':'freq\nmedian', 'maxAmp':'max\namp', 'skewtime':'time\nskew'}
 
     syllable_start = d['syllable_props'][syllable_index]['start_time'] - 0.020
     syllable_end = d['syllable_props'][syllable_index]['end_time'] + 0.030
@@ -247,7 +246,7 @@ def plot_full_data(d, syllable_index):
 
     # plot the biosound properties
     sprops = d['syllable_props'][syllable_index]
-    aprops = d['aprops']
+    aprops = DISPLAYED_ACOUSTIC_PROPS
 
     vals = [sprops[a] for a in aprops]
     ax = plt.subplot(gs[:top_height, (left_width+5):])

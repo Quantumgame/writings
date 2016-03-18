@@ -419,15 +419,16 @@ def draw_category_perf_and_confusion(agg, df_me):
 
 def draw_acoustic_perf_boxplots(agg, df_me):
 
-    aprops_to_display = ['sal', 'maxAmp', 'meanspect', 'entropyspect', 'q2', 'entropytime']
+    aprops_to_display = ['sal', 'meanspect', 'entropyspect', 'q2', 'maxAmp', 'skewtime']
+    aprops_names = {'sal':'sal', 'meanspect':'freq\nmean', 'entropyspect':'freq\nentropy', 'q2':'freq\nmedian', 'maxAmp':'max\namp', 'skewtime':'time\nskew'}
 
     decomps = ['self_locked', 'self_spike_psd', 'self_spike_rate', 'self+cross_locked']
     sub_names = ['LFP PSD', 'Spike PSD', 'Spike Rate', 'LFP Pairwise']
     sub_clrs = [COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, COLOR_RED_SPIKE_RATE, COLOR_PURPLE_LFP_CROSS]
 
-    # decomps = ['self_locked', 'self_spike_psd', 'self_spike_rate']
-    # sub_names = ['LFP PSD', 'Spike PSD', 'Spike Rate']
-    # sub_clrs = [COLOR_BLUE_LFP, COLOR_YELLOW_SPIKE, COLOR_RED_SPIKE_RATE]
+    # decomps = ['self_locked', 'self+cross_locked']
+    # sub_names = ['LFP PSD', 'LFP Pairwise']
+    # sub_clrs = [COLOR_BLUE_LFP, COLOR_PURPLE_LFP_CROSS]
 
     bp_data = dict()
 
@@ -438,14 +439,14 @@ def draw_acoustic_perf_boxplots(agg, df_me):
             i = (df_me.decomp == decomp) & (df_me.aprop == aprop)
             perfs = df_me.r2[i].values
             bd.append(perfs)
-        bp_data[aprop] = bd
+        bp_data[aprops_names[aprop]] = bd
 
     figsize = (24, 3.5)
     fig = plt.figure(figsize=figsize)
     plt.subplots_adjust(top=0.95, bottom=0.05, left=0.05, right=0.99, hspace=0.40, wspace=0.20)
 
-    grouped_boxplot(bp_data, group_names=aprops_to_display, subgroup_names=sub_names,
-                    subgroup_colors=sub_clrs, box_spacing=1.5)
+    grouped_boxplot(bp_data, group_names=[aprops_names[aprop] for aprop in aprops_to_display], subgroup_names=sub_names,
+                    subgroup_colors=sub_clrs, box_spacing=.5)
 
     plt.xlabel('Acoustic Feature')
     plt.ylabel('Decoder R2')

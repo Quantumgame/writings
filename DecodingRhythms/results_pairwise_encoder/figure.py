@@ -281,8 +281,8 @@ def build_graph(bird='GreBlu9508M', block='Site4', segment='Call1', hemi='L', ap
 
 def draw_figures():
     # draw_encoder_perfs()
-    # draw_lags_vs_perf()
-    build_graph()
+    draw_lags_vs_perf()
+    # build_graph()
 
 
 if __name__ == '__main__':
