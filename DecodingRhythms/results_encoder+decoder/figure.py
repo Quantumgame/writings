@@ -97,7 +97,6 @@ def read_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data'):
 
     fname = os.path.join(get_this_dir(), 'encoder_weights_glm_weights.txt')
 
-
     data = {'aprop':list(), 'freq':list(), 'region':list(), 'w':list(), 'p':list()}
 
     f = open(fname, 'r')
@@ -132,7 +131,7 @@ def read_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data'):
     if np.isnan(freqs).sum() > 0:
         freqs = freqs[:-1]
 
-    regs = ['L2', 'CMM', 'L1', 'L3', 'CML', 'NCM']
+    regs = ['L2', 'CMM', 'CML', 'L1', 'L3', 'NCM']
     aprops = REDUCED_ACOUSTIC_PROPS
 
     w_by_freq = np.zeros([len(aprops), len(freqs)])
@@ -142,7 +141,9 @@ def read_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data'):
             if i.sum() == 0:
                 continue
             assert i.sum() == 1, "i.sum()=%d" % i.sum()
-            w_by_freq[k, j] = df[i].w.values[0]
+            p =  df[i].p.values[0]
+            if p < 0.05:
+                w_by_freq[k, j] = df[i].w.values[0]
 
     w_by_reg = np.zeros([len(aprops), len(regs)])
     for k,aprop in enumerate(aprops):
@@ -151,7 +152,9 @@ def read_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data'):
             if i.sum() == 0:
                 continue
             assert i.sum() == 1
-            w_by_reg[k, j] = df[i].w.values[0]
+            p =  df[i].p.values[0]
+            if p < 0.05:
+                w_by_reg[k, j] = df[i].w.values[0]
 
     figsize = (23, 10)
     fig = plt.figure(figsize=figsize)
@@ -164,7 +167,7 @@ def read_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data'):
     plt.xticks(range(len(freqs)), ['%d' % int(f) for f in freqs])
     plt.yticks(range(len(aprops)), aprops)
     plt.xlabel('Frequency (Hz)')
-    plt.colorbar(label='Average Encoder Weight')
+    plt.colorbar(label='Encoder Weight Contribution')
 
     ax = plt.subplot(gs[0, 70:])
     absmax = np.abs(w_by_reg).max()
@@ -172,7 +175,7 @@ def read_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data'):
     plt.xticks(range(len(regs)), ['%s' % r for r in regs])
     plt.yticks(range(len(aprops)), aprops)
     plt.xlabel('Region')
-    plt.colorbar(label='Average Encoder Weight')
+    plt.colorbar(label='Encoder Weight Contribution')
 
     fname = os.path.join(get_this_dir(), 'average_encoder_weights.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
