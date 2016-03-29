@@ -7,13 +7,175 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from lasp.plots import custom_legend
 
-from DecodingRhythms.utils import set_font, get_this_dir
+from DecodingRhythms.utils import set_font, get_this_dir, clean_region
 from lasp.colormaps import magma
 
 from zeebeez.aggregators.pard import PARDAggregator
 from zeebeez.utils import REDUCED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, \
     ACOUSTIC_FEATURE_COLORS
 
+
+def write_dataset_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
+
+    #TODO hack
+    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
+    freqs = hf.attrs['freqs']
+    hf.close()
+
+    edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data.csv'))
+
+    data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'electrode':list(), 'region':list(), 'site':list(),
+            'freq':list(), 'r2':list()}
+
+    weight_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'electrode':list(), 'region':list(), 'site':list(),
+                   'freq':list(), 'aprop':list(), 'w':list()}
+
+    # store the decoder weights for each acoustic property as well
+    for aprop in REDUCED_ACOUSTIC_PROPS:
+        data['weight_%s' % aprop] = list()
+
+    decomp = 'self_locked'
+    i = agg.df.decomp == decomp
+
+    g = agg.df[i].groupby(['bird', 'block', 'segment', 'hemi'])
+    for (bird,block,seg,hemi),gdf in g:
+
+        assert len(gdf) == 1
+
+        wkey = gdf['wkey'].values[0]
+        iindex = gdf['iindex'].values[0]
+
+        eperf = agg.encoder_perfs[wkey]
+        eweights = agg.encoder_weights[wkey]
+        # normalize weights!
+        eweights /= np.abs(eweights).max()
+        index2electrode = agg.index2electrode[iindex]
+
+        site = '%s_%s_%s_%s' % (bird, block, seg, hemi)
+
+        for k,e in enumerate(index2electrode):
+            for j,f in enumerate(freqs):
+
+                regi = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == e)
+                assert regi.sum() == 1
+                reg = clean_region(edata[regi].region.values[0])
+
+                data['bird'].append(bird)
+                data['block'].append(block)
+                data['segment'].append(seg)
+                data['hemi'].append(hemi)
+                data['electrode'].append(e)
+                data['region'].append(reg)
+                data['site'].append(site)
+                data['freq'].append(int(f))
+                data['r2'].append(eperf[k, j])
+
+                for ai,aprop in enumerate(REDUCED_ACOUSTIC_PROPS):
+                    keyname = 'weight_%s' % aprop
+                    w = eweights[k, j, ai]
+                    data[keyname].append(w)
+                    
+                    weight_data['bird'].append(bird)
+                    weight_data['block'].append(block)
+                    weight_data['segment'].append(seg)
+                    weight_data['hemi'].append(hemi)
+                    weight_data['electrode'].append(e)
+                    weight_data['region'].append(clean_region(reg))
+                    weight_data['site'].append(site)
+                    weight_data['freq'].append(int(f))
+                    weight_data['aprop'].append(aprop)
+                    weight_data['w'].append(w)
+
+    df = pd.DataFrame(data)
+    df.to_csv(os.path.join(data_dir, 'aggregate', 'encoder_perfs_for_glm.csv'), header=True, index=False)
+
+    wdf = pd.DataFrame(weight_data)
+    wdf.to_csv(os.path.join(data_dir, 'aggregate', 'encoder_weights_for_glm.csv'), header=True, index=False)
+
+
+def read_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data'):
+
+    fname = os.path.join(get_this_dir(), 'encoder_weights_glm_weights.txt')
+
+
+    data = {'aprop':list(), 'freq':list(), 'region':list(), 'w':list(), 'p':list()}
+
+    f = open(fname, 'r')
+    for ln in f.readlines():
+        if len(ln.strip()) == 0:
+            continue
+
+        x = ln.strip().split()
+        print 'x=',x
+
+        aprop,reg_or_freq = x[0].split(':')
+        aprop = aprop[5:]
+        freq = None
+        reg = None
+        if reg_or_freq.startswith('freq'):
+            freq = int(reg_or_freq[4:])
+        if reg_or_freq.startswith('region'):
+            reg = reg_or_freq[6:]
+
+        w = float(x[1])
+        p = float(x[4])
+
+        data['aprop'].append(aprop)
+        data['freq'].append(freq)
+        data['region'].append(reg)
+        data['w'].append(w)
+        data['p'].append(p)
+
+    df = pd.DataFrame(data)
+
+    freqs = sorted(df.freq.unique())
+    if np.isnan(freqs).sum() > 0:
+        freqs = freqs[:-1]
+
+    regs = ['L2', 'CMM', 'L1', 'L3', 'CML', 'NCM']
+    aprops = REDUCED_ACOUSTIC_PROPS
+
+    w_by_freq = np.zeros([len(aprops), len(freqs)])
+    for k,aprop in enumerate(aprops):
+        for j,f in enumerate(freqs):
+            i = (df.freq == f) & (df.aprop == aprop)
+            if i.sum() == 0:
+                continue
+            assert i.sum() == 1, "i.sum()=%d" % i.sum()
+            w_by_freq[k, j] = df[i].w.values[0]
+
+    w_by_reg = np.zeros([len(aprops), len(regs)])
+    for k,aprop in enumerate(aprops):
+        for j,r in enumerate(regs):
+            i = (df.region == r) & (df.aprop == aprop)
+            if i.sum() == 0:
+                continue
+            assert i.sum() == 1
+            w_by_reg[k, j] = df[i].w.values[0]
+
+    figsize = (23, 10)
+    fig = plt.figure(figsize=figsize)
+
+    gs = plt.GridSpec(1, 100)
+
+    ax = plt.subplot(gs[0, :50])
+    absmax = np.abs(w_by_freq).max()
+    plt.imshow(w_by_freq, origin='upper', interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
+    plt.xticks(range(len(freqs)), ['%d' % int(f) for f in freqs])
+    plt.yticks(range(len(aprops)), aprops)
+    plt.xlabel('Frequency (Hz)')
+    plt.colorbar(label='Average Encoder Weight')
+
+    ax = plt.subplot(gs[0, 70:])
+    absmax = np.abs(w_by_reg).max()
+    plt.imshow(w_by_reg, origin='upper', interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
+    plt.xticks(range(len(regs)), ['%s' % r for r in regs])
+    plt.yticks(range(len(aprops)), aprops)
+    plt.xlabel('Region')
+    plt.colorbar(label='Average Encoder Weight')
+
+    fname = os.path.join(get_this_dir(), 'average_encoder_weights.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
 
 def draw_encoder_perfs(agg):
 
@@ -155,7 +317,10 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
     agg = PARDAggregator.load(agg_file)
 
-    draw_encoder_perfs(agg)
+    # write_dataset_for_glm(agg)
+    read_encoder_weights_weights()
+
+    # draw_encoder_perfs(agg)
     # draw_encoder_weights(agg)
 
     """
