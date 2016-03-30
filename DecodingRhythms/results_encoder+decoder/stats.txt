@@ -338,4 +338,60 @@ F-statistic: 185.2 on 219 and 46244 DF,  p-value: < 2.2e-16
 
 
 
+-------------------------------------------------------------------------
+
+
+
+Call:
+lm(formula = r2 ~ aprop * decomp, data = d)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.69072 -0.05579  0.00695  0.06396  0.50942 
+
+Coefficients:
+                                           Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                 0.40992    0.02866  14.301  < 2e-16 ***
+apropfund                                  -0.33074    0.04054  -8.159 1.59e-15 ***
+apropvoice2percent                         -0.31117    0.04054  -7.676 5.59e-14 ***
+apropskewtime                              -0.30414    0.04054  -7.503 1.92e-13 ***
+apropskewspect                             -0.24534    0.04054  -6.052 2.34e-09 ***
+apropentropyspect                          -0.23310    0.04054  -5.750 1.33e-08 ***
+apropentropytime                           -0.21707    0.04054  -5.355 1.17e-07 ***
+apropmeanspect                             -0.19043    0.04054  -4.698 3.17e-06 ***
+apropq2                                    -0.11902    0.04054  -2.936 0.003434 ** 
+apropsal                                   -0.10290    0.04054  -2.538 0.011351 *  
+apropmaxAmp                                -0.05441    0.04054  -1.342 0.179938    
+
+decompself+cross_locked                     0.47062    0.04054  11.610  < 2e-16 ***
+decompself_locked                           0.19745    0.04054   4.871 1.38e-06 ***
+
+apropfund:decompself+cross_locked          -0.31643    0.05733  -5.520 4.80e-08 ***
+apropskewtime:decompself+cross_locked      -0.30317    0.05733  -5.288 1.66e-07 ***
+apropvoice2percent:decompself+cross_locked -0.27822    0.05733  -4.853 1.50e-06 ***
+apropentropytime:decompself+cross_locked   -0.21017    0.05733  -3.666 0.000265 ***
+apropskewspect:decompself+cross_locked     -0.21748    0.05733  -3.794 0.000161 ***
+apropmaxAmp:decompself_locked              -0.15666    0.05733  -2.733 0.006441 **
+apropskewtime:decompself_locked            -0.15874    0.05733  -2.769 0.005774 ** 
+apropentropytime:decompself_locked         -0.14013    0.05733  -2.444 0.014761 *  
+apropfund:decompself_locked                -0.14619    0.05733  -2.550 0.010986 *  
+apropmaxAmp:decompself+cross_locked        -0.13541    0.05733  -2.362 0.018451 *  
+apropmeanspect:decompself+cross_locked      0.13377    0.05733   2.333 0.019913 *
+apropskewspect:decompself_locked           -0.13026    0.05733  -2.272 0.023380 *  
+apropsal:decompself_locked                 -0.12126    0.05733  -2.115 0.034765 *  
+apropvoice2percent:decompself_locked       -0.11990    0.05733  -2.091 0.036847 *  
+
+apropq2:decompself+cross_locked            -0.10495    0.05733  -1.831 0.067566 .  
+apropentropyspect:decompself+cross_locked  -0.07574    0.05733  -1.321 0.186895      
+apropsal:decompself+cross_locked           -0.05486    0.05733  -0.957 0.338931    
+apropentropyspect:decompself_locked        -0.09577    0.05733  -1.671 0.095251 .  
+apropmeanspect:decompself_locked            0.02993    0.05733   0.522 0.601742    
+apropq2:decompself_locked                  -0.07728    0.05733  -1.348 0.178107    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1344 on 693 degrees of freedom
+Multiple R-squared:  0.7225,	Adjusted R-squared:  0.7097 
+F-statistic:  56.4 on 32 and 693 DF,  p-value: < 2.2e-16
+
 

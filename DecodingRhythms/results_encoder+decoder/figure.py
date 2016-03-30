@@ -15,7 +15,52 @@ from zeebeez.utils import REDUCED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT
     ACOUSTIC_FEATURE_COLORS
 
 
-def write_dataset_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
+def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
+
+    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
+    freqs = hf.attrs['freqs']
+    hf.close()
+
+    edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data.csv'))
+
+    data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'decomp':list(), 'site':list(),
+            'aprop':list(), 'r2':list()}
+
+    g = agg.df.groupby(['bird', 'block', 'segment', 'hemi', 'decomp'])
+    for (bird,block,seg,hemi,decomp),gdf in g:
+
+        if decomp not in ['self_locked', 'self_spike_rate', 'self+cross_locked']:
+            continue
+
+        site = '%s_%s_%s_%s' % (bird, block, seg, hemi)
+
+        assert len(gdf) == 1
+
+        wkey = gdf['wkey'].values[0]
+        iindex = gdf['iindex'].values[0]
+
+        dperf = agg.decoder_perfs[wkey]
+
+        for k,aprop in enumerate(REDUCED_ACOUSTIC_PROPS):
+
+            r2 = dperf[k]
+
+            data['bird'].append(bird)
+            data['block'].append(block)
+            data['segment'].append(seg)
+            data['hemi'].append(hemi)
+            data['decomp'].append(decomp)
+            data['site'].append(site)
+            data['aprop'].append(aprop)
+            data['r2'].append(r2)
+
+    df = pd.DataFrame(data)
+
+    print 'decomps=',df.decomp.unique()
+    df.to_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'), header=True, index=False)
+
+
+def export_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     #TODO hack
     hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
@@ -320,8 +365,9 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
     agg = PARDAggregator.load(agg_file)
 
-    # write_dataset_for_glm(agg)
-    read_encoder_weights_weights()
+    # export_encoder_datasets_for_glm(agg)
+    export_decoder_datasets_for_glm(agg)
+    # read_encoder_weights_weights()
 
     # draw_encoder_perfs(agg)
     # draw_encoder_weights(agg)
