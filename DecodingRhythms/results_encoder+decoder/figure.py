@@ -3,6 +3,7 @@ from copy import deepcopy
 
 import h5py
 import numpy as np
+import operator
 import pandas as pd
 import matplotlib.pyplot as plt
 from lasp.plots import custom_legend
@@ -60,7 +61,98 @@ def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
     df.to_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'), header=True, index=False)
 
 
-def export_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
+def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
+
+    #TODO hack
+    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
+    lags = hf.attrs['lags']
+    hf.close()
+
+    edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data.csv'))
+
+    data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(),
+            'electrode1':list(), 'electrode2':list(), 'regions':list(),
+            'site':list(), 'lag':list(), 'r2':list()}
+
+    weight_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(),
+                   'electrode1':list(), 'electrode2':list(), 'regions':list(),
+                   'site':list(), 'lag':list(), 'aprop':list(), 'w':list()}
+
+    decomp = 'self+cross_locked'
+    i = agg.df.decomp == decomp
+
+    g = agg.df[i].groupby(['bird', 'block', 'segment', 'hemi'])
+    for (bird,block,seg,hemi),gdf in g:
+
+        assert len(gdf) == 1
+
+        wkey = gdf['wkey'].values[0]
+        iindex = gdf['iindex'].values[0]
+        index2electrode = agg.index2electrode[iindex]
+
+        eperf = agg.encoder_perfs[wkey]
+        eweights = agg.encoder_weights[wkey]
+        # normalize weights!
+        eweights /= np.abs(eweights).max()
+
+        site = '%s_%s_%s_%s' % (bird, block, seg, hemi)
+
+        for k,e1 in enumerate(index2electrode):
+
+            regi = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == e1)
+            assert regi.sum() == 1
+            reg1 = clean_region(edata[regi].region.values[0])
+
+            for j in range(k+1):
+                e2 = index2electrode[j]
+
+                regi = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == e2)
+                assert regi.sum() == 1
+                reg2 = clean_region(edata[regi].region.values[0])
+
+                for li,lag in enumerate(lags):
+
+                    r2 = eperf[k, j, li]
+
+                    if lag < 0:
+                        regs = '%s->%s' % (reg2, reg1)
+                    else:
+                        regs = '%s->%s' % (reg1, reg2)
+
+                    data['bird'].append(bird)
+                    data['block'].append(block)
+                    data['segment'].append(seg)
+                    data['hemi'].append(hemi)
+                    data['electrode1'].append(e1)
+                    data['electrode2'].append(e2)
+                    data['regions'].append(regs)
+                    data['site'].append(site)
+                    data['lag'].append(int(lag))
+                    data['r2'].append(r2)
+
+                    for ai,aprop in enumerate(REDUCED_ACOUSTIC_PROPS):
+                        w = eweights[k, j, li, ai]
+
+                        weight_data['bird'].append(bird)
+                        weight_data['block'].append(block)
+                        weight_data['segment'].append(seg)
+                        weight_data['hemi'].append(hemi)
+                        weight_data['electrode1'].append(e1)
+                        weight_data['electrode2'].append(e2)
+                        weight_data['regions'].append(regs)
+                        weight_data['site'].append(site)
+                        weight_data['lag'].append(int(lag))
+                        weight_data['aprop'].append(aprop)
+                        weight_data['w'].append(w)
+
+    df = pd.DataFrame(data)
+    df.to_csv(os.path.join(data_dir, 'aggregate', 'pairwise_encoder_perfs_for_glm.csv'), header=True, index=False)
+
+    wdf = pd.DataFrame(weight_data)
+    wdf.to_csv(os.path.join(data_dir, 'aggregate', 'pairwise_encoder_weights_for_glm.csv'), header=True, index=False)
+
+
+def export_psd_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     #TODO hack
     hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
@@ -136,6 +228,166 @@ def export_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
 
     wdf = pd.DataFrame(weight_data)
     wdf.to_csv(os.path.join(data_dir, 'aggregate', 'encoder_weights_for_glm.csv'), header=True, index=False)
+
+
+def read_pairwise_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data'):
+
+    fname = os.path.join(get_this_dir(), 'pairwise_encoder_weights_glm_weights.txt')
+
+    data = {'lag':list(), 'aprop':list(), 'w':list(), 'p':list()}
+
+    #TODO hack
+    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
+    lags = hf.attrs['lags']
+    hf.close()
+    nlags = len(lags)
+
+    f = open(fname, 'r')
+    for ln in f.readlines():
+        if len(ln.strip()) == 0:
+            continue
+
+        x = ln.strip().split()
+        # print 'x=',x
+
+        aprop,lag = x[0].split(':')
+        aprop = aprop[5:]
+        lag = int(lag[3:])
+
+        if x[1] == 'NA':
+            w = 0.
+            p = 1.
+        else:
+            w = float(x[1])
+            p = float(x[4])
+
+        data['lag'].append(lag)
+        data['aprop'].append(aprop)
+        data['w'].append(w)
+        data['p'].append(p)
+
+    df = pd.DataFrame(data)
+
+    lags = lags[np.abs(lags) < 52]
+    w_mat = np.zeros([len(REDUCED_ACOUSTIC_PROPS), len(lags)])
+
+    for k,aprop in enumerate(REDUCED_ACOUSTIC_PROPS):
+        for j,l in enumerate(lags):
+            i = (df.lag == int(l)) & (df.aprop == aprop)
+            p = df[i].p.values[0]
+            w = df[i].w.values[0]
+            if p < 0.05:
+                w_mat[k, j] = w
+
+    return lags,w_mat
+
+
+def read_pairwise_encoder_perfs_weights(data_dir='/auto/tdrive/mschachter/data'):
+
+    fname = os.path.join(get_this_dir(), 'pairwise_encoder_perfs_glm_weights.txt')
+
+    data = {'lag':list(), 'region1':list(), 'region2':list(), 'w':list(), 'p':list()}
+
+    #TODO hack
+    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
+    lags = hf.attrs['lags']
+    hf.close()
+    nlags = len(lags)
+
+    f = open(fname, 'r')
+    for ln in f.readlines():
+        if len(ln.strip()) == 0:
+            continue
+
+        x = ln.strip().split()
+        # print 'x=',x
+
+        reg_or_lag = x[0]
+        lag = None
+        reg1 = None
+        reg2 = None
+        
+        if reg_or_lag.startswith('lag'):
+            lag = int(reg_or_lag[3:])
+        if reg_or_lag.startswith('region'):
+            regs = reg_or_lag[7:]
+            reg1,reg2 = regs.split('->')
+
+        w = float(x[1])
+        p = float(x[4])
+
+        data['lag'].append(lag)
+        data['region1'].append(reg1)
+        data['region2'].append(reg2)
+        data['w'].append(w)
+        data['p'].append(p)
+
+    df = pd.DataFrame(data)
+
+    lags_plotted = lags[np.abs(lags) < 52]
+    i = ~np.isnan(df.lag) & (df.lag < 52)
+    lag_list = [(lag, w, p) for lag,w,p in zip(df[i].lag.values, df[i].w.values, df[i].p.values)]
+    lag_list.sort(key=operator.itemgetter(0))
+    lag_list = np.array(lag_list)
+
+    # zero out weights that are not statistically significant
+    nss = lag_list[:, -1] > 0.05
+    lag_list[nss, 1] = 0.
+
+    lag_weights = np.array([x[1] for x in lag_list])
+
+    regs = ['L2', 'CMM', 'CML', 'L1', 'L3', 'NCM']
+    reg_weights = np.zeros([len(regs), len(regs)])
+
+    for k,r1 in enumerate(regs):
+        for j,r2 in enumerate(regs):
+
+            i = (df.region1 == r1) & (df.region2 == r2)
+            if i.sum() == 0:
+                print 'Missing connection: (%s,%s)i.sum()=%d' % (r1, r2, i.sum())
+                continue
+
+            w = df[i].w.values[0]
+            p = df[i].p.values[0]
+
+            if p < 0.05:
+                reg_weights[k, j] = w
+
+    lags_w,w_mat = read_pairwise_encoder_weights_weights()
+
+    figsize = (23, 10)
+    fig = plt.figure(figsize=figsize)
+    fig.subplots_adjust(top=0.95, bottom=0.05, right=0.90, left=0.10, hspace=0.25, wspace=0.25)
+
+    gs = plt.GridSpec(100, 100)
+
+    ax = plt.subplot(gs[:30, :32])
+    plt.plot(lags_plotted, lag_weights, 'k-', alpha=0.7, linewidth=7.0)
+    plt.axis('tight')
+    plt.ylim(0, 0.10)
+    plt.ylabel('Avg. Encoder R2 Contrib')
+    plt.xlabel('Lag (ms)')
+
+    ax = plt.subplot(gs[40:, :40])
+    absmax = np.abs(w_mat).max()
+    plt.imshow(w_mat, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=0, cmap=plt.cm.afmhot,
+               origin='lower', extent=(lags_w.min(), lags_w.max(), 0, len(REDUCED_ACOUSTIC_PROPS)))
+    xlbls = np.array([-40, -20, 0, 20, 40])
+    plt.xticks(xlbls, ['%d' % x for x in xlbls])
+    plt.xlabel('Lag (ms)')
+    plt.yticks(np.arange(len(REDUCED_ACOUSTIC_PROPS))+0.5, REDUCED_ACOUSTIC_PROPS)
+    plt.colorbar(label='Avg Weight Contrib')
+    plt.axis('tight')
+
+    ax = plt.subplot(gs[:, 45:])
+    absmax = np.abs(reg_weights).max()
+    plt.imshow(reg_weights, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic, origin='lower')
+    plt.xticks(range(len(regs)), regs)
+    plt.yticks(range(len(regs)), regs)
+    plt.colorbar(label='Avg Encoder R2 Contrib')
+
+    fname = os.path.join(get_this_dir(), 'pairwise_encoder_perf+weights.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
 
 
 def read_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data'):
@@ -366,8 +618,11 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg = PARDAggregator.load(agg_file)
 
     # export_encoder_datasets_for_glm(agg)
-    export_decoder_datasets_for_glm(agg)
+    # export_decoder_datasets_for_glm(agg)
+    # export_pairwise_encoder_datasets_for_glm(agg)
+
     # read_encoder_weights_weights()
+    read_pairwise_encoder_perfs_weights()
 
     # draw_encoder_perfs(agg)
     # draw_encoder_weights(agg)
