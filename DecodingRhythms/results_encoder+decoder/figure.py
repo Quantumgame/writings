@@ -68,15 +68,15 @@ def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschach
     lags = hf.attrs['lags']
     hf.close()
 
-    edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data.csv'))
+    edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data+dist.csv'))
 
     data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(),
             'electrode1':list(), 'electrode2':list(), 'regions':list(),
-            'site':list(), 'lag':list(), 'r2':list()}
+            'site':list(), 'lag':list(), 'r2':list(), 'dist':list()}
 
     weight_data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(),
                    'electrode1':list(), 'electrode2':list(), 'regions':list(),
-                   'site':list(), 'lag':list(), 'aprop':list(), 'w':list()}
+                   'site':list(), 'lag':list(), 'aprop':list(), 'w':list(), 'dist':list()}
 
     decomp = 'self+cross_locked'
     i = agg.df.decomp == decomp
@@ -103,12 +103,19 @@ def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschach
             assert regi.sum() == 1
             reg1 = clean_region(edata[regi].region.values[0])
 
-            for j in range(k+1):
+            eloc1 = np.array([edata[regi].dist_midline.values[0], edata[regi].dist_l2a.values[0]])
+
+            for j in range(k):
                 e2 = index2electrode[j]
 
                 regi = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == e2)
                 assert regi.sum() == 1
                 reg2 = clean_region(edata[regi].region.values[0])
+
+                eloc2 = np.array([edata[regi].dist_midline.values[0], edata[regi].dist_l2a.values[0]])
+
+                # compute the distance between electrodes in anatomical coordinates
+                edist = np.linalg.norm(eloc1 - eloc2)
 
                 for li,lag in enumerate(lags):
 
@@ -129,6 +136,7 @@ def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschach
                     data['site'].append(site)
                     data['lag'].append(int(lag))
                     data['r2'].append(r2)
+                    data['dist'].append(edist)
 
                     for ai,aprop in enumerate(REDUCED_ACOUSTIC_PROPS):
                         w = eweights[k, j, li, ai]
@@ -144,6 +152,7 @@ def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschach
                         weight_data['lag'].append(int(lag))
                         weight_data['aprop'].append(aprop)
                         weight_data['w'].append(w)
+                        weight_data['dist'].append(edist)
 
     df = pd.DataFrame(data)
     df.to_csv(os.path.join(data_dir, 'aggregate', 'pairwise_encoder_perfs_for_glm.csv'), header=True, index=False)
@@ -381,6 +390,8 @@ def read_pairwise_encoder_perfs_weights(data_dir='/auto/tdrive/mschachter/data')
 
     ax = plt.subplot(gs[:, 45:])
     absmax = np.abs(reg_weights).max()
+    print 'reg_weights='
+    print reg_weights
     plt.imshow(reg_weights, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic, origin='lower')
     plt.xticks(range(len(regs)), regs)
     plt.yticks(range(len(regs)), regs)
