@@ -181,6 +181,7 @@ def get_avg_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
     i = agg.df.decomp == decomp
 
     weights = list()
+    weights2 = list()
     r2 = list()
 
     g = agg.df[i].groupby(['bird', 'block', 'segment', 'hemi'])
@@ -207,9 +208,11 @@ def get_avg_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
             for j in range(k):
                 w = eweights[k, j, lag_i, :]
                 weights.append(w)
+                weights2.append(w**2)
                 r2.append(eperf[k, j, lag_i])
 
     weights = np.array(weights)
+    weights2 = np.array(weights2)
     r2 = np.array(r2)
 
     nz = r2 > 0
@@ -217,11 +220,15 @@ def get_avg_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
     weights[~nz] = 0.
     wmean = weights.mean(axis=0)
     wstd = weights.std(axis=0, ddof=1)
+    
+    weights2[~nz] = 0.
+    wmean2 = weights2.mean(axis=0)
+    wstd2 = weights2.std(axis=0, ddof=1)
 
-    plot = False
+    plot = True
     if plot:
         plt.figure()
-        ax = plt.subplot(1, 2, 1)
+        ax = plt.subplot(1, 3, 1)
         absmax = np.abs(wmean).max()
         plt.imshow(wmean.T, interpolation='nearest', aspect='auto', cmap=plt.cm.seismic, vmin=-absmax, vmax=absmax)
         plt.colorbar()
@@ -229,12 +236,22 @@ def get_avg_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
         plt.yticks(np.arange(len(REDUCED_ACOUSTIC_PROPS)), REDUCED_ACOUSTIC_PROPS)
         plt.xticks(np.arange(lag_i.sum()), ['%d' % x for x in lags[lag_i]])
 
-        ax = plt.subplot(1, 2, 2)
+        ax = plt.subplot(1, 3, 2)
+        absmax = np.abs(wmean2).max()
+        plt.imshow(wmean2.T, interpolation='nearest', aspect='auto', cmap=magma)
+        plt.colorbar()
+        plt.title('Mean^2 Weights')
+        plt.yticks(np.arange(len(REDUCED_ACOUSTIC_PROPS)), REDUCED_ACOUSTIC_PROPS)
+        plt.xticks(np.arange(lag_i.sum()), ['%d' % x for x in lags[lag_i]])
+
+        ax = plt.subplot(1, 3, 3)
         plt.imshow(wstd.T, interpolation='nearest', aspect='auto', cmap=plt.cm.seismic, vmin=0)
         plt.colorbar()
         plt.title('SD Weights')
         plt.yticks(np.arange(len(REDUCED_ACOUSTIC_PROPS)), REDUCED_ACOUSTIC_PROPS)
         plt.xticks(np.arange(lag_i.sum()), ['%d' % x for x in lags[lag_i]])
+
+        plt.show()
 
     return lags[lag_i],wmean.T,wstd.T
 
@@ -719,7 +736,8 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     # export_pairwise_encoder_datasets_for_glm(agg)
 
     # read_encoder_weights_weights()
-    read_pairwise_encoder_perfs_weights(agg)
+    # read_pairwise_encoder_perfs_weights(agg)
+    get_avg_encoder_weights(agg)
 
     # get_avg_encoder_weights(agg)
 
