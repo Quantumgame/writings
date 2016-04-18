@@ -1,15 +1,17 @@
 import os
-from copy import deepcopy
+from copy import deepcopy, copy
 
 import h5py
 import numpy as np
 import operator
 import pandas as pd
 import matplotlib.pyplot as plt
-from lasp.plots import custom_legend
+from lasp.plots import custom_legend, grouped_boxplot
 
-from DecodingRhythms.utils import set_font, get_this_dir, clean_region
+from DecodingRhythms.utils import set_font, get_this_dir, clean_region, COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, \
+    COLOR_PURPLE_LFP_CROSS
 from lasp.colormaps import magma
+from zeebeez.aggregators.biosound import AggregateBiosounds
 
 from zeebeez.aggregators.pard import PARDAggregator
 from zeebeez.utils import REDUCED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, \
@@ -63,10 +65,7 @@ def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
 
 def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
 
-    #TODO hack
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
-    lags = hf.attrs['lags']
-    hf.close()
+    freqs,lags = get_freqs_and_lags()
 
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data+dist.csv'))
 
@@ -170,19 +169,16 @@ def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschach
     wdf.to_csv(os.path.join(data_dir, 'aggregate', 'pairwise_encoder_weights_for_glm.csv'), header=True, index=False)
 
 
-def get_avg_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
+def plot_avg_pairwise_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
 
-    #TODO hack
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
-    lags = hf.attrs['lags']
-    hf.close()
+    freqs,lags = get_freqs_and_lags()
+    bs_agg = AggregateBiosounds.load(os.path.join(data_dir, 'aggregate', 'biosound.h5'))
 
     decomp = 'self+cross_locked'
     i = agg.df.decomp == decomp
 
-    weights = list()
-    weights2 = list()
-    r2 = list()
+    W = list()
+    wdata = {'lag':list(), 'xindex':list()}
 
     g = agg.df[i].groupby(['bird', 'block', 'segment', 'hemi'])
     for (bird,block,seg,hemi),gdf in g:
@@ -195,6 +191,7 @@ def get_avg_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
 
         eperf = agg.encoder_perfs[wkey]
         eweights = agg.encoder_weights[wkey]
+        eweights_whitened = agg.encoder_weights_whitened[wkey]
         # print("eperf.shape=" + str(eperf.shape))
         # print("eweights.shape=" + str(eweights.shape))
         # normalize weights!
@@ -206,62 +203,58 @@ def get_avg_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
 
         for k,e1 in enumerate(index2electrode):
             for j in range(k):
-                w = eweights[k, j, lag_i, :]
-                weights.append(w)
-                weights2.append(w**2)
-                r2.append(eperf[k, j, lag_i])
 
-    weights = np.array(weights)
-    weights2 = np.array(weights2)
-    r2 = np.array(r2)
+                for l,lag in enumerate(lags[lag_i]):
 
-    nz = r2 > 0
+                    w_white = eweights_whitened[k, j, l, :]
 
-    weights[~nz] = 0.
-    wmean = weights.mean(axis=0)
-    wstd = weights.std(axis=0, ddof=1)
-    
-    weights2[~nz] = 0.
-    wmean2 = weights2.mean(axis=0)
-    wstd2 = weights2.std(axis=0, ddof=1)
+                    # first compute the effect size for each weight in the whitened space
+                    esize = w_white**2
+
+                    # normalize effect size by dividing by sum
+                    esize /= esize.sum()
+
+                    # adjust each weight in proportion to it's effect size
+                    w_white *= esize
+
+                    # inverse transform the whitened and rescaled weights
+                    w = bs_agg.pca.inverse_transform(w_white)
+                    w = eweights[k, j, l, :]
+
+                    wdata['lag'].append(int(lag))
+                    wdata['xindex'].append(len(W))
+                    W.append(w)
+
+    wdf = pd.DataFrame(wdata)
+    W = np.array(W)
+    W[np.isnan(W)] = 0.
+    W = W**2
+
+    W_by_lag = np.zeros([len(REDUCED_ACOUSTIC_PROPS), lag_i.sum()])
+    for l,lag in enumerate(lags[lag_i]):
+        i = wdf.lag == int(lag)
+        ii = wdf.xindex[i].values
+        W_by_lag[:, l] = W[ii, :].mean(axis=0)
 
     plot = True
     if plot:
         plt.figure()
-        ax = plt.subplot(1, 3, 1)
-        absmax = np.abs(wmean).max()
-        plt.imshow(wmean.T, interpolation='nearest', aspect='auto', cmap=plt.cm.seismic, vmin=-absmax, vmax=absmax)
+        # ax = plt.subplot(1, 3, 1)
+        absmax = np.abs(W_by_lag).max()
+        plt.imshow(W_by_lag, interpolation='nearest', aspect='auto', cmap=plt.cm.seismic, vmin=-absmax, vmax=absmax)
         plt.colorbar()
         plt.title('Mean Weights')
         plt.yticks(np.arange(len(REDUCED_ACOUSTIC_PROPS)), REDUCED_ACOUSTIC_PROPS)
         plt.xticks(np.arange(lag_i.sum()), ['%d' % x for x in lags[lag_i]])
 
-        ax = plt.subplot(1, 3, 2)
-        absmax = np.abs(wmean2).max()
-        plt.imshow(wmean2.T, interpolation='nearest', aspect='auto', cmap=magma)
-        plt.colorbar()
-        plt.title('Mean^2 Weights')
-        plt.yticks(np.arange(len(REDUCED_ACOUSTIC_PROPS)), REDUCED_ACOUSTIC_PROPS)
-        plt.xticks(np.arange(lag_i.sum()), ['%d' % x for x in lags[lag_i]])
-
-        ax = plt.subplot(1, 3, 3)
-        plt.imshow(wstd.T, interpolation='nearest', aspect='auto', cmap=plt.cm.seismic, vmin=0)
-        plt.colorbar()
-        plt.title('SD Weights')
-        plt.yticks(np.arange(len(REDUCED_ACOUSTIC_PROPS)), REDUCED_ACOUSTIC_PROPS)
-        plt.xticks(np.arange(lag_i.sum()), ['%d' % x for x in lags[lag_i]])
-
         plt.show()
 
-    return lags[lag_i],wmean.T,wstd.T
+    return lags[lag_i],W_by_lag,None
 
 
 def export_psd_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
 
-    #TODO hack
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
-    freqs = hf.attrs['freqs']
-    hf.close()
+    freqs,lags = get_freqs_and_lags()
 
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data.csv'))
 
@@ -340,10 +333,7 @@ def read_pairwise_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data
 
     data = {'lag':list(), 'aprop':list(), 'w':list(), 'p':list()}
 
-    #TODO hack
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
-    lags = hf.attrs['lags']
-    hf.close()
+    freqs,lags = get_freqs_and_lags()
     nlags = len(lags)
 
     f = open(fname, 'r')
@@ -393,17 +383,24 @@ def read_pairwise_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data
     return lags,w_mat
 
 
+def get_freqs_and_lags():
+    #TODO hack
+    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
+    lags = hf.attrs['lags']
+    freqs = hf.attrs['freqs']
+    hf.close()
+    nlags = len(lags)
+
+    return freqs,lags
+
+
 def read_pairwise_encoder_perfs_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     fname = os.path.join(get_this_dir(), 'pairwise_encoder_perfs_glm_weights.txt')
 
     data = {'lag':list(), 'region1':list(), 'region2':list(), 'w':list(), 'p':list()}
 
-    #TODO hack
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
-    lags = hf.attrs['lags']
-    hf.close()
-    nlags = len(lags)
+    freqs,lags = get_freqs_and_lags()
 
     f = open(fname, 'r')
     for ln in f.readlines():
@@ -464,7 +461,7 @@ def read_pairwise_encoder_perfs_weights(agg, data_dir='/auto/tdrive/mschachter/d
             if p < 0.05:
                 reg_weights[k, j] = w
 
-    lags_w,w_mat,w_mat_std = get_avg_encoder_weights(agg)
+    lags_w,w_mat,w_mat_std = plot_avg_pairwise_encoder_weights(agg)
     print("wmat.shape=" + str(w_mat.shape))
     print("lags_w.shape=" + str(lags_w.shape))
 
@@ -591,12 +588,117 @@ def read_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data'):
     fname = os.path.join(get_this_dir(), 'average_encoder_weights.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
 
+def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
+
+    freqs,lags = get_freqs_and_lags()
+    bs_agg = AggregateBiosounds.load(os.path.join(data_dir, 'aggregate', 'biosound.h5'))
+
+    freqs = freqs[freqs < 70]
+
+    i = agg.df.decomp == 'self_locked'
+    g = agg.df[i].groupby(['bird', 'block', 'segment', 'hemi'])
+
+    edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data.csv'))
+    wdata = {'region':list(), 'freq':list(), 'xindex':list()}
+    W = list()
+    Wadj = list()
+
+    for (bird,block,seg,hemi),gdf in g:
+
+        assert len(gdf) == 1
+
+        wkey = gdf['wkey'].values[0]
+        iindex = gdf['iindex'].values[0]
+
+        eperf = agg.encoder_perfs[wkey]
+        eweights = agg.encoder_weights[wkey]
+        eweights_whitened = agg.encoder_weights_whitened[wkey]
+        index2electrode = agg.index2electrode[iindex]
+
+        for k,e in enumerate(index2electrode):
+
+            regi = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == e)
+            assert regi.sum() == 1
+            reg = clean_region(edata[regi].region.values[0])
+
+            for j,f in enumerate(freqs):
+                w_white = eweights_whitened[k, j, :]
+
+                # first compute the effect size for each weight in the whitened space
+                esize = w_white**2
+
+                # normalize effect size by dividing by sum
+                esize /= esize.sum()
+
+                # adjust each weight in proportion to it's effect size
+                w_white *= esize
+
+                # inverse transform the whitened and rescaled weights
+                w = bs_agg.pca.inverse_transform(w_white)
+
+                wdata['region'].append(reg)
+                wdata['freq'].append(int(f))
+                wdata['xindex'].append(len(Wadj))
+                Wadj.append(w)
+                W.append(eweights[k, j, :])
+
+    wdf = pd.DataFrame(wdata)
+    Wadj = np.array(Wadj)
+    Wadj[np.isnan(Wadj)] = 0.
+    W = np.array(W)
+    W = W**2
+    # print("# of nans: %d" % np.sum(np.isnan(W.ravel())))
+
+    # compute the average encoder weights by frequency
+    Wmean_by_freq = np.zeros([len(REDUCED_ACOUSTIC_PROPS), len(freqs)])
+    Wstd = np.zeros([len(REDUCED_ACOUSTIC_PROPS), len(freqs)])
+    Wmean_by_freq_adj = np.zeros([len(REDUCED_ACOUSTIC_PROPS), len(freqs)])
+    Wstd_adj = np.zeros([len(REDUCED_ACOUSTIC_PROPS), len(freqs)])
+    for j,f in enumerate(freqs):
+        i = wdf.freq == int(f)
+        ii = wdf.xindex[i].values
+
+        Wmean_by_freq[:, j] = W[ii, :].mean(axis=0)
+        Wstd[:, j] = W[ii, :].std(axis=0, ddof=1)
+        
+        Wmean_by_freq_adj[:, j] = Wadj[ii, :].mean(axis=0)
+        Wstd_adj[:, j] = Wadj[ii, :].std(axis=0, ddof=1)
+
+    # compute the average encoder weights by region
+    regs = ['L2', 'CMM', 'CML', 'L1', 'L3', 'NCM']
+    Wmean_by_reg = np.zeros([len(REDUCED_ACOUSTIC_PROPS), len(regs)])
+    for j,reg in enumerate(regs):
+        i = wdf.region == reg
+        ii = wdf.xindex[i].values
+        Wmean_by_reg[:, j] = W[ii, :].mean(axis=0)
+
+    figsize = (23, 10)
+    fig = plt.figure(figsize=figsize)
+    gs = plt.GridSpec(1, 100)
+
+    absmax = absmax = max(np.abs(Wmean_by_freq).max(), np.abs(Wmean_by_reg).max())
+
+    ax = plt.subplot(gs[0, :35])
+    plt.imshow(Wmean_by_freq_adj, origin='upper', interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
+    plt.xticks(range(len(freqs)), ['%d' % int(f) for f in freqs])
+    plt.yticks(range(len(REDUCED_ACOUSTIC_PROPS)), REDUCED_ACOUSTIC_PROPS)
+    plt.xlabel('Frequency (Hz)')
+    plt.colorbar(label='Mean Encoder Weight')
+
+    ax = plt.subplot(gs[0, 50:])
+    plt.imshow(Wmean_by_reg, origin='upper', interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
+    plt.xticks(range(len(regs)), regs)
+    plt.yticks(range(len(REDUCED_ACOUSTIC_PROPS)), REDUCED_ACOUSTIC_PROPS)
+    plt.xlabel('Region')
+    plt.colorbar(label='Mean Encoder Weight')
+
+    fname = os.path.join(get_this_dir(), 'average_encoder_weights.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
+
+
 def draw_encoder_perfs(agg):
 
-    #TODO hack
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
-    freqs = hf.attrs['freqs']
-    hf.close()
+    freqs,lags = get_freqs_and_lags()
 
     electrodes = [ROSTRAL_CAUDAL_ELECTRODES_LEFT,
                   ROSTRAL_CAUDAL_ELECTRODES_RIGHT,
@@ -664,12 +766,47 @@ def draw_encoder_perfs(agg):
     plt.savefig(fname, facecolor='w', edgecolor='none')
 
 
+def draw_decoder_perf_boxplots(data_dir='/auto/tdrive/mschachter/data'):
+
+    aprops_to_display = list(REDUCED_ACOUSTIC_PROPS)
+    aprops_to_display.remove('fund')
+    aprops_to_display.remove('voice2percent')
+
+    decomps = ['self_spike_rate', 'self_locked', 'self+cross_locked']
+    sub_names = ['Spike Rate', 'LFP PSD', 'LFP Pairwise']
+    sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, COLOR_PURPLE_LFP_CROSS]
+
+    df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'))
+    bp_data = dict()
+
+    for aprop in aprops_to_display:
+
+        bd = list()
+        for decomp in decomps:
+            i = (df_me.decomp == decomp) & (df_me.aprop == aprop)
+            perfs = df_me.r2[i].values
+            bd.append(perfs)
+            print("aprop=%s, decomp=%s" % (aprop, decomp))
+            print(perfs)
+
+        bp_data[aprop] = bd
+
+    figsize = (16, 5.5)
+    fig = plt.figure(figsize=figsize)
+    plt.subplots_adjust(top=0.95, bottom=0.05, left=0.05, right=0.99, hspace=0.40, wspace=0.20)
+
+    grouped_boxplot(bp_data, group_names=aprops_to_display, subgroup_names=sub_names,
+                    subgroup_colors=sub_clrs, box_spacing=1.)
+
+    plt.xlabel('Acoustic Feature')
+    plt.ylabel('Decoder R2')
+
+    fname = os.path.join(get_this_dir(), 'decoder_perf_boxplots.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
+
 def draw_encoder_weights(agg):
 
-    #TODO hack
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
-    freqs = hf.attrs['freqs']
-    hf.close()
+    freqs,lags = get_freqs_and_lags()
 
     aprops = REDUCED_ACOUSTIC_PROPS
 
@@ -731,64 +868,24 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
     agg = PARDAggregator.load(agg_file)
 
-    # export_encoder_datasets_for_glm(agg)
+    # plot_avg_psd_encoder_weights(agg)
+
+    # draw_decoder_perf_boxplots()
+
+    # export_psd_encoder_datasets_for_glm(agg)
     # export_decoder_datasets_for_glm(agg)
     # export_pairwise_encoder_datasets_for_glm(agg)
 
     # read_encoder_weights_weights()
+    plot_avg_pairwise_encoder_weights(agg)
     # read_pairwise_encoder_perfs_weights(agg)
-    get_avg_encoder_weights(agg)
+    # get_avg_encoder_weights(agg)
 
     # get_avg_encoder_weights(agg)
 
     # draw_encoder_perfs(agg)
     # draw_encoder_weights(agg)
 
-    """
-    for (bird,block,segment,hemi,decomp),gdf in agg.df.groupby(['bird', 'block', 'segment','hemi','decomp']):
-
-        assert len(gdf) == 1
-
-        if decomp in ['self_spike_rate', 'self+cross_locked']:
-            continue
-
-        # get segment/decomp props
-        wkey = gdf.wkey.values[0]
-        iindex = gdf.iindex.values[0]
-
-        # get encoder performances
-        encoder_perfs = agg.encoder_perfs[wkey]
-
-        # get decoder weights
-        decoder_weights = agg.decoder_weights[wkey]
-        decoder_perfs = agg.decoder_perfs[wkey]
-
-        fig = plt.figure(figsize=(24, 13))
-        plt.subplots_adjust(top=0.95, bottom=0.05, left=0.03, right=0.99, hspace=0.15, wspace=0.15)
-        ncols = 4
-        nrows = 3
-
-        plt.subplot(nrows, ncols, 1)
-        plt.imshow(encoder_perfs, interpolation='nearest', aspect='auto', vmin=0, cmap=magma)
-        plt.colorbar()
-        plt.xticks()
-        plt.title('Encoder Perf')
-
-        for k,aprop in enumerate(REDUCED_ACOUSTIC_PROPS):
-            dW = decoder_weights[:, :, k]
-            plt.subplot(nrows, ncols, k+2)
-            absmax = np.abs(dW).max()
-            plt.imshow(dW, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
-            plt.colorbar()
-            plt.title('%s decoder: %0.2f' % (aprop, decoder_perfs[k]))
-
-        seg_fname = '%s_%s_%s_%s_%s' % (bird, block, segment, hemi, decomp)
-        plt.suptitle(seg_fname)
-        fname = os.path.join(fig_dir, '%s.png' % seg_fname)
-
-        plt.savefig(fname)
-        plt.close('all')
-    """
 
 if __name__ == '__main__':
     set_font()
