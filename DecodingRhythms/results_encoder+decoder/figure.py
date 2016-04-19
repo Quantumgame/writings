@@ -593,7 +593,7 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
     freqs,lags = get_freqs_and_lags()
     bs_agg = AggregateBiosounds.load(os.path.join(data_dir, 'aggregate', 'biosound.h5'))
 
-    freqs = freqs[freqs < 70]
+    # freqs = freqs[freqs < 70]
 
     i = agg.df.decomp == 'self_locked'
     g = agg.df[i].groupby(['bird', 'block', 'segment', 'hemi'])
@@ -602,6 +602,7 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
     wdata = {'region':list(), 'freq':list(), 'xindex':list()}
     W = list()
     Wadj = list()
+    Wwhite = list()
 
     for (bird,block,seg,hemi),gdf in g:
 
@@ -623,6 +624,7 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
 
             for j,f in enumerate(freqs):
                 w_white = eweights_whitened[k, j, :]
+                w = bs_agg.pca.inverse_transform(w_white)
 
                 # first compute the effect size for each weight in the whitened space
                 esize = w_white**2
@@ -631,38 +633,39 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
                 esize /= esize.sum()
 
                 # adjust each weight in proportion to it's effect size
-                w_white *= esize
+                w_white_cpy = w_white*esize
 
                 # inverse transform the whitened and rescaled weights
-                w = bs_agg.pca.inverse_transform(w_white)
+                w_adj = bs_agg.pca.inverse_transform(w_white_cpy)
+
 
                 wdata['region'].append(reg)
                 wdata['freq'].append(int(f))
                 wdata['xindex'].append(len(Wadj))
-                Wadj.append(w)
-                W.append(eweights[k, j, :])
+                W.append(w)
+                Wadj.append(w_adj)
+                Wwhite.append(w_white)
 
     wdf = pd.DataFrame(wdata)
-    Wadj = np.array(Wadj)
-    Wadj[np.isnan(Wadj)] = 0.
+
     W = np.array(W)
-    W = W**2
+    Wsq = W**2
+
+    # bs_agg.pca.components_ = np.abs(bs_agg.pca.components_)
+    # bs_agg.pca.mean_ = 0.
+
     # print("# of nans: %d" % np.sum(np.isnan(W.ravel())))
 
     # compute the average encoder weights by frequency
     Wmean_by_freq = np.zeros([len(REDUCED_ACOUSTIC_PROPS), len(freqs)])
-    Wstd = np.zeros([len(REDUCED_ACOUSTIC_PROPS), len(freqs)])
-    Wmean_by_freq_adj = np.zeros([len(REDUCED_ACOUSTIC_PROPS), len(freqs)])
-    Wstd_adj = np.zeros([len(REDUCED_ACOUSTIC_PROPS), len(freqs)])
+    Wstd_by_freq = np.zeros([len(REDUCED_ACOUSTIC_PROPS), len(freqs)])
+
     for j,f in enumerate(freqs):
         i = wdf.freq == int(f)
         ii = wdf.xindex[i].values
 
-        Wmean_by_freq[:, j] = W[ii, :].mean(axis=0)
-        Wstd[:, j] = W[ii, :].std(axis=0, ddof=1)
-        
-        Wmean_by_freq_adj[:, j] = Wadj[ii, :].mean(axis=0)
-        Wstd_adj[:, j] = Wadj[ii, :].std(axis=0, ddof=1)
+        Wmean_by_freq[:, j] = Wsq[ii, :].mean(axis=0)
+        Wstd_by_freq[:, j] = W[ii, :].std(axis=0, ddof=1)
 
     # compute the average encoder weights by region
     regs = ['L2', 'CMM', 'CML', 'L1', 'L3', 'NCM']
@@ -670,27 +673,27 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
     for j,reg in enumerate(regs):
         i = wdf.region == reg
         ii = wdf.xindex[i].values
-        Wmean_by_reg[:, j] = W[ii, :].mean(axis=0)
+        Wmean_by_reg[:, j] = Wsq[ii, :].mean(axis=0)
 
     figsize = (23, 10)
     fig = plt.figure(figsize=figsize)
     gs = plt.GridSpec(1, 100)
 
-    absmax = absmax = max(np.abs(Wmean_by_freq).max(), np.abs(Wmean_by_reg).max())
+    absmax = max(np.abs(Wmean_by_freq).max(), np.abs(Wmean_by_reg).max())
 
-    ax = plt.subplot(gs[0, :35])
-    plt.imshow(Wmean_by_freq_adj, origin='upper', interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
+    ax = plt.subplot(gs[0, :50])
+    plt.imshow(Wmean_by_freq, origin='upper', interpolation='nearest', aspect='auto', vmin=0, vmax=absmax, cmap=magma)
     plt.xticks(range(len(freqs)), ['%d' % int(f) for f in freqs])
     plt.yticks(range(len(REDUCED_ACOUSTIC_PROPS)), REDUCED_ACOUSTIC_PROPS)
     plt.xlabel('Frequency (Hz)')
-    plt.colorbar(label='Mean Encoder Weight')
+    plt.colorbar(label='Mean Encoder Effect')
 
-    ax = plt.subplot(gs[0, 50:])
-    plt.imshow(Wmean_by_reg, origin='upper', interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
+    ax = plt.subplot(gs[0, 65:])
+    plt.imshow(Wmean_by_reg, origin='upper', interpolation='nearest', aspect='auto', vmin=0, vmax=absmax, cmap=magma)
     plt.xticks(range(len(regs)), regs)
     plt.yticks(range(len(REDUCED_ACOUSTIC_PROPS)), REDUCED_ACOUSTIC_PROPS)
     plt.xlabel('Region')
-    plt.colorbar(label='Mean Encoder Weight')
+    plt.colorbar(label='Mean Encoder Effect')
 
     fname = os.path.join(get_this_dir(), 'average_encoder_weights.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
@@ -868,7 +871,8 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
     agg = PARDAggregator.load(agg_file)
 
-    # plot_avg_psd_encoder_weights(agg)
+    plot_avg_psd_encoder_weights(agg)
+    # plot_avg_pairwise_encoder_weights(agg)
 
     # draw_decoder_perf_boxplots()
 
@@ -877,7 +881,6 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     # export_pairwise_encoder_datasets_for_glm(agg)
 
     # read_encoder_weights_weights()
-    plot_avg_pairwise_encoder_weights(agg)
     # read_pairwise_encoder_perfs_weights(agg)
     # get_avg_encoder_weights(agg)
 
