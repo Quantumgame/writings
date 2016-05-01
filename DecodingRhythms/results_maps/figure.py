@@ -9,7 +9,7 @@ from scipy.interpolate import griddata
 from lasp.plots import multi_plot, custom_legend
 from lasp.colormaps import magma
 
-from DecodingRhythms.utils import set_font, clean_region
+from DecodingRhythms.utils import set_font, clean_region, get_this_dir
 from zeebeez.aggregators.lfp_and_spike_psd_decoders import AggregateLFPAndSpikePSDDecoder
 from zeebeez.aggregators.pard import PARDAggregator
 from zeebeez.utils import ALL_ACOUSTIC_PROPS
@@ -143,7 +143,7 @@ def plot_maps(agg):
     gridX, gridY = np.meshgrid(gx, gy)
 
     # encoder performance maps
-    aprops_to_show = ['sal', 'q2', 'maxAmp', 'entropytime']
+    aprops_to_show = ALL_ACOUSTIC_PROPS
     electrode_props = list()
     for f in sorted(df.freq.unique()):
         i = df.freq == f
@@ -152,17 +152,19 @@ def plot_maps(agg):
         all_cols['dm'] = df.dist_midline[i].values
         all_cols['dl'] = df.dist_l2a[i].values
         all_cols['r2'] = df.encoder_r2[i].values
+        all_cols['reg'] = df.region[i].values
         for aprop in aprops_to_show:
             eperf = df[i]['eperf_ind_%s' % aprop].values
             ew = df[i]['eweight_ind_%s' % aprop].values
-            all_cols[aprop] = (eperf / eperf.max()) * ew
+            all_cols[aprop] = ew
+            all_cols['%s_perf' % aprop] = eperf
 
         df_f = pd.DataFrame(all_cols)
         gi = (df_f.dm < 2.5) & ~np.isnan(df_f.dm) & ~np.isnan(df_f.dl) & (df_f.r2 > 0)
         df_f = df_f[gi]
-        electrode_props.append({'f':f, 'df':df_f})
+        electrode_props.append({'f':int(f), 'df':df_f})
 
-    def _plot_map(_pdata, _ax, _prop, _cmap, _maxval=None, _bgcolor=None):
+    def _plot_map(_pdata, _ax, _prop, _cmap, _maxval, _bgcolor=None, _perf_alpha=False):
         if _bgcolor is not None:
             _ax.set_axis_bgcolor(_bgcolor)
         _pval = _pdata['df'][_prop].values
@@ -170,15 +172,18 @@ def plot_maps(agg):
         _y = _pdata['df'].dl.values
 
         plt.sca(_ax)
-        if _maxval is not None:
+        _alpha = np.ones([len(_pval)])
+        if _perf_alpha:
+            _alpha = _pdata['df']['%s_perf' % _prop].values
+            _alpha /= _alpha.max()
+            _clrs = _cmap(_pval / _maxval)
+        else:
             _clrs = _cmap(_pval / _maxval)
 
-        # _ax.set_axis_bgcolor('black')
         for k,(_xx,_yy) in enumerate(zip(_x, _y)):
-            plt.plot(_xx, _yy, 'o', c=_clrs[k], markersize=8, alpha=0.9)
+            plt.plot(_xx, _yy, 'o', c=_clrs[k], alpha=_alpha[k], markersize=8)
 
         plt.title('f=%d' % _pdata['f'])
-        # plt.colorbar()
 
     absmax = dict()
     for aprop in aprops_to_show:
@@ -186,7 +191,7 @@ def plot_maps(agg):
 
     def rb_cmap(x):
         assert np.abs(x).max() <= 1
-        _rgb = np.ones([len(x), 3])
+        _rgb = np.zeros([len(x), 3])
         _pos = x >= 0
         _neg = x < 0
 
@@ -194,31 +199,47 @@ def plot_maps(agg):
         _rgb[_neg, 2] = np.abs(x[_neg])
 
         return _rgb
-    
+
     def _plot_r2_map(_pdata, _ax): _plot_map(_pdata, _ax, 'r2', magma, _maxval=0.30, _bgcolor='black')
     multi_plot(electrode_props, _plot_r2_map, nrows=3, ncols=4, figsize=(23, 13))
     plt.suptitle('Encoder Performance (R2)')
+    fname = os.path.join(get_this_dir(), 'r2_map_allfreq.png')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
 
-    def _plot_sal_map(_pdata, _ax): _plot_map(_pdata, _ax, 'sal', rb_cmap, _maxval=absmax['sal'])
-    multi_plot(electrode_props, _plot_sal_map, nrows=3, ncols=4, figsize=(23, 13))
-    plt.suptitle('Saliency Encoder Weights')
+    for aprop in aprops_to_show:
+        def _plot_aprop_map(_pdata, _ax): _plot_map(_pdata, _ax, aprop, rb_cmap, _maxval=absmax[aprop], _perf_alpha=True)
+        multi_plot(electrode_props, _plot_aprop_map, nrows=3, ncols=4, figsize=(23, 13))
+        plt.suptitle('%s Univariate Encoder Weights' % aprop)
+        fname = os.path.join(get_this_dir(), 'map_allfreq_%s.png' % aprop)
+        plt.savefig(fname, facecolor='w', edgecolor='none')
 
-    def _plot_q2_map(_pdata, _ax):
-        _plot_map(_pdata, _ax, 'q2', rb_cmap, _maxval=absmax['q2'])
-    multi_plot(electrode_props, _plot_q2_map, nrows=3, ncols=4, figsize=(23, 13))
-    plt.suptitle('Q2 Encoder Weights')
+    """
+    # make a plot just for r2 at 33 Hz
+    set_font()
+    edict = [e for e in electrode_props if e['f'] == 33][0]
+    figsize = (23, 10)
+    plt.figure(figsize=figsize)
+    gs = plt.GridSpec(1, 100)
 
-    def _plot_maxAmp_map(_pdata, _ax):
-        _plot_map(_pdata, _ax, 'maxAmp', rb_cmap, _maxval=absmax['maxAmp'])
-    multi_plot(electrode_props, _plot_maxAmp_map, nrows=3, ncols=4, figsize=(23, 13))
-    plt.suptitle('maxAmp Encoder Weights')
+    ax = plt.subplot(gs[50:])
+    ax.set_axis_bgcolor('black')
+    pval = edict['df']['r2'].values
+    pval /= 0.30
+    regs = edict['df']['reg'].values
+    x = edict['df'].dm.values
+    y = edict['df'].dl.values
+    for k, (_xx, _yy) in enumerate(zip(x, y)):
+        plt.plot(_xx, _yy, 'o', c=magma(pval[k]), alpha=0.9, markersize=8)
+        plt.text(_xx, _yy, regs[k], fontsize=8, color='w', alpha=0.7)
 
-    def _plot_entropytime_map(_pdata, _ax):
-        _plot_map(_pdata, _ax, 'entropytime', rb_cmap, _maxval=absmax['entropytime'])
-    multi_plot(electrode_props, _plot_entropytime_map, nrows=3, ncols=4, figsize=(23, 13))
-    plt.suptitle('entropytime Encoder Weights')
+    plt.xlabel('Distance from LH (mm)')
+    plt.ylabel('Distance from L2A (mm)')
 
-    plt.show()
+    fname = os.path.join(get_this_dir(), 'r2_map.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
+    """
+
+    # plt.show()
 
 
 def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder+decoder'):
