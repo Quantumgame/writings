@@ -143,38 +143,91 @@ def plot_maps(agg):
     gridX, gridY = np.meshgrid(gx, gy)
 
     # encoder performance maps
-    enc_perfs = list()
+    aprops_to_show = ['sal', 'q2', 'maxAmp', 'entropytime']
+    electrode_props = list()
     for f in sorted(df.freq.unique()):
         i = df.freq == f
-        dm = df.dist_midline[i].values
-        dl = df.dist_l2a[i].values
-        r2 = df.encoder_r2[i].values
-        X = np.array(zip(dm, dl, r2))
-        gi = (dm < 2.5) & ~np.isnan(dm) & ~np.isnan(dl) & (r2 > 0)
-        X = X[gi, :]
-        grid_data = griddata(X[:, :2], X[:, -1], (gridX, gridY), method='linear')
-        enc_perfs.append({'f':f, 'grid_data':grid_data, 'X':X})
 
-    def _plot_map(_pdata, _ax):
+        all_cols = dict()
+        all_cols['dm'] = df.dist_midline[i].values
+        all_cols['dl'] = df.dist_l2a[i].values
+        all_cols['r2'] = df.encoder_r2[i].values
+        for aprop in aprops_to_show:
+            eperf = df[i]['eperf_ind_%s' % aprop].values
+            ew = df[i]['eweight_ind_%s' % aprop].values
+            all_cols[aprop] = (eperf / eperf.max()) * ew
+
+        df_f = pd.DataFrame(all_cols)
+        gi = (df_f.dm < 2.5) & ~np.isnan(df_f.dm) & ~np.isnan(df_f.dl) & (df_f.r2 > 0)
+        df_f = df_f[gi]
+        electrode_props.append({'f':f, 'df':df_f})
+
+    def _plot_map(_pdata, _ax, _prop, _cmap, _maxval=None, _bgcolor=None):
+        if _bgcolor is not None:
+            _ax.set_axis_bgcolor(_bgcolor)
+        _pval = _pdata['df'][_prop].values
+        _x = _pdata['df'].dm.values
+        _y = _pdata['df'].dl.values
+
         plt.sca(_ax)
-        _ax.set_axis_bgcolor('black')
-        plt.imshow(_pdata['grid_data'].T, interpolation='nearest', aspect='auto',
-                   extent=(gx.min(), gx.max(), gy.min(), gy.max()), origin='lower',
-                   vmin=0, vmax=0.30, cmap=magma)
-        plt.title('f=%d' % _pdata['f'])
-        plt.colorbar()
+        if _maxval is not None:
+            _clrs = _cmap(_pval / _maxval)
 
-    multi_plot(enc_perfs, _plot_map, nrows=3, ncols=4, figsize=(23, 13))
+        # _ax.set_axis_bgcolor('black')
+        for k,(_xx,_yy) in enumerate(zip(_x, _y)):
+            plt.plot(_xx, _yy, 'o', c=_clrs[k], markersize=8, alpha=0.9)
+
+        plt.title('f=%d' % _pdata['f'])
+        # plt.colorbar()
+
+    absmax = dict()
+    for aprop in aprops_to_show:
+        absmax[aprop] = np.abs(df['eweight_ind_%s' % aprop]).max()
+
+    def rb_cmap(x):
+        assert np.abs(x).max() <= 1
+        _rgb = np.ones([len(x), 3])
+        _pos = x >= 0
+        _neg = x < 0
+
+        _rgb[_pos, 0] = x[_pos]
+        _rgb[_neg, 2] = np.abs(x[_neg])
+
+        return _rgb
+    
+    def _plot_r2_map(_pdata, _ax): _plot_map(_pdata, _ax, 'r2', magma, _maxval=0.30, _bgcolor='black')
+    multi_plot(electrode_props, _plot_r2_map, nrows=3, ncols=4, figsize=(23, 13))
+    plt.suptitle('Encoder Performance (R2)')
+
+    def _plot_sal_map(_pdata, _ax): _plot_map(_pdata, _ax, 'sal', rb_cmap, _maxval=absmax['sal'])
+    multi_plot(electrode_props, _plot_sal_map, nrows=3, ncols=4, figsize=(23, 13))
+    plt.suptitle('Saliency Encoder Weights')
+
+    def _plot_q2_map(_pdata, _ax):
+        _plot_map(_pdata, _ax, 'q2', rb_cmap, _maxval=absmax['q2'])
+    multi_plot(electrode_props, _plot_q2_map, nrows=3, ncols=4, figsize=(23, 13))
+    plt.suptitle('Q2 Encoder Weights')
+
+    def _plot_maxAmp_map(_pdata, _ax):
+        _plot_map(_pdata, _ax, 'maxAmp', rb_cmap, _maxval=absmax['maxAmp'])
+    multi_plot(electrode_props, _plot_maxAmp_map, nrows=3, ncols=4, figsize=(23, 13))
+    plt.suptitle('maxAmp Encoder Weights')
+
+    def _plot_entropytime_map(_pdata, _ax):
+        _plot_map(_pdata, _ax, 'entropytime', rb_cmap, _maxval=absmax['entropytime'])
+    multi_plot(electrode_props, _plot_entropytime_map, nrows=3, ncols=4, figsize=(23, 13))
+    plt.suptitle('entropytime Encoder Weights')
+
     plt.show()
 
 
 def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder+decoder'):
 
-    # agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
-    # agg = PARDAggregator.load(agg_file)
+    agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
+    agg = PARDAggregator.load(agg_file)
 
-    # plot_maps(agg)
-    plot_raw_dists()
+    plot_maps(agg)
+    # plot_raw_dists()
 
 
 if __name__ == '__main__':
