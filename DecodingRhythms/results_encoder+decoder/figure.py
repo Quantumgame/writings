@@ -783,7 +783,7 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
             bd[decomp] = perfs
         bprop_data.append({'bd':bd, 'lfp_mean':bd['self_locked'].mean(), 'aprop':aprop})
 
-    bprop_data.sort(key=operator.itemgetter('lfp_mean'))
+    bprop_data.sort(key=operator.itemgetter('lfp_mean'), reverse=True)
 
     lfp_r2 = [bdict['bd']['self_locked'].mean() for bdict in bprop_data]
     lfp_r2_std = [bdict['bd']['self_locked'].std(ddof=1) for bdict in bprop_data]
@@ -870,11 +870,11 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg = PARDAggregator.load(agg_file)
 
     # ###### figure with encoder effects per frequency
-    plot_avg_psd_encoder_weights(agg)
+    # plot_avg_psd_encoder_weights(agg)
 
     # ###### these two functions write a csv file for decoder weights and draw barplots for decoder performance
-    # export_decoder_datasets_for_glm(agg)
-    # draw_decoder_perf_barplots()
+    export_decoder_datasets_for_glm(agg)
+    draw_decoder_perf_barplots()
 
     # draw_all_encoder_perfs_and_decoder_weights(agg)
 
