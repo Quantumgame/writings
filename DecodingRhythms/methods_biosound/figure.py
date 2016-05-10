@@ -1,4 +1,5 @@
 import os
+import operator
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,7 +11,7 @@ from lasp.timefreq import gaussian_stft
 
 from neosound.sound_store import HDF5Store
 from neosound.sound_manager import SoundManager
-from utils import set_font
+from utils import set_font, get_this_dir
 
 from zeebeez.aggregators.biosound import AggregateBiosounds
 from zeebeez.utils import ALL_ACOUSTIC_PROPS
@@ -62,6 +63,59 @@ def get_syllable_props(agg, stim_id, syllable_order, data_dir):
             }
 
 
+def get_syllable_examples(agg, aprop, data_dir):
+
+    aprop_index = list(agg.acoustic_props).index(aprop)
+    dlist = list()
+    for stype,stim_id,syllable_order,xindex in zip(agg.df.stim_type.values, agg.df.stim_id.values, agg.df.syllable_order.values, agg.df.xindex.values):
+        if stype in ['song', 'Ag', 'Di', 'mlnoise']:
+            continue
+        dlist.append( (stype, stim_id, syllable_order, agg.Xraw[xindex, aprop_index]))
+
+    dlist.sort(key=operator.itemgetter(-1))
+    print dlist
+
+    med_index = int(len(dlist) / 2.)
+
+    slist = list()
+    slist.append(dlist[2])
+    slist.append(dlist[med_index])
+    slist.append(dlist[-1])
+
+    specs = list()
+    spec_freq = None
+    stypes = list()
+    propvals = list()
+    for stype,stim_id,syllable_order,propval in slist:
+        sprops = get_syllable_props(agg, stim_id, syllable_order, data_dir)
+        s = sprops['spec']
+        spec_freq = sprops['spec_freq']
+        the_spec = s[:, sprops['spec_si']:sprops['spec_ei']]
+        specs.append(the_spec)
+        stypes.append(stype)
+        propvals.append(propval)
+
+    spec_lens = [s.shape[1] for s in specs]
+    spec_len = np.sum(spec_lens)
+    spec_space = 100
+
+    full_spec_len = spec_space*(len(slist)+1) + spec_len
+    full_spec = np.zeros([len(spec_freq), full_spec_len])
+
+    centers = list()
+
+    last_i = 0
+    for k,s in enumerate(specs):
+        si = last_i + spec_space
+        ei = si + s.shape[1]
+        c = int(((ei-si) / 2.) + si)
+        centers.append(c)
+        last_i = ei
+        full_spec[:, si:ei] = s
+
+    return spec_freq,full_spec,centers,propvals,stypes
+
+
 def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdrive/mschachter/data'):
 
     sprops = get_syllable_props(agg, stim_id, syllable_order, data_dir)
@@ -80,9 +134,14 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     spec_si = sprops['spec_si']
     spec_ei = sprops['spec_ei']
 
+    aprop_specs = dict()
+    aprop_spec_props = ['maxAmp', 'meanspect', 'sal']
+    for aprop in aprop_spec_props:
+        aprop_specs[aprop] = get_syllable_examples(agg, aprop, data_dir)
+
     figsize = (23, 13)
-    fig = plt.figure(figsize=figsize)
-    fig.subplots_adjust(top=0.95, bottom=0.08, right=0.97, left=0.06, hspace=0.20, wspace=0.20)
+    fig = plt.figure(figsize=figsize, facecolor='w')
+    fig.subplots_adjust(top=0.95, bottom=0.08, right=0.97, left=0.06, hspace=0.30, wspace=0.30)
     gs = plt.GridSpec(3, 100)
 
     sp_width = 20
@@ -99,6 +158,24 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     plt.ylabel('Waveform')
     plt.axis('tight')
 
+    aprops_to_get = ['meantime', 'stdtime', 'skewtime', 'kurtosistime', 'entropytime', 'maxAmp']
+    units = ['s', 's', '', '', '', '']
+    ax = plt.subplot(gs[0, sp_width:(sp_width+18)])
+    txt_space = 0.1
+    for k,aprop in enumerate(aprops_to_get):
+        aval = aprops[aprop]
+        if aval > 10:
+            txt = '%s: %d' % (aprop, aval)
+        else:
+            txt = '%s: %0.2f' % (aprop, aval)
+        txt += ' %s' % units[k]
+        plt.text(0.1, 1-((k+1)*txt_space), txt, fontsize=18)
+    ax.set_axis_off()
+    plt.xlim(0, 1)
+    plt.ylim(0, 1)
+    plt.xticks([])
+    plt.yticks([])
+
     ax = plt.subplot(gs[1, :sp_width])
     fi = (ps_freq > 0) & (ps_freq <= 8000.)
     plt.plot(ps_freq[fi]*1e-3, ps[fi], 'k-', linewidth=3., alpha=1.)
@@ -109,12 +186,67 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     plt.xlabel('Frequency (kHz)')
     plt.axis('tight')
 
+    aprops_to_get = ['meanspect', 'stdspect', 'skewspect', 'kurtosisspect', 'entropyspect', 'q1', 'q2', 'q3']
+    units = ['Hz', 'Hz', '', '', '', 'Hz', 'Hz', 'Hz']
+    ax = plt.subplot(gs[1, sp_width:(sp_width+18)])
+    for k,aprop in enumerate(aprops_to_get):
+        aval = aprops[aprop]
+        if aval > 10:
+            txt = '%s: %d' % (aprop, aval)
+        else:
+            txt = '%s: %0.2f' % (aprop, aval)
+        txt += ' %s' % units[k]
+        plt.text(0.1, 1-((k+1)*txt_space), txt, fontsize=18)
+    ax.set_axis_off()
+    plt.xlim(0, 1)
+    plt.ylim(0, 1)
+    plt.xticks([])
+    plt.yticks([])
+
     spec_colormap()
     ax = plt.subplot(gs[2, :sp_width])
     plot_spectrogram((spec_t[spec_si:spec_ei]-start_time)*1e3, spec_freq*1e-3, spec[:, spec_si:spec_ei], ax, colormap='SpectroColorMap', colorbar=False)
     plt.axhline(aprops['fund']*1e-3, color='k', linestyle='--', linewidth=3.0)
     plt.ylabel("Frequency (kHz")
     plt.xlabel('Time (ms)')
+
+    for k,aprop in enumerate(aprop_spec_props):
+
+        full_spec_freq, full_spec, centers, propvals, stypes = aprop_specs[aprop]
+
+        ax = plt.subplot(gs[k, (sp_width+20):])
+        full_spec_t = np.arange(full_spec.shape[1])
+        plot_spectrogram(full_spec_t, full_spec_freq*1e-3, full_spec, ax, colormap='SpectroColorMap', colorbar=False)
+        for c,st in zip(centers,stypes):
+            plt.text(c, 7., st, fontsize=20)
+        pstrs = list()
+        for p in propvals:
+            if p > 10:
+                pstrs.append('%d' % p)
+            else:
+                pstrs.append('%0.3f' % p)
+        plt.xticks(centers, pstrs)
+        plt.xlabel(aprop)
+
+    aprops_to_get = ['fund', 'fund2', 'sal', 'voice2percent', 'maxfund', 'minfund', 'cvfund']
+    units = ['Hz', 'Hz', '', '', 'Hz', 'Hz', 'Hz']
+    ax = plt.subplot(gs[2, sp_width:(sp_width + 18)])
+    for k, aprop in enumerate(aprops_to_get):
+        aval = aprops[aprop]
+        if aval > 10:
+            txt = '%s: %d' % (aprop, aval)
+        else:
+            txt = '%s: %0.2f' % (aprop, aval)
+        txt += ' %s' % units[k]
+        plt.text(0.1, 1 - ((k + 1) * txt_space), txt, fontsize=18)
+    ax.set_axis_off()
+    plt.xlim(0, 1)
+    plt.ylim(0, 1)
+    plt.xticks([])
+    plt.yticks([])
+
+    fname = os.path.join(get_this_dir(), 'figure.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
 
     plt.show()
 
