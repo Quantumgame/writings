@@ -4,6 +4,8 @@ import operator
 import numpy as np
 import matplotlib.pyplot as plt
 
+import networkx as nx
+
 from lasp.signal import power_spectrum
 from lasp.sound import temporal_envelope, spec_colormap, plot_spectrogram, log_transform
 
@@ -251,6 +253,77 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     plt.show()
 
 
+def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
+
+    Xz,good_indices = agg.remove_duplicates()
+    i = np.zeros(len(agg.df), dtype='bool')
+    i[good_indices] = True
+    aprops = agg.acoustic_props
+
+    df = agg.df[i]
+    dur = (df.end_time - df.start_time).values * 1e3
+    dur_q1 = np.percentile(dur, 1)
+    dur_q5 = np.percentile(dur, 5)
+    dur_q25 = np.percentile(dur, 25)
+    dur_q50 = np.percentile(dur, 50)
+
+    dur_thresh = 45
+    i = (dur > dur_thresh) & (dur < 500)
+
+    print '# of samples: %d' % i.sum()
+
+    # compute the correlation matrix
+    C = np.corrcoef(Xz.T)
+
+    # build an undirected graph from the correlation matrix
+    g = nx.Graph()
+    for aprop in aprops:
+        g.add_node(aprop, name=str(aprop))
+
+    # connect nodes if their cc is above a given threshold
+    cc_thresh = 0.0
+    for k,aprop1 in enumerate(aprops):
+        for j in range(k):
+            if np.abs(C[k, j]) > cc_thresh:
+                aprop2 = aprops[j]
+                g.add_edge(aprop1, aprop2, weight=abs(float(C[k, j])))
+
+    # pos = nx.spring_layout(g)
+    # nx.draw(g, pos, labels={aprop:aprop for aprop in aprops})
+    # plt.show()
+
+    nx.write_gexf(g, '/tmp/acoustic_feature_graph.gexf')
+
+    print 'Acoustic Feature Clusters:'
+    for grp in sorted(nx.connected_components(g), key=len, reverse=True):
+        print grp
+
+    figsize = (23, 12)
+    fig = plt.figure(figsize=figsize)
+    fig.subplots_adjust(left=0.07, right=0.99, top=0.90, bottom=0.20, hspace=0.01, wspace=0.01)
+    gs = plt.GridSpec(1, 100)
+
+    # plot data matrix
+    absmax = np.abs(Xz).max()
+    absmax = 4
+    ax = plt.subplot(gs[0, :40])
+    plt.imshow(Xz, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
+    xt = range(len(aprops))
+    plt.xticks(xt, agg.acoustic_props, rotation=90)
+    plt.colorbar()
+    plt.title('Z-scored Acoustic Feature Matrix')
+
+    ax = plt.subplot(gs[0, 50:])
+    plt.imshow(C, interpolation='nearest', aspect='auto', vmin=-1, vmax=1, cmap=plt.cm.seismic, origin='lower')
+    xt = range(len(aprops))
+    plt.xticks(xt, aprops, rotation=90)
+    plt.yticks(xt, aprops)
+    plt.colorbar(label='Correlation Coefficient')
+    plt.title('Acoustic Feature Correlation Matrix')
+
+    plt.show()
+
+
 if __name__ == '__main__':
 
     set_font()
@@ -258,4 +331,6 @@ if __name__ == '__main__':
     agg_file = '/auto/tdrive/mschachter/data/aggregate/biosound.h5'
     agg = AggregateBiosounds.load(agg_file)
 
-    plot_syllable_comps(agg)
+    # plot_syllable_comps(agg)
+    plot_acoustic_stats(agg)
+
