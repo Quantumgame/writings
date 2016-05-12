@@ -768,9 +768,12 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
 
     aprops_to_display = list(ALL_ACOUSTIC_PROPS)
 
-    decomps = ['self_spike_rate', 'self_locked']
-    sub_names = ['Spike Rate', 'LFP PSD']
-    sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP]
+    # decomps = ['self_spike_rate', 'self_locked']
+    # sub_names = ['Spike Rate', 'LFP PSD']
+    # sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP]
+    decomps = ['self_spike_rate', 'self_locked', 'self+cross_locked']
+    sub_names = ['Spike Rate', 'LFP PSD', 'PSD+Pairwise']
+    sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, COLOR_PURPLE_LFP_CROSS]
 
     df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'))
     bprop_data = list()
@@ -791,25 +794,43 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
     spike_r2 = [bdict['bd']['self_spike_rate'].mean() for bdict in bprop_data]
     spike_r2_std = [bdict['bd']['self_spike_rate'].std(ddof=1) for bdict in bprop_data]
 
+    if len(decomps) == 3:
+        pairwise_r2 = [bdict['bd']['self+cross_locked'].mean() for bdict in bprop_data]
+        pairwise_r2_std = [bdict['bd']['self+cross_locked'].std(ddof=1) for bdict in bprop_data]
+
     aprops_xticks = [bdict['aprop'] for bdict in bprop_data]
 
     figsize = (16, 6.5)
     fig = plt.figure(figsize=figsize)
     plt.subplots_adjust(top=0.95, bottom=0.15, left=0.05, right=0.99, hspace=0.20, wspace=0.20)
 
-    bar_x = np.arange(len(lfp_r2))
-    plt.bar(bar_x, spike_r2, yerr=spike_r2_std, width=0.4, color=COLOR_RED_SPIKE_RATE, alpha=0.9, ecolor='k')
-    plt.bar(bar_x+0.4, lfp_r2, yerr=lfp_r2_std, width=0.4, color=COLOR_BLUE_LFP, alpha=0.9, ecolor='k')
-    plt.ylabel('Decoder R2')
-    plt.xticks(bar_x+0.45, aprops_xticks, rotation=60, fontsize=12)
+    bar_inc = 0.4
+    bar_width = 0.4
+    if len(decomps) == 3:
+        bar_inc = 0.2
+        bar_width = 0.2
 
-    leg = custom_legend([COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP], ['Spike Rate', 'LFP PSD'])
-    plt.legend(handles=leg, loc='upper left')
+    bar_x = np.arange(len(lfp_r2))
+    plt.bar(bar_x, spike_r2, yerr=spike_r2_std, width=bar_width, color=COLOR_RED_SPIKE_RATE, alpha=0.9, ecolor='k')
+    plt.bar(bar_x+bar_inc, lfp_r2, yerr=lfp_r2_std, width=bar_width, color=COLOR_BLUE_LFP, alpha=0.9, ecolor='k')
+    if len(decomps) == 3:
+        plt.bar(bar_x + 2*bar_inc, pairwise_r2, yerr=pairwise_r2_std, width=bar_width, color=COLOR_PURPLE_LFP_CROSS, alpha=0.9, ecolor='k')
+
+    plt.ylabel('Decoder R2')
+    plt.xticks(bar_x+0.45, aprops_xticks, rotation=90, fontsize=12)
+
+    leg = custom_legend(sub_clrs, sub_names)
+    plt.legend(handles=leg, loc='upper right')
     plt.axis('tight')
     plt.xlim(-0.5, bar_x.max() + 1)
     plt.ylim(0, 0.75)
+    if len(decomps) == 3:
+        plt.ylim(0, 1.)
 
     fname = os.path.join(get_this_dir(), 'decoder_perf_barplots.svg')
+    if len(decomps) == 3:
+        fname = os.path.join(get_this_dir(), 'decoder_perf_barplots_all.svg')
+
     plt.savefig(fname, facecolor='w', edgecolor='none')
 
 
