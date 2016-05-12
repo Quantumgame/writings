@@ -11,7 +11,8 @@ from lasp.sound import plot_spectrogram, spec_colormap
 from zeebeez.transforms.biosound import BiosoundTransform
 from zeebeez.transforms.pairwise_cf import PairwiseCFTransform
 from zeebeez.transforms.stim_event import StimEventTransform
-from zeebeez.utils import ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, DISPLAYED_ACOUSTIC_PROPS
+from zeebeez.utils import ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, DISPLAYED_ACOUSTIC_PROPS, \
+    ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE
 
 
 def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/mschachter/data'):
@@ -19,7 +20,7 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
     bdir = os.path.join(data_dir, bird)
     tdir = os.path.join(bdir, 'transforms')
 
-    aprops = DISPLAYED_ACOUSTIC_PROPS
+    aprops = ALL_ACOUSTIC_PROPS
 
     # load the BioSound
     bs_file = os.path.join(tdir, 'BiosoundTransform_%s.h5' % bird)
@@ -171,7 +172,7 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
 
 def plot_full_data(d, syllable_index):
 
-    aprops_names = {'sal':'sal', 'meanspect':'freq\nmean', 'entropyspect':'freq\nentropy', 'q2':'freq\nmedian', 'maxAmp':'max\namp', 'skewtime':'time\nskew'}
+
 
     syllable_start = d['syllable_props'][syllable_index]['start_time'] - 0.020
     syllable_end = d['syllable_props'][syllable_index]['end_time'] + 0.030
@@ -182,9 +183,10 @@ def plot_full_data(d, syllable_index):
 
     gs = plt.GridSpec(100, 100)
     left_width = 55
-    top_height = 15
-    middle_height = 35
-    bottom_height = 40
+    top_height = 30
+    middle_height = 40
+    # bottom_height = 40
+    top_bottom_sep = 20
 
     # plot the spectrogram
     ax = plt.subplot(gs[:top_height+1, :left_width])
@@ -201,7 +203,7 @@ def plot_full_data(d, syllable_index):
     lfp_mean = d['lfp'].mean(axis=0)
     lfp_t = np.arange(lfp_mean.shape[1]) / sr
     nelectrodes,nt = lfp_mean.shape
-    gs_i = top_height + 5
+    gs_i = top_height + top_bottom_sep
     gs_e = gs_i + middle_height + 1
 
     ax = plt.subplot(gs[gs_i:gs_e, :left_width])
@@ -218,6 +220,7 @@ def plot_full_data(d, syllable_index):
     plt.xlabel('Time (s)')
 
     # plot the PSTH
+    """
     gs_i = gs_e + 5
     gs_e = gs_i + bottom_height + 1
     ax = plt.subplot(gs[gs_i:gs_e, :left_width])
@@ -243,22 +246,30 @@ def plot_full_data(d, syllable_index):
 
     plt.axvline(syllable_start, c='k', linestyle='--', linewidth=3.0, alpha=0.7)
     plt.axvline(syllable_end, c='k', linestyle='--', linewidth=3.0, alpha=0.7)
+    """
 
     # plot the biosound properties
     sprops = d['syllable_props'][syllable_index]
-    aprops = DISPLAYED_ACOUSTIC_PROPS
+    aprops = ALL_ACOUSTIC_PROPS
 
     vals = [sprops[a] for a in aprops]
     ax = plt.subplot(gs[:top_height, (left_width+5):])
     plt.axhline(0, c='k')
-    plt.bar(range(len(aprops)), vals, color='#c0c0c0')
+    for k,(aprop,v) in enumerate(zip(aprops,vals)):
+        bx = k
+        rgb = np.array(ACOUSTIC_PROP_COLORS_BY_TYPE[aprop]).astype('int')
+        clr_hex = '#%s' % "".join(map(chr, rgb)).encode('hex')
+        print 'clr=',clr_hex
+        plt.bar(bx, v, color=clr_hex, alpha=0.7)
+
+    # plt.bar(range(len(aprops)), vals, color='#c0c0c0')
     plt.axis('tight')
     plt.ylim(-1.5, 1.5)
-    plt.xticks(np.arange(len(aprops))+0.5, [aprops_names[a] for a in aprops])
+    plt.xticks(np.arange(len(aprops))+0.5, aprops, rotation=90)
     plt.ylabel('Z-score')
 
     # plot the LFP power spectra
-    gs_i = top_height + 5
+    gs_i = top_height + top_bottom_sep
     gs_e = gs_i + middle_height + 1
 
     f = d['psd_freq']
@@ -271,6 +282,7 @@ def plot_full_data(d, syllable_index):
     plt.ylabel('Electrode')
 
     # plot the PSTH power spectra
+    """
     gs_i = gs_e + 5
     gs_e = gs_i + bottom_height + 1
 
@@ -293,6 +305,7 @@ def plot_full_data(d, syllable_index):
         emean = elocs.mean()
         ytick_locs.append(emean+0.5)
     plt.yticks(ytick_locs, d['electrode_order'])
+    """
 
     fname = os.path.join(get_this_dir(), 'figure.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')

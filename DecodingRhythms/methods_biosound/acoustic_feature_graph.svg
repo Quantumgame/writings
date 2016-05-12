@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   contentScriptType="text/ecmascript"
+   width="795.0"
+   zoomAndPan="magnify"
+   contentStyleType="text/css"
+   viewBox="-352.000000 -200.000000 795.000000 588.000000"
+   height="588.0"
+   preserveAspectRatio="xMidYMid meet"
+   version="1.1"
+   id="svg2"
+   inkscape:version="0.91 r"
+   sodipodi:docname="acoustic_feature_graph.svg">
+  <metadata
+     id="metadata195">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs193" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1855"
+     inkscape:window-height="1056"
+     id="namedview191"
+     showgrid="false"
+     inkscape:zoom="0.80272109"
+     inkscape:cx="427.85924"
+     inkscape:cy="297.67545"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <g
+     id="g3715">
+    <path
+       d="m -279.6813,-16.723139 c 4.33285,28.901972 -32.52085,78.754206 -61.42279,83.087061"
+       class="skewspect q1"
+       id="path5"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:3.40377808;stroke-opacity:1" />
+    <path
+       d="m -279.6813,-16.723139 c 49.12719,33.870054 72.01294,158.365949 38.14288,207.493139"
+       class="skewspect q3"
+       id="path7"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:3.1776638;stroke-opacity:1" />
+    <path
+       d="m -279.6813,-16.723139 c 22.32818,41.212534 -5.99839,136.523569 -47.21091,158.851739"
+       class="skewspect q2"
+       id="path9"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:3.5899148;stroke-opacity:1" />
+    <path
+       d="m -279.6813,-16.723139 c -22.44944,-32.746366 -7.004,-115.540031 25.74237,-137.989441"
+       class="skewspect kurtosisspect"
+       id="path11"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:2.05491996;stroke-opacity:1" />
+    <path
+       d="m -279.6813,-16.723139 c 38.04188,-7.942678 107.01875,37.206146 114.96144,75.248045"
+       class="skewspect meanspect"
+       id="path13"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:3.6182127;stroke-opacity:1" />
+    <path
+       d="m -341.10409,66.363922 c 44.79437,4.968079 104.53373,79.611738 99.56567,124.406078"
+       class="q1 q3"
+       id="path15"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:3.69880676;stroke-opacity:1" />
+    <path
+       d="m -341.10409,66.363922 c 17.9953,12.310562 26.52243,57.769368 14.21188,75.764678"
+       class="q1 q2"
+       id="path17"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:4.4178915;stroke-opacity:1" />
+    <path
+       d="M -341.10409,66.363922 C -244.93805,46.910023 -71.508102,161.97829 -52.054211,258.14435"
+       class="q1 voice2percent"
+       id="path19"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#7f8c00;stroke-width:1.39058936;stroke-opacity:1" />
+    <path
+       d="m -341.10409,66.363922 c 33.70904,-36.84465 139.53958,-41.548061 176.38423,-7.839016"
+       class="q1 meanspect"
+       id="path21"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:4.5517664;stroke-opacity:1" />
+    <path
+       d="m -241.53842,190.77 c -26.79904,7.34247 -78.01129,-21.84236 -85.35379,-48.6414"
+       class="q3 q2"
+       id="path23"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:4.49408293;stroke-opacity:1" />
+    <path
+       d="M -241.53842,190.77 C -260.32776,81.987068 -125.33734,-109.37133 -16.554405,-128.16066"
+       class="q3 stdspect"
+       id="path25"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:2.70993948;stroke-opacity:1" />
+    <path
+       d="M -241.53842,190.77 C -180.55453,121.41973 14.946671,108.87014 84.296944,169.85402"
+       class="q3 sal"
+       id="path27"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#7f8c00;stroke-width:1.8073386;stroke-opacity:1" />
+    <path
+       d="M -241.53842,190.77 C -218.90948,81.100227 -20.461388,-49.461014 89.208389,-26.832069"
+       class="q3 entropyspect"
+       id="path29"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:2.6870904;stroke-opacity:1" />
+    <path
+       d="m -241.53842,190.77 c 51.37172,-24.42198 165.062239,16.00264 189.484209,67.37435"
+       class="q3 voice2percent"
+       id="path31"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#7f8c00;stroke-width:1.44194269;stroke-opacity:1" />
+    <path
+       d="m -241.53842,190.77 c -11.08531,-41.81273 35.00583,-121.159786 76.81856,-132.245094"
+       class="q3 meanspect"
+       id="path33"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:4.49366331;stroke-opacity:1" />
+    <path
+       d="m -326.89221,142.1286 c 8.0097,-116.125419 194.21239,-278.29898 310.337805,-270.28926"
+       class="q2 stdspect"
+       id="path35"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:1.26255655;stroke-opacity:1" />
+    <path
+       d="M -326.89221,142.1286 C -239.1093,65.43586 7.604196,82.071098 84.296944,169.85402"
+       class="q2 sal"
+       id="path37"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#7f8c00;stroke-width:1.30449235;stroke-opacity:1" />
+    <path
+       d="M -326.89221,142.1286 C -277.46423,25.116356 -27.80386,-76.260056 89.208389,-26.832069"
+       class="q2 entropyspect"
+       id="path39"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:1.80366886;stroke-opacity:1" />
+    <path
+       d="m -326.89221,142.1286 c 78.17074,-31.76445 243.073545,37.84499 274.837999,116.01575"
+       class="q2 voice2percent"
+       id="path41"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#7f8c00;stroke-width:1.55794621;stroke-opacity:1" />
+    <path
+       d="m -326.89221,142.1286 c 15.71374,-49.155211 113.01715,-99.31742 162.17235,-83.603694"
+       class="q2 meanspect"
+       id="path43"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:4.73045015;stroke-opacity:1" />
+    <path
+       d="M -71.763557,377.89569 C -82.15979,305.07526 11.476513,180.25026 84.296944,169.85402"
+       class="cvfund sal"
+       id="path45"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:1.28228128;stroke-opacity:1" />
+    <path
+       d="m -71.763557,377.89569 c -11.684784,-13.51187 -8.944184,-51.30682 4.567672,-62.99161"
+       class="cvfund fund2"
+       id="path47"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:2.07984734;stroke-opacity:1" />
+    <path
+       d="M -71.763557,377.89569 C -47.442017,330.63019 59.93853,296.21426 107.20403,320.5358"
+       class="cvfund minfund"
+       id="path49"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:2.05024624;stroke-opacity:1" />
+    <path
+       d="M -71.763557,377.89569 C -36.587746,341.93216 70.121231,340.75064 106.08474,375.92645"
+       class="cvfund fund"
+       id="path51"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:3.3696866;stroke-opacity:1" />
+    <path
+       d="M -71.763557,377.89569 C -7.602627,293.43088 215.33598,262.9751 299.80078,327.13602"
+       class="cvfund maxfund"
+       id="path53"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:3.91999602;stroke-opacity:1" />
+    <path
+       d="m -71.763557,377.89569 c -20.0084,-27.89212 -8.182793,-99.74295 19.709346,-119.75134"
+       class="cvfund voice2percent"
+       id="path55"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:1.59440875;stroke-opacity:1" />
+    <path
+       d="m -253.93893,-154.71258 c 94.20556,-43.05336 300.093952,33.67494 343.147319,127.880511"
+       class="kurtosisspect entropyspect"
+       id="path57"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:1.51958084;stroke-opacity:1" />
+    <path
+       d="m -253.93893,-154.71258 c 52.78727,-42.16654 195.218006,-26.23536 237.384525,26.55192"
+       class="kurtosisspect stdspect"
+       id="path59"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:1.42797482;stroke-opacity:1" />
+    <path
+       d="M -16.554405,-128.16066 C 63.218803,-88.727997 123.72961,90.080811 84.296944,169.85402"
+       class="stdspect sal"
+       id="path61"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#7f8c00;stroke-width:2.03855968;stroke-opacity:1" />
+    <path
+       d="M -16.554405,-128.16066 C 24.863873,-129.0475 88.321548,-68.250343 89.208389,-26.832069"
+       class="stdspect entropyspect"
+       id="path63"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:3.45048928;stroke-opacity:1" />
+    <path
+       d="M -16.554405,-128.16066 C -8.850388,-61.190453 -97.749664,50.820885 -164.71986,58.524906"
+       class="stdspect meanspect"
+       id="path65"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:1.37909269;stroke-opacity:1" />
+    <path
+       d="M 84.296944,169.85402 C 45.942013,129.53451 48.888874,11.522864 89.208389,-26.832069"
+       class="sal entropyspect"
+       id="path67"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#7f8c00;stroke-width:3.7851367;stroke-opacity:1" />
+    <path
+       d="M 84.296944,169.85402 C 12.227757,197.39156 -137.18233,130.59409 -164.71986,58.524906"
+       class="sal meanspect"
+       id="path69"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#7f8c00;stroke-width:1.45880878;stroke-opacity:1" />
+    <path
+       d="M -67.195885,314.90408 C 8.649839,243.95113 228.84782,251.2903 299.80078,327.13602"
+       class="fund2 maxfund"
+       id="path71"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:1.76854086;stroke-opacity:1" />
+    <path
+       d="m -67.195885,314.90408 c 46.860598,-22.45166 150.82898,14.16178 173.280625,61.02237"
+       class="fund2 fund"
+       id="path73"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:1.40589118;stroke-opacity:1" />
+    <path
+       d="m -67.195885,314.90408 c -8.323608,-14.38028 0.761391,-48.43609 15.141674,-56.75973"
+       class="fund2 voice2percent"
+       id="path75"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:1.99408114;stroke-opacity:1" />
+    <path
+       d="m 432.73285,58.668976 c 10.00629,10.068275 9.91327,40.180107 -0.155,50.186384"
+       class="stdtime meantime"
+       id="path77"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#0080ff;stroke-width:4.97988272;stroke-opacity:1" />
+    <path
+       d="M 89.208389,-26.832069 C 55.494133,41.024979 -96.862816,92.239166 -164.71986,58.524906"
+       class="entropyspect meanspect"
+       id="path79"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#ff8000;stroke-width:1.97383118;stroke-opacity:1" />
+    <path
+       d="m 107.20403,320.5358 c 39.83938,-37.19931 155.39744,-33.23917 192.59675,6.60022"
+       class="minfund maxfund"
+       id="path81"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:2.47245502;stroke-opacity:1" />
+    <path
+       d="m 107.20403,320.5358 c 10.85427,11.30197 10.1827,44.53637 -1.11929,55.39065"
+       class="minfund fund"
+       id="path83"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:3.86414051;stroke-opacity:1" />
+    <path
+       d="m 251.76019,94.715935 c 56.09213,36.875895 84.91648,176.327945 48.04059,232.420085"
+       class="maxAmp maxfund"
+       id="path85"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#004c00;stroke-width:1.44040918;stroke-opacity:1" />
+    <path
+       d="M 251.76019,94.715935 C 278.86722,180.09312 191.46194,348.81946 106.08474,375.92645"
+       class="maxAmp fund"
+       id="path87"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#004c00;stroke-width:1.26353967;stroke-opacity:1" />
+    <path
+       d="M 251.76019,94.715935 C 241.7774,70.375351 263.31415,18.890337 287.65472,8.90757"
+       class="maxAmp entropytime"
+       id="path89"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#00407f;stroke-width:2.04091716;stroke-opacity:1" />
+    <path
+       d="M 251.76019,94.715935 C 161.22597,170.77374 -88.662056,149.05913 -164.71986,58.524906"
+       class="maxAmp meanspect"
+       id="path91"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#7f4000;stroke-width:1.26916313;stroke-opacity:1" />
+    <path
+       d="m 106.08474,375.92645 c 28.98511,-48.50128 145.21473,-77.77557 193.71604,-48.79043"
+       class="fund maxfund"
+       id="path93"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:4.30304956;stroke-opacity:1" />
+    <path
+       d="M 106.08474,375.92645 C 50.900528,383.9978 -43.982841,313.32855 -52.054211,258.14435"
+       class="fund voice2percent"
+       id="path95"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:1.52047622;stroke-opacity:1" />
+    <path
+       d="M 299.80078,327.13602 C 215.63144,383.70868 4.51845,342.31369 -52.054211,258.14435"
+       class="maxfund voice2percent"
+       id="path97"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#009900;stroke-width:1.76713574;stroke-opacity:1" />
+    <path
+       d="m 329.22174,-189.48247 c 14.59976,22.27489 3.0871,77.58686 -19.18777,92.186633"
+       class="kurtosistime skewtime"
+       id="path99"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#0080ff;stroke-width:2.68174791;stroke-opacity:1" />
+    <path
+       d="M 310.03397,-97.295837 C 326.7988,-71.579315 313.37128,-7.857263 287.65472,8.90757"
+       class="skewtime entropytime"
+       id="path101"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#0080ff;stroke-width:1.89395022;stroke-opacity:1" />
+    <path
+       d="M -52.054211,258.14435 C -114.51123,240.75359 -182.11063,120.98193 -164.71986,58.524906"
+       class="voice2percent meanspect"
+       id="path103"
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#7f8c00;stroke-width:1.58347797;stroke-opacity:1" />
+    <circle
+       r="10"
+       cx="-279.6813"
+       class="skewspect"
+       cy="-16.723139"
+       id="circle106"
+       style="fill:#ff8000;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="-341.1041"
+       class="q1"
+       cy="66.363922"
+       id="circle108"
+       style="fill:#ff8000;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="-241.53842"
+       class="q3"
+       cy="190.77"
+       id="circle110"
+       style="fill:#ff8000;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="-326.89221"
+       class="q2"
+       cy="142.1286"
+       id="circle112"
+       style="fill:#ff8000;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="-71.763557"
+       class="cvfund"
+       cy="377.89569"
+       id="circle114"
+       style="fill:#009900;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="-253.93893"
+       class="kurtosisspect"
+       cy="-154.71259"
+       id="circle116"
+       style="fill:#ff8000;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="-16.554405"
+       class="stdspect"
+       cy="-128.16066"
+       id="circle118"
+       style="fill:#ff8000;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="84.296944"
+       class="sal"
+       cy="169.85402"
+       id="circle120"
+       style="fill:#009900;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="-67.195885"
+       class="fund2"
+       cy="314.90408"
+       id="circle122"
+       style="fill:#009900;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="432.73285"
+       class="stdtime"
+       cy="58.668976"
+       id="circle124"
+       style="fill:#0080ff;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="89.208389"
+       class="entropyspect"
+       cy="-26.832069"
+       id="circle126"
+       style="fill:#ff8000;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="107.20403"
+       class="minfund"
+       cy="320.5358"
+       id="circle128"
+       style="fill:#009900;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="251.76019"
+       class="maxAmp"
+       cy="94.715935"
+       id="circle130"
+       style="fill:#000000;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="432.57785"
+       class="meantime"
+       cy="108.85536"
+       id="circle132"
+       style="fill:#0080ff;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="106.08474"
+       class="fund"
+       cy="375.92645"
+       id="circle134"
+       style="fill:#009900;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="299.80078"
+       class="maxfund"
+       cy="327.13602"
+       id="circle136"
+       style="fill:#009900;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="329.22174"
+       class="kurtosistime"
+       cy="-189.48247"
+       id="circle138"
+       style="fill:#0080ff;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="310.03397"
+       class="skewtime"
+       cy="-97.295837"
+       id="circle140"
+       style="fill:#0080ff;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="287.65472"
+       class="entropytime"
+       cy="8.9075699"
+       id="circle142"
+       style="fill:#0080ff;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="-52.054211"
+       class="voice2percent"
+       cy="258.14435"
+       id="circle144"
+       style="fill:#009900;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <circle
+       r="10"
+       cx="-164.71986"
+       class="meanspect"
+       cy="58.524906"
+       id="circle146"
+       style="fill:#ff8000;fill-opacity:0.25;stroke:#000000;stroke-width:1;stroke-opacity:0.25" />
+    <text
+       font-size="24"
+       x="-279.6813"
+       y="-11.235834"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="skewspect"
+       id="text149">skewspect</text>
+    <text
+       font-size="24"
+       x="-341.1041"
+       y="71.868805"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="q1"
+       id="text151">q1</text>
+    <text
+       font-size="24"
+       x="-241.53842"
+       y="196.27489"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="q3"
+       id="text153">q3</text>
+    <text
+       font-size="24"
+       x="-326.89221"
+       y="147.63348"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="q2"
+       id="text155">q2</text>
+    <text
+       font-size="24"
+       x="-71.763557"
+       y="382.33417"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="cvfund"
+       id="text157">cvfund</text>
+    <text
+       font-size="24"
+       x="-253.93893"
+       y="-149.22528"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="kurtosisspect"
+       id="text159">kurtosisspect</text>
+    <text
+       font-size="24"
+       x="-16.554405"
+       y="-122.67336"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="stdspect"
+       id="text161">stdspect</text>
+    <text
+       font-size="24"
+       x="84.296944"
+       y="174.21925"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="sal"
+       id="text163">sal</text>
+    <text
+       font-size="24"
+       x="-67.195885"
+       y="319.34256"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="fund2"
+       id="text165">fund2</text>
+    <text
+       font-size="24"
+       x="432.73285"
+       y="63.03421"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="stdtime"
+       id="text167">stdtime</text>
+    <text
+       font-size="24"
+       x="89.208389"
+       y="-21.371132"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="entropyspect"
+       id="text169">entropyspect</text>
+    <text
+       font-size="24"
+       x="107.20403"
+       y="324.97427"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="minfund"
+       id="text171">minfund</text>
+    <text
+       font-size="24"
+       x="251.76019"
+       y="100.20324"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="maxAmp"
+       id="text173">maxAmp</text>
+    <text
+       font-size="24"
+       x="432.57785"
+       y="113.2206"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="meantime"
+       id="text175">meantime</text>
+    <text
+       font-size="24"
+       x="106.08474"
+       y="380.36493"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="fund"
+       id="text177">fund</text>
+    <text
+       font-size="24"
+       x="299.80078"
+       y="331.57449"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="maxfund"
+       id="text179">maxfund</text>
+    <text
+       font-size="24"
+       x="329.22174"
+       y="-185.11723"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="kurtosistime"
+       id="text181">kurtosistime</text>
+    <text
+       font-size="24"
+       x="310.03397"
+       y="-92.930603"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="skewtime"
+       id="text183">skewtime</text>
+    <text
+       font-size="24"
+       x="287.65472"
+       y="14.465187"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="entropytime"
+       id="text185">entropytime</text>
+    <text
+       font-size="24"
+       x="-52.054211"
+       y="263.64923"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="voice2percent"
+       id="text187">voice2percent</text>
+    <text
+       font-size="24"
+       x="-164.71986"
+       y="63.915531"
+       style="font-size:24px;font-family:Arial;text-anchor:middle;fill:#000000"
+       class="meanspect"
+       id="text189">meanspect</text>
+  </g>
+</svg>

@@ -16,7 +16,7 @@ from neosound.sound_manager import SoundManager
 from utils import set_font, get_this_dir
 
 from zeebeez.aggregators.biosound import AggregateBiosounds
-from zeebeez.utils import ALL_ACOUSTIC_PROPS
+from zeebeez.utils import ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE
 
 
 def get_syllable_props(agg, stim_id, syllable_order, data_dir):
@@ -275,17 +275,21 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     # compute the correlation matrix
     C = np.corrcoef(Xz.T)
 
+
     # build an undirected graph from the correlation matrix
     g = nx.Graph()
     for aprop in aprops:
-        g.add_node(aprop, name=str(aprop))
+        rgb = ACOUSTIC_PROP_COLORS_BY_TYPE[aprop]
+        viz = {'color':{'r':rgb[0], 'g':rgb[1], 'b':rgb[2], 'a':0}}
+        g.add_node(aprop, name=str(aprop), viz=viz)
 
     # connect nodes if their cc is above a given threshold
-    cc_thresh = 0.0
+    cc_thresh = 0.25
     for k,aprop1 in enumerate(aprops):
         for j in range(k):
             if np.abs(C[k, j]) > cc_thresh:
                 aprop2 = aprops[j]
+                viz = {'color': {'r': 0, 'g': .5, 'b': 0, 'a': 0.7}}
                 g.add_edge(aprop1, aprop2, weight=abs(float(C[k, j])))
 
     # pos = nx.spring_layout(g)
@@ -320,6 +324,9 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     plt.yticks(xt, aprops)
     plt.colorbar(label='Correlation Coefficient')
     plt.title('Acoustic Feature Correlation Matrix')
+
+    fname = os.path.join(get_this_dir(), 'acoustic_data_and_corr_matrix.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
 
     plt.show()
 
