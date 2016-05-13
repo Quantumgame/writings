@@ -164,24 +164,27 @@ def plot_maps(agg):
         df_f = df_f[gi]
         electrode_props.append({'f':int(f), 'df':df_f})
 
-    def _plot_map(_pdata, _ax, _prop, _cmap, _maxval, _bgcolor=None, _perf_alpha=False):
+    def _plot_map(_pdata, _ax, _prop, _cmap, _maxval, _bgcolor=None, _perf_alpha=False, _plot_region=False, _msize=8):
         if _bgcolor is not None:
             _ax.set_axis_bgcolor(_bgcolor)
         _pval = _pdata['df'][_prop].values
         _x = _pdata['df'].dm.values
         _y = _pdata['df'].dl.values
+        _regs = _pdata['df']['reg'].values
 
         plt.sca(_ax)
         _alpha = np.ones([len(_pval)])
         if _perf_alpha:
             _alpha = _pdata['df']['%s_perf' % _prop].values
             _alpha /= _alpha.max()
+            _alpha[_alpha > 0.9] = 1.
             _clrs = _cmap(_pval / _maxval)
         else:
             _clrs = _cmap(_pval / _maxval)
 
         for k,(_xx,_yy) in enumerate(zip(_x, _y)):
-            plt.plot(_xx, _yy, 'o', c=_clrs[k], alpha=_alpha[k], markersize=8)
+            plt.plot(_xx, _yy, 'o', c=_clrs[k], alpha=_alpha[k], markersize=_msize)
+            plt.text(_xx, _yy, _regs[k], fontsize=8, color='w', alpha=0.7)
 
         plt.title('f=%d' % _pdata['f'])
 
@@ -200,6 +203,7 @@ def plot_maps(agg):
 
         return _rgb
 
+    """
     def _plot_r2_map(_pdata, _ax): _plot_map(_pdata, _ax, 'r2', magma, _maxval=0.30, _bgcolor='black')
     multi_plot(electrode_props, _plot_r2_map, nrows=3, ncols=4, figsize=(23, 13))
     plt.suptitle('Encoder Performance (R2)')
@@ -212,6 +216,28 @@ def plot_maps(agg):
         plt.suptitle('%s Univariate Encoder Weights' % aprop)
         fname = os.path.join(get_this_dir(), 'map_allfreq_%s.png' % aprop)
         plt.savefig(fname, facecolor='w', edgecolor='none')
+    """
+
+    edict = [e for e in electrode_props if e['f'] == 33][0]
+
+    # make a plot for just saliency at 33Hz
+    aprops = {'sal':'Saliency', 'meanspect':'Spectral Mean', 'maxAmp':'Maximum Amplitude'}
+
+    set_font()
+    for aprop,aname in aprops.items():
+        figsize = (12, 10)
+        fig = plt.figure(figsize=figsize)
+        ax = plt.subplot(111)
+        ax.set_axis_bgcolor('black')
+        _plot_map(edict, ax, aprop, rb_cmap, _maxval=absmax[aprop], _perf_alpha=True, _msize=12)
+        plt.xlabel('Distance from midline (mm)')
+        plt.ylabel('Distance from L2A (mm)')
+        plt.title('%s Encoder Weights (33Hz)' % aname)
+
+        fname = os.path.join(get_this_dir(), '%s_encoder_weights.svg' % aprop)
+        plt.savefig(fname, facecolor='w', edgecolor='none')
+
+    plt.show()
 
     """
     # make a plot just for r2 at 33 Hz
