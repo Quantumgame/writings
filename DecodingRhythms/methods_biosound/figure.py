@@ -13,7 +13,7 @@ from lasp.timefreq import gaussian_stft
 
 from neosound.sound_store import HDF5Store
 from neosound.sound_manager import SoundManager
-from utils import set_font, get_this_dir
+from DecodingRhythms.utils import set_font, get_this_dir
 
 from zeebeez.aggregators.biosound import AggregateBiosounds
 from zeebeez.utils import ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE
@@ -35,7 +35,7 @@ def get_syllable_props(agg, stim_id, syllable_order, data_dir):
     sfile = os.path.join(data_dir, bird, 'stims.h5')
 
     # get the raw sound pressure waveform
-    sound_manager = SoundManager(HDF5Store, sfile, db_args={'read_only': True})
+    sound_manager = SoundManager(HDF5Store, sfile, read_only=True, db_args={'read_only': True})
     wave = sound_manager.reconstruct(stim_id)
     wave_sr = wave.samplerate
     wave = np.array(wave).squeeze()
@@ -65,11 +65,17 @@ def get_syllable_props(agg, stim_id, syllable_order, data_dir):
             }
 
 
-def get_syllable_examples(agg, aprop, data_dir):
+def get_syllable_examples(agg, aprop, data_dir, bird=None):
+    
+    if bird is not None:
+        i = agg.df.bird == bird
+        df = agg.df[i]
+    else:
+        df = agg.df
 
     aprop_index = list(agg.acoustic_props).index(aprop)
     dlist = list()
-    for stype,stim_id,syllable_order,xindex in zip(agg.df.stim_type.values, agg.df.stim_id.values, agg.df.syllable_order.values, agg.df.xindex.values):
+    for stype,stim_id,syllable_order,xindex in zip(df.stim_type.values, df.stim_id.values, df.syllable_order.values, df.xindex.values):
         if stype in ['song', 'Ag', 'Di', 'mlnoise']:
             continue
         dlist.append( (stype, stim_id, syllable_order, agg.Xraw[xindex, aprop_index]))
@@ -137,9 +143,9 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     spec_ei = sprops['spec_ei']
 
     aprop_specs = dict()
-    aprop_spec_props = ['maxAmp', 'meanspect', 'sal']
+    aprop_spec_props = ['entropytime', 'meanspect', 'sal']
     for aprop in aprop_spec_props:
-        aprop_specs[aprop] = get_syllable_examples(agg, aprop, data_dir)
+        aprop_specs[aprop] = get_syllable_examples(agg, aprop, data_dir, bird='GreBlu9508M')
 
     figsize = (23, 13)
     fig = plt.figure(figsize=figsize, facecolor='w')
@@ -248,7 +254,7 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     plt.yticks([])
 
     fname = os.path.join(get_this_dir(), 'figure.svg')
-    plt.savefig(fname, facecolor='w', edgecolor='none')
+    # plt.savefig(fname, facecolor='w', edgecolor='none')
 
     plt.show()
 
@@ -274,7 +280,6 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     # compute the correlation matrix
     C = np.corrcoef(Xz.T)
-
 
     # build an undirected graph from the correlation matrix
     g = nx.Graph()
@@ -337,7 +342,18 @@ if __name__ == '__main__':
 
     agg_file = '/auto/tdrive/mschachter/data/aggregate/biosound.h5'
     agg = AggregateBiosounds.load(agg_file)
+    durs = agg.df.end_time = agg.df.start_time
+    dlist = list(zip(agg.df.stim_type.values, durs.values))
+    dlist.sort(key=operator.itemgetter(-1))
+    for stype,d in dlist:
+        print '%s   %f' % (stype, d)
+    # print 'max duration=%f' % durs.max()
+
+    dd = dict()
+    for b,s in zip(agg.df.bird, agg.df.stim_id):
+        dd[(b,s)] = True
+    print '# of unique stimuli: %d' % len(dd)
 
     # plot_syllable_comps(agg)
-    plot_acoustic_stats(agg)
+    # plot_acoustic_stats(agg)
 
