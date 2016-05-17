@@ -11,7 +11,7 @@ from scipy.interpolate import griddata
 from lasp.plots import custom_legend, grouped_boxplot, multi_plot
 
 from DecodingRhythms.utils import set_font, get_this_dir, clean_region, COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, \
-    COLOR_PURPLE_LFP_CROSS
+    COLOR_PURPLE_LFP_CROSS, COLOR_CRIMSON_SPIKE_SYNC
 from lasp.colormaps import magma
 from zeebeez.aggregators.biosound import AggregateBiosounds
 
@@ -34,7 +34,7 @@ def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
     g = agg.df.groupby(['bird', 'block', 'segment', 'hemi', 'decomp'])
     for (bird,block,seg,hemi,decomp),gdf in g:
 
-        if decomp not in ['self_locked', 'self_spike_rate', 'self+cross_locked']:
+        if decomp not in ['self_locked', 'self_spike_rate', 'self+cross_locked', 'self_spike_rate+sync']:
             continue
 
         site = '%s_%s_%s_%s' % (bird, block, seg, hemi)
@@ -771,9 +771,9 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
     # decomps = ['self_spike_rate', 'self_locked']
     # sub_names = ['Spike Rate', 'LFP PSD']
     # sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP]
-    decomps = ['self_spike_rate', 'self_locked', 'self+cross_locked']
-    sub_names = ['Spike Rate', 'LFP PSD', 'PSD+Pairwise']
-    sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, COLOR_PURPLE_LFP_CROSS]
+    decomps = ['self_spike_rate', 'self_locked', 'self_spike_rate+sync', 'self+cross_locked']
+    sub_names = ['Spike Rate', 'LFP PSD', 'Spike Rate+Sync', 'PSD+Pairwise']
+    sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, COLOR_CRIMSON_SPIKE_SYNC, COLOR_PURPLE_LFP_CROSS]
 
     df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'))
     bprop_data = list()
@@ -794,9 +794,12 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
     spike_r2 = [bdict['bd']['self_spike_rate'].mean() for bdict in bprop_data]
     spike_r2_std = [bdict['bd']['self_spike_rate'].std(ddof=1) for bdict in bprop_data]
 
-    if len(decomps) == 3:
+    if len(decomps) == 4:
         pairwise_r2 = [bdict['bd']['self+cross_locked'].mean() for bdict in bprop_data]
         pairwise_r2_std = [bdict['bd']['self+cross_locked'].std(ddof=1) for bdict in bprop_data]
+        spike_sync_r2 = [bdict['bd']['self_spike_rate+sync'].mean() for bdict in bprop_data]
+        spike_sync_r2_std = [bdict['bd']['self_spike_rate+sync'].std(ddof=1) for bdict in bprop_data]
+        print 'spike_sync_r2=',spike_sync_r2
 
     aprops_xticks = [bdict['aprop'] for bdict in bprop_data]
 
@@ -804,17 +807,19 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
     fig = plt.figure(figsize=figsize)
     plt.subplots_adjust(top=0.95, bottom=0.15, left=0.05, right=0.99, hspace=0.20, wspace=0.20)
 
-    bar_inc = 0.4
     bar_width = 0.4
-    if len(decomps) == 3:
-        bar_inc = 0.2
+    if len(decomps) == 4:
         bar_width = 0.2
 
+    bar_data = [(spike_r2, spike_r2_std), (lfp_r2, lfp_r2_std)]
+    if len(decomps) == 4:
+        bar_data.append( (spike_sync_r2, spike_sync_r2_std) )
+        bar_data.append( (pairwise_r2, pairwise_r2_std) )
+
     bar_x = np.arange(len(lfp_r2))
-    plt.bar(bar_x, spike_r2, yerr=spike_r2_std, width=bar_width, color=COLOR_RED_SPIKE_RATE, alpha=0.9, ecolor='k')
-    plt.bar(bar_x+bar_inc, lfp_r2, yerr=lfp_r2_std, width=bar_width, color=COLOR_BLUE_LFP, alpha=0.9, ecolor='k')
-    if len(decomps) == 3:
-        plt.bar(bar_x + 2*bar_inc, pairwise_r2, yerr=pairwise_r2_std, width=bar_width, color=COLOR_PURPLE_LFP_CROSS, alpha=0.9, ecolor='k')
+    for k,(br2,bstd) in enumerate(bar_data):
+        bx = bar_x + bar_width*k
+        plt.bar(bx, br2, yerr=bstd, width=bar_width, color=sub_clrs[k], alpha=0.9, ecolor='k')
 
     plt.ylabel('Decoder R2')
     plt.xticks(bar_x+0.45, aprops_xticks, rotation=90, fontsize=12)
@@ -824,12 +829,14 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
     plt.axis('tight')
     plt.xlim(-0.5, bar_x.max() + 1)
     plt.ylim(0, 0.75)
-    if len(decomps) == 3:
+    if len(decomps) == 4:
         plt.ylim(0, 1.)
 
     fname = os.path.join(get_this_dir(), 'decoder_perf_barplots.svg')
-    if len(decomps) == 3:
+    if len(decomps) == 4:
         fname = os.path.join(get_this_dir(), 'decoder_perf_barplots_all.svg')
+
+    plt.show()
 
     plt.savefig(fname, facecolor='w', edgecolor='none')
 

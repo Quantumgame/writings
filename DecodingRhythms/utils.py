@@ -16,6 +16,7 @@ COLOR_BLUE_LFP = '#0068A5'
 COLOR_YELLOW_SPIKE = '#F0DB00'
 COLOR_RED_SPIKE_RATE = '#E90027'
 COLOR_PURPLE_LFP_CROSS = '#863198'
+COLOR_CRIMSON_SPIKE_SYNC = '#610B0B'
 
 def set_font():
     font = {'family':'normal', 'weight':'bold', 'size':16}
