@@ -22,7 +22,7 @@ from zeebeez.utils import REDUCED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT
 
 def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
 
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
+    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_GreBlu9508M_Site4_Call1_L_full_psds.h5', 'r')
     freqs = hf.attrs['freqs']
     hf.close()
 
@@ -33,9 +33,6 @@ def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
 
     g = agg.df.groupby(['bird', 'block', 'segment', 'hemi', 'decomp'])
     for (bird,block,seg,hemi,decomp),gdf in g:
-
-        if decomp not in ['self_locked', 'self_spike_rate', 'self+cross_locked', 'self_spike_rate+sync']:
-            continue
 
         site = '%s_%s_%s_%s' % (bird, block, seg, hemi)
 
@@ -387,7 +384,7 @@ def read_pairwise_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data
 
 def get_freqs_and_lags():
     #TODO hack
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
+    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_GreBlu9508M_Site4_Call1_L_full_psds.h5')
     lags = hf.attrs['lags']
     freqs = hf.attrs['freqs']
     hf.close()
@@ -598,7 +595,7 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     # freqs = freqs[freqs < 70]
 
-    i = agg.df.decomp == 'self_locked'
+    i = agg.df.decomp == 'full_psds'
     g = agg.df[i].groupby(['bird', 'block', 'segment', 'hemi'])
 
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data.csv'))
@@ -616,7 +613,6 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
 
         eperf = agg.encoder_perfs[wkey]
         eweights = agg.encoder_weights[wkey]
-        eweights_whitened = agg.encoder_weights_whitened[wkey]
         index2electrode = agg.index2electrode[iindex]
 
         for k,e in enumerate(index2electrode):
@@ -626,32 +622,21 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
             reg = clean_region(edata[regi].region.values[0])
 
             for j,f in enumerate(freqs):
-                w_white = eweights_whitened[k, j, :]
-                w = bs_agg.pca.inverse_transform(w_white)
-
-                # first compute the effect size for each weight in the whitened space
-                esize = w_white**2
-
-                # normalize effect size by dividing by sum
-                esize /= esize.sum()
-
-                # adjust each weight in proportion to it's effect size
-                w_white_cpy = w_white*esize
-
-                # inverse transform the whitened and rescaled weights
-                w_adj = bs_agg.pca.inverse_transform(w_white_cpy)
-
+                w = eweights[k, j, :]
                 wdata['region'].append(reg)
                 wdata['freq'].append(int(f))
                 wdata['xindex'].append(len(Wadj))
                 W.append(w)
-                Wadj.append(w_adj)
-                Wwhite.append(w_white)
 
     wdf = pd.DataFrame(wdata)
 
     W = np.array(W)
     Wsq = W**2
+
+    absmax = np.abs(W).max()
+    plt.figure()
+    plt.imshow(W, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
+    plt.show()
 
     # bs_agg.pca.components_ = np.abs(bs_agg.pca.components_)
     # bs_agg.pca.mean_ = 0.
@@ -689,6 +674,7 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
     plt.yticks(range(len(ALL_ACOUSTIC_PROPS)), ALL_ACOUSTIC_PROPS)
     plt.xlabel('Frequency (Hz)')
     plt.colorbar(label='Mean Encoder Effect')
+    plt.show()
 
     fname = os.path.join(get_this_dir(), 'average_encoder_weights.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
@@ -771,8 +757,8 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
     # decomps = ['self_spike_rate', 'self_locked']
     # sub_names = ['Spike Rate', 'LFP PSD']
     # sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP]
-    decomps = ['self_spike_rate', 'self_locked', 'self_spike_rate+sync', 'self+cross_locked']
-    sub_names = ['Spike Rate', 'LFP PSD', 'Spike Rate+Sync', 'PSD+Pairwise']
+    decomps = ['spike_rate', 'full_psds', 'spike_rate+spike_sync', 'full_psds+full_cfs']
+    sub_names = ['Spike Rate', 'LFP PSD', 'Spike Rate + Sync', 'LFP PSD + CFs']
     sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, COLOR_CRIMSON_SPIKE_SYNC, COLOR_PURPLE_LFP_CROSS]
 
     df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'))
@@ -784,22 +770,21 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
             i = (df_me.decomp == decomp) & (df_me.aprop == aprop)
             perfs = df_me.r2[i].values
             bd[decomp] = perfs
-        bprop_data.append({'bd':bd, 'lfp_mean':bd['self_locked'].mean(), 'aprop':aprop})
+        bprop_data.append({'bd':bd, 'lfp_mean':bd['full_psds'].mean(), 'aprop':aprop})
 
     bprop_data.sort(key=operator.itemgetter('lfp_mean'), reverse=True)
 
-    lfp_r2 = [bdict['bd']['self_locked'].mean() for bdict in bprop_data]
-    lfp_r2_std = [bdict['bd']['self_locked'].std(ddof=1) for bdict in bprop_data]
+    lfp_r2 = [bdict['bd']['full_psds'].mean() for bdict in bprop_data]
+    lfp_r2_std = [bdict['bd']['full_psds'].std(ddof=1) for bdict in bprop_data]
 
-    spike_r2 = [bdict['bd']['self_spike_rate'].mean() for bdict in bprop_data]
-    spike_r2_std = [bdict['bd']['self_spike_rate'].std(ddof=1) for bdict in bprop_data]
+    spike_r2 = [bdict['bd']['spike_rate'].mean() for bdict in bprop_data]
+    spike_r2_std = [bdict['bd']['spike_rate'].std(ddof=1) for bdict in bprop_data]
 
     if len(decomps) == 4:
-        pairwise_r2 = [bdict['bd']['self+cross_locked'].mean() for bdict in bprop_data]
-        pairwise_r2_std = [bdict['bd']['self+cross_locked'].std(ddof=1) for bdict in bprop_data]
-        spike_sync_r2 = [bdict['bd']['self_spike_rate+sync'].mean() for bdict in bprop_data]
-        spike_sync_r2_std = [bdict['bd']['self_spike_rate+sync'].std(ddof=1) for bdict in bprop_data]
-        print 'spike_sync_r2=',spike_sync_r2
+        pairwise_r2 = [bdict['bd']['full_psds+full_cfs'].mean() for bdict in bprop_data]
+        pairwise_r2_std = [bdict['bd']['full_psds+full_cfs'].std(ddof=1) for bdict in bprop_data]
+        spike_sync_r2 = [bdict['bd']['spike_rate+spike_sync'].mean() for bdict in bprop_data]
+        spike_sync_r2_std = [bdict['bd']['spike_rate+spike_sync'].std(ddof=1) for bdict in bprop_data]
 
     aprops_xticks = [bdict['aprop'] for bdict in bprop_data]
 
