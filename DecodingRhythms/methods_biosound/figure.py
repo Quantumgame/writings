@@ -336,24 +336,42 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     plt.show()
 
 
+def plot_meantime_stuff(agg):
+
+    durs = agg.df.end_time - agg.df.start_time
+
+    i = (durs > 0.040) & (durs < 0.400)
+    aprops = list(agg.acoustic_props)
+    mti = aprops.index('meantime')
+    sti = aprops.index('stdtime')
+    xi = agg.df.xindex[i].values
+
+    meantime = agg.Xraw[xi, mti]
+    stdtime = agg.Xraw[xi, sti]
+    durs = durs[i]
+
+    plt.figure()
+    ax = plt.subplot(1, 2, 1)
+    plt.plot(meantime, durs, 'ko')
+    plt.xlabel('Meantime')
+    plt.ylabel('Duration')
+
+    ax = plt.subplot(1, 2, 2)
+    plt.plot(stdtime, durs, 'ko')
+    plt.xlabel('Stdtime')
+    plt.ylabel('Duration')
+
+    plt.show()
+
+
 if __name__ == '__main__':
 
     set_font()
 
     agg_file = '/auto/tdrive/mschachter/data/aggregate/biosound.h5'
     agg = AggregateBiosounds.load(agg_file)
-    durs = agg.df.end_time = agg.df.start_time
-    dlist = list(zip(agg.df.stim_type.values, durs.values))
-    dlist.sort(key=operator.itemgetter(-1))
-    for stype,d in dlist:
-        print '%s   %f' % (stype, d)
-    # print 'max duration=%f' % durs.max()
-
-    dd = dict()
-    for b,s in zip(agg.df.bird, agg.df.stim_id):
-        dd[(b,s)] = True
-    print '# of unique stimuli: %d' % len(dd)
 
     # plot_syllable_comps(agg)
     # plot_acoustic_stats(agg)
+    plot_meantime_stuff(agg)
 

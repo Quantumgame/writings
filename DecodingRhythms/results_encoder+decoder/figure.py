@@ -384,7 +384,7 @@ def read_pairwise_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data
 
 def get_freqs_and_lags():
     #TODO hack
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_GreBlu9508M_Site4_Call1_L_full_psds.h5')
+    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_Site1_Call1_L_full_psds.h5')
     lags = hf.attrs['lags']
     freqs = hf.attrs['freqs']
     hf.close()
@@ -601,8 +601,6 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data.csv'))
     wdata = {'region':list(), 'freq':list(), 'xindex':list()}
     W = list()
-    Wadj = list()
-    Wwhite = list()
 
     for (bird,block,seg,hemi),gdf in g:
 
@@ -625,18 +623,13 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
                 w = eweights[k, j, :]
                 wdata['region'].append(reg)
                 wdata['freq'].append(int(f))
-                wdata['xindex'].append(len(Wadj))
+                wdata['xindex'].append(len(W))
                 W.append(w)
 
     wdf = pd.DataFrame(wdata)
 
     W = np.array(W)
     Wsq = W**2
-
-    absmax = np.abs(W).max()
-    plt.figure()
-    plt.imshow(W, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
-    plt.show()
 
     # bs_agg.pca.components_ = np.abs(bs_agg.pca.components_)
     # bs_agg.pca.mean_ = 0.
@@ -883,11 +876,11 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg = PARDAggregator.load(agg_file)
 
     # ###### figure with encoder effects per frequency
-    # plot_avg_psd_encoder_weights(agg)
+    plot_avg_psd_encoder_weights(agg)
 
     # ###### these two functions write a csv file for decoder weights and draw barplots for decoder performance
-    export_decoder_datasets_for_glm(agg)
-    draw_decoder_perf_barplots()
+    # export_decoder_datasets_for_glm(agg)
+    # draw_decoder_perf_barplots()
 
     # draw_all_encoder_perfs_and_decoder_weights(agg)
 
