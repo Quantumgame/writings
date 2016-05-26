@@ -17,7 +17,7 @@ from zeebeez.utils import ALL_ACOUSTIC_PROPS
 
 def get_freqs_and_lags():
     #TODO hack
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_self_locked_Site4_Call1_L.h5')
+    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_Site4_Call1_L_full_psds.h5')
     lags = hf.attrs['lags']
     freqs = hf.attrs['freqs']
     hf.close()
@@ -45,7 +45,7 @@ def export_perf_and_weight_and_loc_data(agg, data_dir='/auto/tdrive/mschachter/d
 
     for (bird,block,segment,hemi),gdf in agg.df.groupby(['bird', 'block', 'segment', 'hemi']):
         bstr = '%s_%s_%s_%s' % (bird,hemi,block,segment)
-        ii = (gdf.decomp == 'self_locked')
+        ii = (gdf.decomp == 'full_psds')
         assert ii.sum() == 1
         wkey = gdf[ii]['wkey'].values[0]
         iindex = gdf[ii]['iindex'].values[0]
@@ -184,7 +184,7 @@ def plot_maps(agg):
 
         for k,(_xx,_yy) in enumerate(zip(_x, _y)):
             plt.plot(_xx, _yy, 'o', c=_clrs[k], alpha=_alpha[k], markersize=_msize)
-            plt.text(_xx, _yy, _regs[k], fontsize=8, color='w', alpha=0.7)
+            # plt.text(_xx, _yy, _regs[k], fontsize=8, color='w', alpha=0.7)
 
         plt.title('f=%d' % _pdata['f'])
 
@@ -203,13 +203,18 @@ def plot_maps(agg):
 
         return _rgb
 
+    max_r2 = 0.40
     """
-    def _plot_r2_map(_pdata, _ax): _plot_map(_pdata, _ax, 'r2', magma, _maxval=0.30, _bgcolor='black')
+    def _plot_r2_map(_pdata, _ax): _plot_map(_pdata, _ax, 'r2', magma, _maxval=max_r2, _bgcolor='black')
     multi_plot(electrode_props, _plot_r2_map, nrows=3, ncols=4, figsize=(23, 13))
     plt.suptitle('Encoder Performance (R2)')
+    plt.show()
+
     fname = os.path.join(get_this_dir(), 'r2_map_allfreq.png')
     plt.savefig(fname, facecolor='w', edgecolor='none')
+    """
 
+    """
     for aprop in aprops_to_show:
         def _plot_aprop_map(_pdata, _ax): _plot_map(_pdata, _ax, aprop, rb_cmap, _maxval=absmax[aprop], _perf_alpha=True)
         multi_plot(electrode_props, _plot_aprop_map, nrows=3, ncols=4, figsize=(23, 13))
@@ -218,6 +223,7 @@ def plot_maps(agg):
         plt.savefig(fname, facecolor='w', edgecolor='none')
     """
 
+    """
     edict = [e for e in electrode_props if e['f'] == 33][0]
 
     # make a plot for just saliency at 33Hz
@@ -238,6 +244,7 @@ def plot_maps(agg):
         plt.savefig(fname, facecolor='w', edgecolor='none')
 
     plt.show()
+    """
 
     """
     # make a plot just for r2 at 33 Hz
@@ -250,7 +257,7 @@ def plot_maps(agg):
     ax = plt.subplot(gs[50:])
     ax.set_axis_bgcolor('black')
     pval = edict['df']['r2'].values
-    pval /= 0.30
+    pval /= max_r2
     regs = edict['df']['reg'].values
     x = edict['df'].dm.values
     y = edict['df'].dl.values
@@ -260,10 +267,10 @@ def plot_maps(agg):
 
     plt.xlabel('Distance from LH (mm)')
     plt.ylabel('Distance from L2A (mm)')
+    """
 
     fname = os.path.join(get_this_dir(), 'r2_map.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
-    """
 
     # plt.show()
 

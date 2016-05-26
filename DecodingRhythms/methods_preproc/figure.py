@@ -50,12 +50,6 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
     all_lfp_psds -= all_lfp_psds.mean(axis=0)
     all_lfp_psds /= all_lfp_psds.std(axis=0, ddof=1)
 
-    all_spike_psds = deepcopy(pcf.spike_psd)
-    log_transform(all_spike_psds, dbnoise=80.)
-
-    # all_spike_psds -= all_spike_psds.mean(axis=0)
-    # all_spike_psds /= all_spike_psds.std(axis=0, ddof=1)
-
     # get overall biosound stats
     bs_stats = dict()
     for aprop in aprops:
@@ -126,41 +120,14 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
         # get the LFP power spectra
         lfp_psd = list()
         for k,e in enumerate(electrode_order):
-            i = (pcf.df.stim_id == stim_id) & (pcf.df.order == o) & (pcf.df.decomp == 'locked') & \
+            i = (pcf.df.stim_id == stim_id) & (pcf.df.order == o) & (pcf.df.decomp == 'full') & \
                 (pcf.df.electrode1 == e) & (pcf.df.electrode2 == e)
 
-            assert i.sum() == 1
+            assert i.sum() == 1, "i.sum()=%d" % i.sum()
 
             index = pcf.df[i]['index'].values[0]
             lfp_psd.append(all_lfp_psds[index, :])
         d['lfp_psd'] = np.array(lfp_psd)
-
-        # get the PSTH power spectra
-        psth_psd = list()
-        cell_i2e = list()
-        for k,e in enumerate(electrode_order):
-            i = (pcf.df.stim_id == stim_id) & (pcf.df.order == o) & (pcf.df.decomp == 'spike_psd') & \
-                (pcf.df.electrode1 == e) & (pcf.df.electrode2 == e)
-            assert i.sum() > 0, "i.sum()=%d" % i.sum()
-
-            cindex = pcf.df.cell_index[i].values
-
-            for ci in cindex:
-                i = (pcf.df.stim_id == stim_id) & (pcf.df.order == o) & (pcf.df.decomp == 'spike_psd') & \
-                    (pcf.df.electrode1 == e) & (pcf.df.electrode2 == e) & (pcf.df.cell_index == ci)
-
-                assert i.sum() == 1, "i.sum()=%d" % i.sum()
-
-                index = pcf.df['index'][i].values[0]
-                psd = all_spike_psds[index, :]
-                psth_psd.append(psd)
-
-                cell_i2e.append(e)
-
-        if cell_index2electrode is None:
-            cell_index2electrode = cell_i2e
-
-        d['psth_psd'] = psth_psd
 
         syllable_props.append(d)
 
@@ -200,7 +167,8 @@ def plot_full_data(d, syllable_index):
 
     # plot the LFPs
     sr = d['lfp_sample_rate']
-    lfp_mean = d['lfp'].mean(axis=0)
+    # lfp_mean = d['lfp'].mean(axis=0)
+    lfp_mean = d['lfp'][2, :, :]
     lfp_t = np.arange(lfp_mean.shape[1]) / sr
     nelectrodes,nt = lfp_mean.shape
     gs_i = top_height + top_bottom_sep
@@ -259,7 +227,6 @@ def plot_full_data(d, syllable_index):
         bx = k
         rgb = np.array(ACOUSTIC_PROP_COLORS_BY_TYPE[aprop]).astype('int')
         clr_hex = '#%s' % "".join(map(chr, rgb)).encode('hex')
-        print 'clr=',clr_hex
         plt.bar(bx, v, color=clr_hex, alpha=0.7)
 
     # plt.bar(range(len(aprops)), vals, color='#c0c0c0')
@@ -280,32 +247,6 @@ def plot_full_data(d, syllable_index):
     plt.xlabel('Frequency (Hz)')
     plt.yticks(np.arange(nelectrodes)+0.5, d['electrode_order'])
     plt.ylabel('Electrode')
-
-    # plot the PSTH power spectra
-    """
-    gs_i = gs_e + 5
-    gs_e = gs_i + bottom_height + 1
-
-    ax = plt.subplot(gs[gs_i:gs_e, (left_width+5):])
-    plt.imshow(sprops['psth_psd'], interpolation='nearest', aspect='auto', origin='upper',
-               extent=(f.min(), f.max(), ncells, 0), cmap=viridis)
-    plt.colorbar(label='Log Power')
-    plt.xlabel('Frequency (Hz)')
-    plt.ylabel('Electrode')
-
-    last_electrode = cell_i2e[0]
-    for k,e in enumerate(cell_i2e):
-        if e != last_electrode:
-            plt.axhline(k, c='w', alpha=0.9)
-            last_electrode = e
-
-    ytick_locs = list()
-    for e in d['electrode_order']:
-        elocs = np.array([k for k,el in enumerate(cell_i2e) if el == e])
-        emean = elocs.mean()
-        ytick_locs.append(emean+0.5)
-    plt.yticks(ytick_locs, d['electrode_order'])
-    """
 
     fname = os.path.join(get_this_dir(), 'figure.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')

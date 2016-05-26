@@ -261,10 +261,10 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
 
 def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
 
-    Xz,good_indices = agg.remove_duplicates()
+    aprops = ALL_ACOUSTIC_PROPS
+    Xz,good_indices = agg.remove_duplicates(acoustic_props=aprops)
     i = np.zeros(len(agg.df), dtype='bool')
     i[good_indices] = True
-    aprops = agg.acoustic_props
 
     df = agg.df[i]
     dur = (df.end_time - df.start_time).values * 1e3
@@ -273,8 +273,8 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     dur_q25 = np.percentile(dur, 25)
     dur_q50 = np.percentile(dur, 50)
 
-    dur_thresh = 45
-    i = (dur > dur_thresh) & (dur < 500)
+    dur_thresh = 40
+    i = (dur > dur_thresh) & (dur < 400)
 
     print '# of samples: %d' % i.sum()
 
@@ -301,7 +301,7 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     # nx.draw(g, pos, labels={aprop:aprop for aprop in aprops})
     # plt.show()
 
-    nx.write_gexf(g, '/tmp/acoustic_feature_graph.gexf')
+    # nx.write_gexf(g, '/tmp/acoustic_feature_graph.gexf')
 
     print 'Acoustic Feature Clusters:'
     for grp in sorted(nx.connected_components(g), key=len, reverse=True):
@@ -372,6 +372,6 @@ if __name__ == '__main__':
     agg = AggregateBiosounds.load(agg_file)
 
     # plot_syllable_comps(agg)
-    # plot_acoustic_stats(agg)
-    plot_meantime_stuff(agg)
+    plot_acoustic_stats(agg)
+    # plot_meantime_stuff(agg)
 
