@@ -755,17 +755,18 @@ def draw_encoder_perfs(agg):
     plt.savefig(fname, facecolor='w', edgecolor='none')
 
 
-def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
+def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all=True):
 
     aprops_to_display = list(ALL_ACOUSTIC_PROPS)
 
-    decomps = ['spike_rate', 'full_psds']
-    sub_names = ['Spike Rate', 'LFP PSD']
-    sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP]
-
-    # decomps = ['spike_rate', 'full_psds', 'spike_rate+spike_sync', 'full_psds+full_cfs']
-    # sub_names = ['Spike Rate', 'LFP PSD', 'Spike Rate + Sync', 'LFP PSD + CFs']
-    # sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, COLOR_CRIMSON_SPIKE_SYNC, COLOR_PURPLE_LFP_CROSS]
+    if not show_all:
+        decomps = ['spike_rate', 'full_psds']
+        sub_names = ['Spike Rate', 'LFP PSD']
+        sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP]
+    else:
+        decomps = ['spike_rate', 'full_psds', 'spike_rate+spike_sync', 'full_psds+full_cfs']
+        sub_names = ['Spike Rate', 'LFP PSD', 'Spike Rate + Sync', 'LFP PSD + CFs']
+        sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, COLOR_CRIMSON_SPIKE_SYNC, COLOR_PURPLE_LFP_CROSS]
 
     df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'))
     bprop_data = list()
@@ -786,7 +787,7 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
     spike_r2 = [bdict['bd']['spike_rate'].mean() for bdict in bprop_data]
     spike_r2_std = [bdict['bd']['spike_rate'].std(ddof=1) for bdict in bprop_data]
 
-    if len(decomps) == 4:
+    if show_all:
         pairwise_r2 = [bdict['bd']['full_psds+full_cfs'].mean() for bdict in bprop_data]
         pairwise_r2_std = [bdict['bd']['full_psds+full_cfs'].std(ddof=1) for bdict in bprop_data]
         spike_sync_r2 = [bdict['bd']['spike_rate+spike_sync'].mean() for bdict in bprop_data]
@@ -799,7 +800,7 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
     plt.subplots_adjust(top=0.95, bottom=0.15, left=0.05, right=0.99, hspace=0.20, wspace=0.20)
 
     bar_width = 0.4
-    if len(decomps) == 4:
+    if show_all:
         bar_width = 0.2
 
     bar_data = [(spike_r2, spike_r2_std), (lfp_r2, lfp_r2_std)]
@@ -822,7 +823,7 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data'):
     plt.ylim(0, 1)
 
     fname = os.path.join(get_this_dir(), 'decoder_perf_barplots.svg')
-    if len(decomps) == 4:
+    if show_all:
         fname = os.path.join(get_this_dir(), 'decoder_perf_barplots_all.svg')
 
     plt.savefig(fname, facecolor='w', edgecolor='none')
