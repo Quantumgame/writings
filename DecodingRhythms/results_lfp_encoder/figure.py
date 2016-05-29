@@ -4,10 +4,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from lasp.plots import grouped_boxplot
+from lasp.plots import grouped_boxplot, plot_mean_from_scatter, custom_legend
 
 from zeebeez.aggregators.lfp_encoder import LFPEncoderAggregator
-from utils import clean_region, COLOR_RED_SPIKE_RATE, COLOR_CRIMSON_SPIKE_SYNC
+from utils import clean_region, COLOR_RED_SPIKE_RATE, COLOR_CRIMSON_SPIKE_SYNC, set_font, get_this_dir
 
 
 def get_encoder_perf_data_for_psd(agg, ein='rate'):
@@ -57,7 +57,7 @@ def get_encoder_perf_data_for_psd(agg, ein='rate'):
     return df
 
 
-def get_encoder_weight_data_for_psd(agg):
+def get_encoder_weight_data_for_psd(agg, include_sync=True, write_to_file=True):
 
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data+dist.csv'))
     cdata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'cell_data.csv'))
@@ -126,7 +126,8 @@ def get_encoder_weight_data_for_psd(agg):
              'rate_mean': list(), 'rate_std': list(),
              'sync_mean': list(), 'sync_std': list(),
              'dist_from_electrode': list(),
-             'same_electrode':list()
+             'dist_cell2cell':list(),
+             'same_electrode':list(), 'cells_same_electrode':list(),
              }
 
     i = (agg.df.encoder_input == 'both') & (agg.df.encoder_output == 'psd')
@@ -180,11 +181,55 @@ def get_encoder_weight_data_for_psd(agg):
                     wdata['sync_mean'].append(-1)
                     wdata['sync_std'].append(-1)
                     wdata['dist_from_electrode'].append(edist[e])
+                    wdata['dist_cell2cell'].append(-1)
                     wdata['cell_index'].append(ci)
                     wdata['same_electrode'].append(int(e == cell_electrode))
+                    wdata['cells_same_electrode'].append(0)
+
+                if not include_sync:
+                    continue
+
+                # get the synchrony weights
+                for n1, ci1 in enumerate(index2cell):
+                    rate1, rate_std1, edist1 = cell_data[(bird, block, segment, hemi, ci1)]
+
+                    for n2 in range(n1):
+                        ci2 = index2cell[n2]
+                        rate2, rate_std2, edist2 = cell_data[(bird, block, segment, hemi, ci2)]
+
+                        e1 = cell_index2electrode[ci1]
+                        e2 = cell_index2electrode[ci2]
+
+                        cells_same_electrode = int(e1 == e2)
+                        same_electrode = int(e1 == e2 and e1 == e)
+                        dist_cell2cell = edist1[e2]
+                        avg_dist_from_electrode = (edist1[e] + edist2[e]) / 2.
+
+                        wdata['bird'].append(bird)
+                        wdata['block'].append(block)
+                        wdata['segment'].append(segment)
+                        wdata['hemi'].append(hemi)
+                        wdata['electrode'].append(e)
+                        wdata['region'].append(reg)
+                        wdata['f'].append(int(f))
+                        wdata['w'].append(W[n1+1, n2])
+                        wdata['r2'].append(r2)
+                        wdata['dist_l2a'].append(dist_l2a)
+                        wdata['dist_midline'].append(dist_midline)
+                        wdata['wtype'].append('sync')
+                        wdata['rate_mean'].append(-1)
+                        wdata['rate_std'].append(-1)
+                        wdata['sync_mean'].append(-1)
+                        wdata['sync_std'].append(-1)
+                        wdata['dist_from_electrode'].append(avg_dist_from_electrode)
+                        wdata['dist_cell2cell'].append(dist_cell2cell)
+                        wdata['cell_index'].append(-1)
+                        wdata['same_electrode'].append(same_electrode)
+                        wdata['cells_same_electrode'].append(cells_same_electrode)
 
     wdf = pd.DataFrame(wdata)
-    wdf.to_csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_weights.csv', index=False)
+    if write_to_file:
+        wdf.to_csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_weights.csv', index=False)
 
     return wdf
 
@@ -206,7 +251,7 @@ def draw_perf_by_freq(agg, data_dir='/auto/tdrive/mschachter/data'):
             i = df[ein].f == f
             r2 = df[ein].r2[i].values
             bp_data[f].append(r2)
-            flat_data[ein].append([r2.mean(), r2.std()])
+            flat_data[ein].append([r2.mean(), r2.std() / np.sqrt(i.sum())])
 
     """
     grouped_boxplot(bp_data, group_names=[int(f) for f in agg.freqs], subgroup_names=['Rate', 'Rate+Sync'],
@@ -215,25 +260,96 @@ def draw_perf_by_freq(agg, data_dir='/auto/tdrive/mschachter/data'):
     """
 
     clrs = {'rate':COLOR_RED_SPIKE_RATE, 'both':COLOR_CRIMSON_SPIKE_SYNC}
-    plt.figure()
-    for ein in etypes:
+    for k,ein in enumerate(etypes):
         perf = np.array(flat_data[ein])
-        plt.plot(agg.freqs, perf[:, 0], '-', c=clrs[ein], linewidth=5.0, alpha=0.7)
 
-    plt.legend(['Rate', 'Rate+Sync'])
+        plt.errorbar(agg.freqs, perf[:, 0], yerr=perf[:, 1], c=clrs[ein], linewidth=8.0, elinewidth=5.0,
+                     ecolor='k', alpha=0.6, capthick=0.)
+
+    plt.legend(['Rate', 'Rate+Sync'], loc='upper right')
     plt.xlabel('LFP Frequency (Hz)')
-    plt.ylabel('Encoder Performance')
+    plt.ylabel('Mean Spike->LFP Encoder Performance (R2)')
     plt.axis('tight')
-    plt.show()
+    plt.ylim(0, 1)
+
+
+def draw_rate_weight_by_dist(agg):
+
+    wdf = get_encoder_weight_data_for_psd(agg, include_sync=False, write_to_file=False)
+
+    # plot the average encoder weight as a function of distance from predicted electrode
+    clrs = {49:'k', 165:'g'}
+    for f in [49, 165]:
+        i = ~np.isnan(wdf.dist_from_electrode.values) & (wdf.r2 > 0.20) & (wdf.dist_from_electrode > 0) & (wdf.f == f)
+
+        x = wdf.dist_from_electrode[i].values
+        y = (wdf.w[i].values)**2
+
+        plot_mean_from_scatter(x, y, bins=10, num_smooth_points=200, alpha=0.7, color=clrs[f], ecolor='#b5b5b5')
+
+    plt.xlabel('Distance From Predicted Electrode (um)')
+    plt.ylabel('Spike Rate Effect Size')
+    plt.axis('tight')
+    leg = custom_legend(colors=[clrs[49], clrs[165]], labels=['49Hz', '165Hz'])
+    plt.legend(handles=leg, loc='lower left')
+
+def draw_rate_weight_by_same(agg):
+    wdf = get_encoder_weight_data_for_psd(agg, include_sync=False, write_to_file=False)
+
+    # plot the average encoder weight as a function of distance from predicted electrode
+    clrs = {49: 'k', 165: 'g'}
+    vals = dict()
+    for f in [49, 165]:
+        i = ~np.isnan(wdf.dist_from_electrode.values) & (wdf.r2 > 0.20) & (wdf.f == f)
+        df = wdf[i]
+
+        diff_electrode = df.dist_from_electrode > 0
+        same_electrode = ~diff_electrode
+
+        diff_effect = df.w[diff_electrode].values**2
+        same_effect = df.w[same_electrode].values ** 2
+
+        vals[f] = [same_effect.mean(), diff_effect.mean(),
+                   same_effect.std(ddof=1) / np.sqrt(same_electrode.sum()),
+                   diff_effect.std(ddof=1) / np.sqrt(diff_electrode.sum()),]
+
+    figsize = (5, 3)
+    plt.figure(figsize=figsize)
+
+    plt.bar([0, 0.5], vals[49][:2], yerr=vals[49][2:], width=0.45, color=clrs[49], alpha=0.7, ecolor='k')
+    plt.bar([1.5, 2.0], vals[165][:2], yerr=vals[165][2:], width=0.45, color=clrs[165], alpha=0.7, ecolor='k')
+    plt.xticks([])
 
 
 def draw_figures(agg, data_dir='/auto/tdrive/mschachter/data'):
 
-    # draw_perf_by_freq(agg)
-    wdf = get_encoder_weight_data_for_psd(agg)
+    figsize = (23, 8)
+    fig = plt.figure(figsize=figsize)
+
+    ax = plt.subplot(1, 2, 1)
+    draw_perf_by_freq(agg)
+
+    ax = plt.subplot(1, 2, 2)
+    draw_rate_weight_by_dist(agg)
+
+    fname = os.path.join(get_this_dir(), 'figure.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
+
+    draw_rate_weight_by_same(agg)
+    fname = os.path.join(get_this_dir(), 'figure_inset.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
+
+    plt.show()
+
+
+
+
+    # wdf = get_encoder_weight_data_for_psd(agg)
 
 
 if __name__ == '__main__':
+
+    set_font()
 
     data_dir = '/auto/tdrive/mschachter/data'
     agg_dir = os.path.join(data_dir, 'aggregate')
