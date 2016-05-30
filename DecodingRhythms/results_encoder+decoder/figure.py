@@ -672,8 +672,26 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data', d
     fig = plt.figure(figsize=figsize)
     gs = plt.GridSpec(100, 100)
 
+    # plot the average performance by frequency
+    freqs = list(sorted(wdf.freq.unique()))
+    perf_by_freq = list()
+    for f in freqs:
+        i = (wdf.freq == f) & (wdf.eperf > 0)
+        r2 = wdf.eperf[i].values
+
+        perf_by_freq.append( (r2.mean(), r2.std(ddof=1)) )
+    perf_by_freq = np.array(perf_by_freq)
+
+    ax = plt.subplot(gs[:25, :32])
+    plt.errorbar(freqs, perf_by_freq[:,0], yerr=perf_by_freq[:, 1], fmt='k-',
+                 linewidth=5.0, ecolor='#b8b8b8', elinewidth=5.0, capthick=0.)
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Encoder R2')
+    plt.axis('tight')
+
+    # plot the average encoder effect sizes
     absmax = np.percentile(Wsq.ravel(), 96)
-    ax = plt.subplot(gs[:100, :40])
+    ax = plt.subplot(gs[35:100, :40])
     plt.imshow(Wsq_by_freq, origin='upper', interpolation='nearest', aspect='auto', vmin=0, vmax=absmax, cmap=magma)
     plt.xticks(range(len(freqs)), ['%d' % int(f) for f in freqs])
     aprops = [ALL_ACOUSTIC_PROPS[k] for k in aprop_order]
@@ -684,6 +702,7 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data', d
     fname = os.path.join(get_this_dir(), 'average_encoder_weights.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
 
+    plt.show()
 
 def draw_encoder_perfs(agg):
 
@@ -888,11 +907,11 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg = PARDAggregator.load(agg_file)
 
     # ###### figure with encoder effects per frequency
-    # plot_avg_psd_encoder_weights(agg, decomp='full_psds')
+    plot_avg_psd_encoder_weights(agg, decomp='full_psds')
 
     # ###### these two functions write a csv file for decoder weights and draw barplots for decoder performance
-    export_decoder_datasets_for_glm(agg)
-    draw_decoder_perf_barplots()
+    # export_decoder_datasets_for_glm(agg)
+    # draw_decoder_perf_barplots()
 
     # draw_all_encoder_perfs_and_decoder_weights(agg)
 
