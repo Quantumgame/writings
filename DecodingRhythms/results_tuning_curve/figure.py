@@ -72,7 +72,7 @@ def draw_curves(agg):
     height = int(100 / len(aprops)) - hpad
     width = int((100 - offset) / 3.) - wpad
 
-    topn = 20
+    topn = 30
 
     xticks = {'meanspect':([1, 3, 5], ['1', '3', '5']),
               'maxAmp':([0.1, 0.4, 0.7], ['0.1', '0.4', '0.7']),
@@ -107,14 +107,10 @@ def draw_curves(agg):
                     ylbl = 'Spike Rate (Hz)'
                     if k == 0:
                         plt.title('Spike Rate')
-                    if j == 0:
-                        ylbl = ('%s\n' % aprop) + ylbl
                 elif decomp.endswith('psds'):
                     if k == 0:
                         plt.title('LFP Power (%d Hz)' % f)
                     ylbl = 'LFP Power'
-                    if j == 0:
-                        ylbl = ('%s\n' % aprop) + ylbl
                 plt.ylabel(ylbl)
                 if aprop in xticks:
                     plt.xticks(xticks[aprop][0], xticks[aprop][1])

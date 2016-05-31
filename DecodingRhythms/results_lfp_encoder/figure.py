@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from lasp.plots import grouped_boxplot, plot_mean_from_scatter, custom_legend
 
 from zeebeez.aggregators.lfp_encoder import LFPEncoderAggregator
-from utils import clean_region, COLOR_RED_SPIKE_RATE, COLOR_CRIMSON_SPIKE_SYNC, set_font, get_this_dir
+from DecodingRhythms.utils import clean_region, COLOR_RED_SPIKE_RATE, COLOR_CRIMSON_SPIKE_SYNC, set_font, get_this_dir
 
 
 def get_encoder_perf_data_for_psd(agg, ein='rate'):

@@ -20,48 +20,6 @@ from zeebeez.utils import REDUCED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT
     ACOUSTIC_FEATURE_COLORS, ALL_ACOUSTIC_PROPS
 
 
-def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
-
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_Site4_Call1_L_full_psds.h5', 'r')
-    freqs = hf.attrs['freqs']
-    hf.close()
-
-    edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data.csv'))
-
-    data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(), 'decomp':list(), 'site':list(),
-            'aprop':list(), 'r2':list()}
-
-    g = agg.df.groupby(['bird', 'block', 'segment', 'hemi', 'decomp'])
-    for (bird,block,seg,hemi,decomp),gdf in g:
-
-        site = '%s_%s_%s_%s' % (bird, block, seg, hemi)
-
-        assert len(gdf) == 1
-
-        wkey = gdf['wkey'].values[0]
-        iindex = gdf['iindex'].values[0]
-
-        dperf = agg.decoder_perfs[wkey]
-
-        for k,aprop in enumerate(ALL_ACOUSTIC_PROPS):
-
-            r2 = dperf[k]
-
-            data['bird'].append(bird)
-            data['block'].append(block)
-            data['segment'].append(seg)
-            data['hemi'].append(hemi)
-            data['decomp'].append(decomp)
-            data['site'].append(site)
-            data['aprop'].append(aprop)
-            data['r2'].append(r2)
-
-    df = pd.DataFrame(data)
-
-    print 'decomps=',df.decomp.unique()
-    df.to_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'), header=True, index=False)
-
-
 def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     freqs,lags = get_freqs_and_lags()
@@ -124,9 +82,6 @@ def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschach
                     else:
                         regs = '%s->%s' % (reg1, reg2)
 
-                    if reg1 in ['HP', '?'] or reg2 in ['HP', '?']:
-                        continue
-
                     data['bird'].append(bird)
                     data['block'].append(block)
                     data['segment'].append(seg)
@@ -139,14 +94,8 @@ def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschach
                     data['r2'].append(r2)
                     data['dist'].append(edist)
 
-                    for ai,aprop in enumerate(REDUCED_ACOUSTIC_PROPS):
+                    for ai,aprop in enumerate(ALL_ACOUSTIC_PROPS):
                         w = eweights[k, j, li, ai]
-
-                        if reg1 in ['HP', '?'] or reg2 in ['HP', '?']:
-                            continue
-
-                        if abs(lag) > 20:
-                            continue
 
                         weight_data['bird'].append(bird)
                         weight_data['block'].append(block)
@@ -173,15 +122,17 @@ def plot_avg_pairwise_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/dat
     freqs,lags = get_freqs_and_lags()
     bs_agg = AggregateBiosounds.load(os.path.join(data_dir, 'aggregate', 'biosound.h5'))
 
-    decomp = 'self+cross_locked'
+    print agg.df.decomp.unique()
+    decomp = 'full_psds+full_cfs'
     i = agg.df.decomp == decomp
+    assert i.sum() > 0
 
     W = list()
     wdata = {'lag':list(), 'xindex':list()}
+    nlags = len(lags)
 
     g = agg.df[i].groupby(['bird', 'block', 'segment', 'hemi'])
     for (bird,block,seg,hemi),gdf in g:
-
         assert len(gdf) == 1
 
         wkey = gdf['wkey'].values[0]
@@ -190,36 +141,13 @@ def plot_avg_pairwise_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/dat
 
         eperf = agg.encoder_perfs[wkey]
         eweights = agg.encoder_weights[wkey]
-        eweights_whitened = agg.encoder_weights_whitened[wkey]
-        # print("eperf.shape=" + str(eperf.shape))
-        # print("eweights.shape=" + str(eweights.shape))
-        # normalize weights!
-        # eweights /= np.abs(eweights).max()
 
         # site = '%s_%s_%s_%s' % (bird, block, seg, hemi)
 
-        lag_i = np.abs(lags) < 20
-
         for k,e1 in enumerate(index2electrode):
             for j in range(k):
-
-                for l,lag in enumerate(lags[lag_i]):
-
-                    w_white = eweights_whitened[k, j, l, :]
-
-                    # first compute the effect size for each weight in the whitened space
-                    esize = w_white**2
-
-                    # normalize effect size by dividing by sum
-                    esize /= esize.sum()
-
-                    # adjust each weight in proportion to it's effect size
-                    w_white *= esize
-
-                    # inverse transform the whitened and rescaled weights
-                    w = bs_agg.pca.inverse_transform(w_white)
+                for l,lag in enumerate(lags):
                     w = eweights[k, j, l, :]
-
                     wdata['lag'].append(int(lag))
                     wdata['xindex'].append(len(W))
                     W.append(w)
@@ -227,28 +155,31 @@ def plot_avg_pairwise_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/dat
     wdf = pd.DataFrame(wdata)
     W = np.array(W)
     W[np.isnan(W)] = 0.
-    W = W**2
+    W2 = W**2
 
-    W_by_lag = np.zeros([len(REDUCED_ACOUSTIC_PROPS), lag_i.sum()])
-    for l,lag in enumerate(lags[lag_i]):
+    print 'nlags=%d' % nlags
+
+    W2_by_lag = np.zeros([len(ALL_ACOUSTIC_PROPS), nlags])
+    for l,lag in enumerate(lags):
         i = wdf.lag == int(lag)
+        assert i.sum() > 0
         ii = wdf.xindex[i].values
-        W_by_lag[:, l] = W[ii, :].mean(axis=0)
+        W2_by_lag[:, l] = W2[ii, :].mean(axis=0)
 
     plot = True
     if plot:
         plt.figure()
         # ax = plt.subplot(1, 3, 1)
-        absmax = np.abs(W_by_lag).max()
-        plt.imshow(W_by_lag, interpolation='nearest', aspect='auto', cmap=plt.cm.seismic, vmin=-absmax, vmax=absmax)
+        absmax = W2_by_lag.max()
+        plt.imshow(W2_by_lag, interpolation='nearest', aspect='auto', cmap=magma, vmin=0, vmax=absmax)
         plt.colorbar()
         plt.title('Mean Weights')
-        plt.yticks(np.arange(len(REDUCED_ACOUSTIC_PROPS)), REDUCED_ACOUSTIC_PROPS)
-        plt.xticks(np.arange(lag_i.sum()), ['%d' % x for x in lags[lag_i]])
+        plt.yticks(np.arange(len(ALL_ACOUSTIC_PROPS)), ALL_ACOUSTIC_PROPS)
+        plt.xticks(np.arange(nlags), ['%d' % x for x in lags])
 
         plt.show()
 
-    return lags[lag_i],W_by_lag,None
+    return lags,W2_by_lag,None
 
 
 def export_psd_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
@@ -326,62 +257,6 @@ def export_psd_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/d
     wdf.to_csv(os.path.join(data_dir, 'aggregate', 'encoder_weights_for_glm.csv'), header=True, index=False)
 
 
-def read_pairwise_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data'):
-
-    fname = os.path.join(get_this_dir(), 'pairwise_encoder_weights_glm_weights.txt')
-
-    data = {'lag':list(), 'aprop':list(), 'w':list(), 'p':list()}
-
-    freqs,lags = get_freqs_and_lags()
-    nlags = len(lags)
-
-    f = open(fname, 'r')
-    for ln in f.readlines():
-        if len(ln.strip()) == 0:
-            continue
-
-        x = ln.strip().split()
-        # print 'x=',x
-
-        if x[0].startswith('regions'):
-            continue
-
-        try:
-            aprop,lag = x[0].split(':')
-        except ValueError:
-            print x[0]
-            raise
-        aprop = aprop[5:]
-        lag = int(lag[3:])
-
-        if x[1] == 'NA':
-            w = 0.
-            p = 1.
-        else:
-            w = float(x[1])
-            p = float(x[4])
-
-        data['lag'].append(lag)
-        data['aprop'].append(aprop)
-        data['w'].append(w)
-        data['p'].append(p)
-
-    df = pd.DataFrame(data)
-
-    lags = lags[np.abs(lags) < 52]
-    w_mat = np.zeros([len(REDUCED_ACOUSTIC_PROPS), len(lags)])
-
-    for k,aprop in enumerate(REDUCED_ACOUSTIC_PROPS):
-        for j,l in enumerate(lags):
-            i = (df.lag == int(l)) & (df.aprop == aprop)
-            p = df[i].p.values[0]
-            w = df[i].w.values[0]
-            if p < 0.05:
-                w_mat[k, j] = w
-
-    return lags,w_mat
-
-
 def get_freqs_and_lags():
     #TODO hack
     hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_Site1_Call1_L_full_psds.h5')
@@ -391,201 +266,6 @@ def get_freqs_and_lags():
     nlags = len(lags)
 
     return freqs,lags
-
-
-def read_pairwise_encoder_perfs_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
-
-    fname = os.path.join(get_this_dir(), 'pairwise_encoder_perfs_glm_weights.txt')
-
-    data = {'lag':list(), 'region1':list(), 'region2':list(), 'w':list(), 'p':list()}
-
-    freqs,lags = get_freqs_and_lags()
-
-    f = open(fname, 'r')
-    for ln in f.readlines():
-        if len(ln.strip()) == 0:
-            continue
-
-        x = ln.strip().split()
-        # print 'x=',x
-
-        reg_or_lag = x[0]
-        lag = None
-        reg1 = None
-        reg2 = None
-        
-        if reg_or_lag.startswith('lag'):
-            lag = int(reg_or_lag[3:])
-        if reg_or_lag.startswith('region'):
-            regs = reg_or_lag[7:]
-            reg1,reg2 = regs.split('->')
-
-        w = float(x[1])
-        p = float(x[4])
-
-        data['lag'].append(lag)
-        data['region1'].append(reg1)
-        data['region2'].append(reg2)
-        data['w'].append(w)
-        data['p'].append(p)
-
-    df = pd.DataFrame(data)
-
-    lags_plotted = lags[np.abs(lags) < 52]
-    i = ~np.isnan(df.lag) & (df.lag < 52)
-    lag_list = [(lag, w, p) for lag,w,p in zip(df[i].lag.values, df[i].w.values, df[i].p.values)]
-    lag_list.sort(key=operator.itemgetter(0))
-    lag_list = np.array(lag_list)
-
-    # zero out weights that are not statistically significant
-    nss = lag_list[:, -1] > 0.05
-    lag_list[nss, 1] = 0.
-
-    lag_weights = np.array([x[1] for x in lag_list])
-
-    regs = ['L2', 'CMM', 'CML', 'L1', 'L3', 'NCM']
-    reg_weights = np.zeros([len(regs), len(regs)])
-
-    for k,r1 in enumerate(regs):
-        for j,r2 in enumerate(regs):
-
-            i = (df.region1 == r1) & (df.region2 == r2)
-            if i.sum() == 0:
-                print 'Missing connection: (%s,%s)i.sum()=%d' % (r1, r2, i.sum())
-                continue
-
-            w = df[i].w.values[0]
-            p = df[i].p.values[0]
-
-            if p < 0.05:
-                reg_weights[k, j] = w
-
-    lags_w,w_mat,w_mat_std = plot_avg_pairwise_encoder_weights(agg)
-    print("wmat.shape=" + str(w_mat.shape))
-    print("lags_w.shape=" + str(lags_w.shape))
-
-    figsize = (23, 10)
-    fig = plt.figure(figsize=figsize)
-    fig.subplots_adjust(top=0.95, bottom=0.05, right=0.90, left=0.10, hspace=0.25, wspace=0.25)
-
-    gs = plt.GridSpec(100, 100)
-
-    ax = plt.subplot(gs[:30, :32])
-    plt.plot(lags_plotted, lag_weights, 'k-', alpha=0.7, linewidth=7.0)
-    plt.axis('tight')
-    plt.ylim(0, 0.10)
-    plt.ylabel('Avg. Encoder R2 Contrib')
-    plt.xlabel('Lag (ms)')
-
-    ax = plt.subplot(gs[40:, :40])
-    absmax = np.abs(reg_weights).max()
-    print 'reg_weights='
-    print reg_weights
-    plt.imshow(reg_weights, interpolation='nearest', aspect='auto', cmap=magma, origin='lower')
-    plt.xticks(range(len(regs)), regs)
-    plt.yticks(range(len(regs)), regs)
-    plt.colorbar(label='Avg Encoder R2 Contrib')
-
-    ax = plt.subplot(gs[:, 55:])
-    absmax = np.abs(w_mat).max()
-    plt.imshow(w_mat, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic,
-               origin='lower')
-    plt.xticks(np.arange(len(lags_w)), ['%d' % x for x in lags_w])
-    plt.xlabel('Lag (ms)')
-    plt.yticks(np.arange(len(REDUCED_ACOUSTIC_PROPS)), REDUCED_ACOUSTIC_PROPS)
-    plt.colorbar(label='Mean Weight')
-    plt.axis('tight')
-
-    fname = os.path.join(get_this_dir(), 'pairwise_encoder_perf+weights.svg')
-    plt.savefig(fname, facecolor='w', edgecolor='none')
-
-
-def read_encoder_weights_weights(data_dir='/auto/tdrive/mschachter/data'):
-
-    fname = os.path.join(get_this_dir(), 'encoder_weights_glm_weights.txt')
-
-    data = {'aprop':list(), 'freq':list(), 'region':list(), 'w':list(), 'p':list()}
-
-    f = open(fname, 'r')
-    for ln in f.readlines():
-        if len(ln.strip()) == 0:
-            continue
-
-        x = ln.strip().split()
-        print 'x=',x
-
-        aprop,reg_or_freq = x[0].split(':')
-        aprop = aprop[5:]
-        freq = None
-        reg = None
-        if reg_or_freq.startswith('freq'):
-            freq = int(reg_or_freq[4:])
-        if reg_or_freq.startswith('region'):
-            reg = reg_or_freq[6:]
-
-        w = float(x[1])
-        p = float(x[4])
-
-        data['aprop'].append(aprop)
-        data['freq'].append(freq)
-        data['region'].append(reg)
-        data['w'].append(w)
-        data['p'].append(p)
-
-    df = pd.DataFrame(data)
-
-    freqs = sorted(df.freq.unique())
-    if np.isnan(freqs).sum() > 0:
-        freqs = freqs[:-1]
-
-    regs = ['L2', 'CMM', 'CML', 'L1', 'L3', 'NCM']
-    aprops = REDUCED_ACOUSTIC_PROPS
-
-    w_by_freq = np.zeros([len(aprops), len(freqs)])
-    for k,aprop in enumerate(aprops):
-        for j,f in enumerate(freqs):
-            i = (df.freq == f) & (df.aprop == aprop)
-            if i.sum() == 0:
-                continue
-            assert i.sum() == 1, "i.sum()=%d" % i.sum()
-            p =  df[i].p.values[0]
-            if p < 0.05:
-                w_by_freq[k, j] = df[i].w.values[0]
-
-    w_by_reg = np.zeros([len(aprops), len(regs)])
-    for k,aprop in enumerate(aprops):
-        for j,r in enumerate(regs):
-            i = (df.region == r) & (df.aprop == aprop)
-            if i.sum() == 0:
-                continue
-            assert i.sum() == 1
-            p =  df[i].p.values[0]
-            if p < 0.05:
-                w_by_reg[k, j] = df[i].w.values[0]
-
-    figsize = (23, 10)
-    fig = plt.figure(figsize=figsize)
-
-    gs = plt.GridSpec(1, 100)
-
-    ax = plt.subplot(gs[0, :50])
-    absmax = np.abs(w_by_freq).max()
-    plt.imshow(w_by_freq, origin='upper', interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
-    plt.xticks(range(len(freqs)), ['%d' % int(f) for f in freqs])
-    plt.yticks(range(len(aprops)), aprops)
-    plt.xlabel('Frequency (Hz)')
-    plt.colorbar(label='Encoder Weight Contribution')
-
-    ax = plt.subplot(gs[0, 70:])
-    absmax = np.abs(w_by_reg).max()
-    plt.imshow(w_by_reg, origin='upper', interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
-    plt.xticks(range(len(regs)), ['%s' % r for r in regs])
-    plt.yticks(range(len(aprops)), aprops)
-    plt.xlabel('Region')
-    plt.colorbar(label='Encoder Weight Contribution')
-
-    fname = os.path.join(get_this_dir(), 'average_encoder_weights.svg')
-    plt.savefig(fname, facecolor='w', edgecolor='none')
 
 
 def get_encoder_weights_squared(agg, decomp, data_dir='/auto/tdrive/mschachter/data'):
@@ -704,6 +384,7 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data', d
 
     plt.show()
 
+
 def draw_encoder_perfs(agg):
 
     freqs,lags = get_freqs_and_lags()
@@ -774,82 +455,6 @@ def draw_encoder_perfs(agg):
     plt.savefig(fname, facecolor='w', edgecolor='none')
 
 
-def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all=True):
-
-    aprops_to_display = list(ALL_ACOUSTIC_PROPS)
-
-    if not show_all:
-        decomps = ['spike_rate', 'full_psds']
-        sub_names = ['Spike Rate', 'LFP PSD']
-        sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP]
-    else:
-        decomps = ['spike_rate', 'full_psds', 'spike_rate+spike_sync', 'full_psds+full_cfs']
-        sub_names = ['Spike Rate', 'LFP PSD', 'Spike Rate + Sync', 'LFP PSD + CFs']
-        sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, COLOR_CRIMSON_SPIKE_SYNC, COLOR_PURPLE_LFP_CROSS]
-
-    df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'))
-    bprop_data = list()
-
-    for aprop in aprops_to_display:
-        bd = dict()
-        for decomp in decomps:
-            i = (df_me.decomp == decomp) & (df_me.aprop == aprop)
-            perfs = df_me.r2[i].values
-            bd[decomp] = perfs
-        bprop_data.append({'bd':bd, 'lfp_mean':bd['full_psds'].mean(), 'aprop':aprop})
-
-    bprop_data.sort(key=operator.itemgetter('lfp_mean'), reverse=True)
-
-    lfp_r2 = [bdict['bd']['full_psds'].mean() for bdict in bprop_data]
-    lfp_r2_std = [bdict['bd']['full_psds'].std(ddof=1) for bdict in bprop_data]
-
-    spike_r2 = [bdict['bd']['spike_rate'].mean() for bdict in bprop_data]
-    spike_r2_std = [bdict['bd']['spike_rate'].std(ddof=1) for bdict in bprop_data]
-
-    if show_all:
-        pairwise_r2 = [bdict['bd']['full_psds+full_cfs'].mean() for bdict in bprop_data]
-        pairwise_r2_std = [bdict['bd']['full_psds+full_cfs'].std(ddof=1) for bdict in bprop_data]
-        spike_sync_r2 = [bdict['bd']['spike_rate+spike_sync'].mean() for bdict in bprop_data]
-        spike_sync_r2_std = [bdict['bd']['spike_rate+spike_sync'].std(ddof=1) for bdict in bprop_data]
-
-    aprops_xticks = [bdict['aprop'] for bdict in bprop_data]
-
-    figsize = (23, 7.)
-    fig = plt.figure(figsize=figsize)
-    plt.subplots_adjust(top=0.95, bottom=0.15, left=0.05, right=0.99, hspace=0.20, wspace=0.20)
-
-    bar_width = 0.4
-    if show_all:
-        bar_width = 0.2
-
-    bar_data = [(spike_r2, spike_r2_std), (lfp_r2, lfp_r2_std)]
-    if len(decomps) == 4:
-        bar_data.append( (spike_sync_r2, spike_sync_r2_std) )
-        bar_data.append( (pairwise_r2, pairwise_r2_std) )
-
-    bar_x = np.arange(len(lfp_r2))
-    for k,(br2,bstd) in enumerate(bar_data):
-        bx = bar_x + bar_width*k
-        plt.bar(bx, br2, yerr=bstd, width=bar_width, color=sub_clrs[k], alpha=0.9, ecolor='k')
-
-    plt.ylabel('Decoder R2')
-    plt.xticks(bar_x+0.45, aprops_xticks, rotation=90, fontsize=12)
-
-    leg = custom_legend(sub_clrs, sub_names)
-    plt.legend(handles=leg, loc='upper right')
-    plt.axis('tight')
-    plt.xlim(-0.5, bar_x.max() + 1)
-    plt.ylim(0, 1)
-
-    fname = os.path.join(get_this_dir(), 'decoder_perf_barplots.svg')
-    if show_all:
-        fname = os.path.join(get_this_dir(), 'decoder_perf_barplots_all.svg')
-
-    plt.savefig(fname, facecolor='w', edgecolor='none')
-
-    plt.show()
-
-
 def draw_all_encoder_perfs_and_decoder_weights(agg, aprops=('sal', 'q2', 'maxAmp', 'meantime', 'entropytime')):
 
     freqs,lags = get_freqs_and_lags()
@@ -907,17 +512,19 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg = PARDAggregator.load(agg_file)
 
     # ###### figure with encoder effects per frequency
-    plot_avg_psd_encoder_weights(agg, decomp='full_psds')
+    # plot_avg_psd_encoder_weights(agg, decomp='full_psds')
+
+    # ###### figure with encoder effects per lag
+    # plot_avg_pairwise_encoder_weights(agg)
 
     # ###### these two functions write a csv file for decoder weights and draw barplots for decoder performance
     # export_decoder_datasets_for_glm(agg)
     # draw_decoder_perf_barplots()
 
+    # ###### this function draws pairwise decoder weight effect size as a function of distance
+
+
     # draw_all_encoder_perfs_and_decoder_weights(agg)
-
-    # plot_avg_pairwise_encoder_weights(agg)
-
-    # draw_decoder_perf_boxplots()
 
     # export_psd_encoder_datasets_for_glm(agg)
     # export_decoder_datasets_for_glm(agg)
