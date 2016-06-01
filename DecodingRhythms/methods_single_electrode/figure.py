@@ -156,7 +156,7 @@ if __name__ == '__main__':
     sefile = os.path.join(output_dir, 'StimEvent_%s.h5' % file_ext)
     se = StimEventTransform.load(sefile, rep_types_to_load=['raw'])
     se.segment_stims()
-    se.zscore('raw')
+    se.preprocess('raw')
 
     draw_figures(se, stim_id, syllable_index)
     plt.show()

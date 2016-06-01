@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 from lasp.plots import grouped_boxplot, plot_mean_from_scatter, custom_legend
 
 from zeebeez.aggregators.lfp_encoder import LFPEncoderAggregator
-from DecodingRhythms.utils import clean_region, COLOR_RED_SPIKE_RATE, COLOR_CRIMSON_SPIKE_SYNC, set_font, get_this_dir
+from DecodingRhythms.utils import clean_region, COLOR_RED_SPIKE_RATE, COLOR_CRIMSON_SPIKE_SYNC, set_font, get_this_dir, \
+    get_e2e_dists
 
 
 def get_encoder_perf_data_for_psd(agg, ein='rate'):
@@ -62,32 +63,7 @@ def get_encoder_weight_data_for_psd(agg, include_sync=True, write_to_file=True):
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data+dist.csv'))
     cdata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'cell_data.csv'))
 
-    # precompute distance from each electrode to each other electrode
-    print 'Precomputing electrode distances'
-    e2e_dists = dict()
-    for (bird,block,hemi),gdf in edata.groupby(['bird', 'block', 'hemisphere']):
-
-        mult = 1.
-        if bird == 'GreBlu9508M':
-            mult = 4.
-
-        num_electrodes = len(gdf.electrode.unique())
-        assert num_electrodes == 16
-        e2e = dict()
-        for e1 in gdf.electrode.unique():
-            i1 = (gdf.electrode == e1)
-            assert i1.sum() == 1
-            dl2a1 = gdf.dist_l2a[i1].values[0] * mult
-            dmid1 = gdf.dist_midline[i1].values[0]
-
-            for e2 in gdf.electrode.unique():
-                i2 = (gdf.electrode == e2)
-                assert i2.sum() == 1
-                dl2a2 = gdf.dist_l2a[i2].values[0] * mult
-                dmid2 = gdf.dist_midline[i2].values[0]
-
-                e2e[(e1, e2)] = np.sqrt((dl2a1 - dl2a2)**2 + (dmid1 - dmid2)**2)
-        e2e_dists[(bird,block,hemi)] = e2e
+    e2e_dists = get_e2e_dists()
 
     # put cell data into an efficient lookup table
     print 'Creating cell lookup table'

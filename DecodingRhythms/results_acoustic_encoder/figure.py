@@ -43,8 +43,7 @@ def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschach
         assert len(gdf) == 1
 
         wkey = gdf['wkey'].values[0]
-        iindex = gdf['iindex'].values[0]
-        index2electrode = agg.index2electrode[iindex]
+        index2electrode = agg.index2electrode[wkey]
 
         eperf = agg.encoder_perfs[wkey]
         eweights = agg.encoder_weights[wkey]
@@ -136,8 +135,7 @@ def plot_avg_pairwise_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/dat
         assert len(gdf) == 1
 
         wkey = gdf['wkey'].values[0]
-        iindex = gdf['iindex'].values[0]
-        index2electrode = agg.index2electrode[iindex]
+        index2electrode = agg.index2electrode[wkey]
 
         eperf = agg.encoder_perfs[wkey]
         eweights = agg.encoder_weights[wkey]
@@ -213,7 +211,7 @@ def export_psd_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/d
         eweights = agg.encoder_weights[wkey]
         # normalize weights!
         eweights /= np.abs(eweights).max()
-        index2electrode = agg.index2electrode[iindex]
+        index2electrode = agg.index2electrode[wkey]
 
         site = '%s_%s_%s_%s' % (bird, block, seg, hemi)
 
@@ -289,7 +287,7 @@ def get_encoder_weights_squared(agg, decomp, data_dir='/auto/tdrive/mschachter/d
 
         eperf = agg.encoder_perfs[wkey]
         eweights = agg.encoder_weights[wkey]
-        index2electrode = agg.index2electrode[iindex]
+        index2electrode = agg.index2electrode[wkey]
 
         for k, e in enumerate(index2electrode):
 

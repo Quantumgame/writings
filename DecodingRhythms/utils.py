@@ -368,3 +368,37 @@ def clean_region(reg):
     if reg == 'CM':
         return '?'
     return reg
+
+
+def get_e2e_dists(data_dir='/auto/tdrive/mschachter/data'):
+
+    edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data+dist.csv'))
+
+    # precompute distance from each electrode to each other electrode
+    e2e_dists = dict()
+    for (bird, block, hemi), gdf in edata.groupby(['bird', 'block', 'hemisphere']):
+
+        mult = 1.
+        if bird == 'GreBlu9508M':
+            mult = 4.
+
+        num_electrodes = len(gdf.electrode.unique())
+        assert num_electrodes == 16
+        e2e = dict()
+        for e1 in gdf.electrode.unique():
+            i1 = (gdf.electrode == e1)
+            assert i1.sum() == 1
+            dl2a1 = gdf.dist_l2a[i1].values[0] * mult
+            dmid1 = gdf.dist_midline[i1].values[0]
+
+            for e2 in gdf.electrode.unique():
+                i2 = (gdf.electrode == e2)
+                assert i2.sum() == 1
+                dl2a2 = gdf.dist_l2a[i2].values[0] * mult
+                dmid2 = gdf.dist_midline[i2].values[0]
+
+                e2e[(e1, e2)] = np.sqrt((dl2a1 - dl2a2) ** 2 + (dmid1 - dmid2) ** 2)
+        e2e_dists[(bird, block, hemi)] = e2e
+
+    return e2e_dists
+

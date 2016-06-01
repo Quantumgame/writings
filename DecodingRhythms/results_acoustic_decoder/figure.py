@@ -7,14 +7,14 @@ import operator
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from lasp.plots import custom_legend
+from lasp.plots import custom_legend, compute_mean_from_scatter
 
 from DecodingRhythms.utils import set_font, get_this_dir, clean_region, COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, \
-    COLOR_PURPLE_LFP_CROSS, COLOR_CRIMSON_SPIKE_SYNC
+    COLOR_PURPLE_LFP_CROSS, COLOR_CRIMSON_SPIKE_SYNC, get_e2e_dists
 
 from zeebeez.aggregators.pard import PARDAggregator
 from zeebeez.utils import REDUCED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, \
-    ACOUSTIC_FEATURE_COLORS, ALL_ACOUSTIC_PROPS
+    ACOUSTIC_FEATURE_COLORS, ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE
 
 
 def get_freqs_and_lags():
@@ -47,8 +47,6 @@ def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
         assert len(gdf) == 1
 
         wkey = gdf['wkey'].values[0]
-        iindex = gdf['iindex'].values[0]
-
         dperf = agg.decoder_perfs[wkey]
 
         for k,aprop in enumerate(ALL_ACOUSTIC_PROPS):
@@ -70,34 +68,104 @@ def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
     df.to_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'), header=True, index=False)
 
 
-def export_pairwise_decoder_weights(agg, data_dir='/auto/tdrive/mschachter/data', decomp='full_psds+full_cfs'):
+def export_pairwise_decoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
     freqs, lags = get_freqs_and_lags()
 
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data+dist.csv'))
 
     wdata = {'bird': list(), 'block': list(), 'segment': list(), 'hemi': list(),
              'electrode1': list(), 'electrode2': list(), 'cell1':list(), 'cell2':list(),
-             'region1': list(), 'region2': list(),
-             'lag': list(), 'aprop': list(), 'w': list(), 'dist': list()}
+             'region1': list(), 'region2': list(), 'r2':list(),
+             'aprop': list(), 'w': list(), 'dist': list(), 'decomp':list()}
 
-    i = agg.df.decomp == decomp
-    assert i.sum() > 0
+    decomps = ['full_psds+full_cfs', 'spike_rate+spike_sync']
 
-    assert isinstance(agg, PARDAggregator)
+    for decomp in decomps:
 
-    df = agg.df[i]
-    g = df.groupby(['bird', 'block', 'segment', 'hemi'])
-    for (bird, block, seg, hemi), gdf in g:
+        i = agg.df.decomp == decomp
+        assert i.sum() > 0
 
-        assert len(gdf) == 1
-        wkey = gdf['wkey'].values[0]
-        iindex = gdf['iindex'].values[0]
-        index2electrode = agg.index2electrode[iindex]
-        index2cell = agg.index2cell[wkey]
-        cell_index2electrode = agg.cell_index2electrode[wkey]
+        assert isinstance(agg, PARDAggregator)
 
-        dweights = agg.decoder_weights[wkey]
-        print 'dweights.shape=',dweights.shape
+        lags_i = np.abs(lags) < 6
+
+        aprops = ALL_ACOUSTIC_PROPS
+
+        e2e_dists = get_e2e_dists()
+
+        df = agg.df[i]
+        g = df.groupby(['bird', 'block', 'segment', 'hemi'])
+        for (bird, block, seg, hemi), gdf in g:
+
+            assert len(gdf) == 1
+            wkey = gdf['wkey'].values[0]
+            index2electrode = agg.index2electrode[wkey]
+            index2cell = agg.index2cell[wkey]
+            cell_index2electrode = agg.cell_index2electrode[wkey]
+
+            electrode2reg = dict()
+            for e in index2electrode:
+                ei = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == e)
+                assert ei.sum() == 1
+                electrode2reg[e] = clean_region(edata.region[ei].values[0])
+
+            dweights = agg.decoder_weights[wkey]
+            dperfs = agg.decoder_perfs[wkey]
+
+            if 'cfs' in decomp:
+                for k,e1 in enumerate(index2electrode):
+
+                    for j in range(k):
+                        e2 = index2electrode[j]
+
+                        for n,aprop in enumerate(aprops):
+                            w = np.abs(dweights[k, j, lags_i, n]).sum()
+
+                            wdata['bird'].append(bird)
+                            wdata['block'].append(block)
+                            wdata['segment'].append(seg)
+                            wdata['hemi'].append(hemi)
+                            wdata['electrode1'].append(e1)
+                            wdata['electrode2'].append(e2)
+                            wdata['cell1'].append(-1)
+                            wdata['cell2'].append(-1)
+                            wdata['region1'].append(electrode2reg[e1])
+                            wdata['region2'].append(electrode2reg[e2])
+                            wdata['aprop'].append(aprop)
+                            wdata['w'].append(w)
+                            wdata['dist'].append(e2e_dists[(bird,block,hemi)][(e1, e2)])
+                            wdata['decomp'].append(decomp)
+                            wdata['r2'].append(dperfs[n])
+
+            elif 'sync' in decomp:
+                for k,c1 in enumerate(index2cell):
+                    for j in range(k):
+                        c2 = index2cell[j]
+                        e1 = cell_index2electrode[c1]
+                        e2 = cell_index2electrode[c2]
+
+                        for n, aprop in enumerate(aprops):
+                            w = np.abs(dweights[k, j, n]).sum()
+
+                            wdata['bird'].append(bird)
+                            wdata['block'].append(block)
+                            wdata['segment'].append(seg)
+                            wdata['hemi'].append(hemi)
+                            wdata['electrode1'].append(e1)
+                            wdata['electrode2'].append(e2)
+                            wdata['cell1'].append(c1)
+                            wdata['cell2'].append(c2)
+                            wdata['region1'].append(electrode2reg[e1])
+                            wdata['region2'].append(electrode2reg[e2])
+                            wdata['aprop'].append(aprop)
+                            wdata['w'].append(w)
+                            wdata['dist'].append(e2e_dists[(bird, block, hemi)][(e1, e2)])
+                            wdata['decomp'].append(decomp)
+                            wdata['r2'].append(dperfs[n])
+
+    wdf = pd.DataFrame(wdata)
+
+    return wdf
 
 
 def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all=True):
@@ -176,6 +244,64 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all
     plt.show()
 
 
+def draw_pairwise_weights_vs_dist(agg):
+
+    wdf = export_pairwise_decoder_weights(agg)
+
+    r2_thresh = 0.20
+    # aprops = ALL_ACOUSTIC_PROPS
+    aprops = ['meanspect', 'stdspect', 'sal', 'maxAmp']
+    aprop_clrs = {'meanspect':'#FF8000', 'stdspect':'#FFBF00', 'sal':'#088A08', 'maxAmp':'k'}
+
+    print wdf.decomp.unique()
+
+    # get scatter data for weights vs distance
+    scatter_data = dict()
+    for decomp in ['full_psds+full_cfs', 'spike_rate+spike_sync']:
+        i = wdf.decomp == decomp
+        assert i.sum() > 0
+
+        df = wdf[i]
+        for n,aprop in enumerate(aprops):
+            ii = (df.r2 > r2_thresh) & (df.aprop == aprop) & ~np.isnan(df.dist) & ~np.isinf(df.dist)
+            d = df.dist[ii].values
+            w = df.w[ii].values
+            scatter_data[(decomp, aprop)] = (d, w)
+
+    decomp_labels = {'full_psds+full_cfs':'LFP Pairwise Correlations', 'spike_rate+spike_sync':'Spike Synchrony'}
+
+    figsize = (14, 6)
+    fig = plt.figure(figsize=figsize)
+    fig.subplots_adjust(left=0.10, right=0.98)
+
+    for k,decomp in enumerate(['full_psds+full_cfs', 'spike_rate+spike_sync']):
+        ax = plt.subplot(1, 2, k+1)
+        for aprop in aprops:
+            d,w = scatter_data[(decomp, aprop)]
+
+            wz = w**2
+            wz /= wz.std(ddof=1)
+
+            xcenter, ymean, yerr, ymean_cs = compute_mean_from_scatter(d, wz, bins=5, num_smooth_points=300)
+            # plt.plot(xcenter, ymean, '-', c=aprop_clrs[aprop], linewidth=7.0, alpha=0.7)
+            plt.errorbar(xcenter, ymean, linestyle='-', yerr=yerr, c=aprop_clrs[aprop], linewidth=9.0, alpha=0.7,
+                         elinewidth=8., ecolor='#d8d8d8', capsize=0.)
+            plt.axis('tight')
+
+        plt.ylabel('Decoder Weight Effect')
+        plt.xlabel('Pairwise Distance (mm)')
+        plt.title(decomp_labels[decomp])
+
+        aclrs = [aprop_clrs[aprop] for aprop in aprops]
+        leg = custom_legend(aclrs, aprops)
+        plt.legend(handles=leg, loc='lower left')
+
+    fname = os.path.join(get_this_dir(), 'pairwise_decoder_effect_vs_dist.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
+
+    plt.show()
+
+
 def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder+decoder'):
 
     agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
@@ -186,7 +312,7 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     # draw_decoder_perf_barplots()
 
     # ###### these two functions draw the relationship between pairwise decoder weights and distance
-    export_pairwise_decoder_weights(agg)
+    draw_pairwise_weights_vs_dist(agg)
 
 
 if __name__ == '__main__':
