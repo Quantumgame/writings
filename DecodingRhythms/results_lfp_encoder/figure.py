@@ -261,7 +261,7 @@ def draw_rate_weight_by_dist(agg):
         x = wdf.dist_from_electrode[i].values
         y = (wdf.w[i].values)**2
 
-        plot_mean_from_scatter(x, y, bins=10, num_smooth_points=200, alpha=0.7, color=clrs[f], ecolor='#b5b5b5')
+        plot_mean_from_scatter(x, y, bins=5, num_smooth_points=200, alpha=0.7, color=clrs[f], ecolor='#b5b5b5')
 
     plt.xlabel('Distance From Predicted Electrode (um)')
     plt.ylabel('Spike Rate Effect Size')
@@ -311,9 +311,9 @@ def draw_figures(agg, data_dir='/auto/tdrive/mschachter/data'):
     fname = os.path.join(get_this_dir(), 'figure.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
 
-    draw_rate_weight_by_same(agg)
-    fname = os.path.join(get_this_dir(), 'figure_inset.svg')
-    plt.savefig(fname, facecolor='w', edgecolor='none')
+    # draw_rate_weight_by_same(agg)
+    # fname = os.path.join(get_this_dir(), 'figure_inset.svg')
+    # plt.savefig(fname, facecolor='w', edgecolor='none')
 
     plt.show()
 
