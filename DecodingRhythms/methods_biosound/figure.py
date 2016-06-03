@@ -16,7 +16,7 @@ from neosound.sound_manager import SoundManager
 from DecodingRhythms.utils import set_font, get_this_dir
 
 from zeebeez.aggregators.biosound import AggregateBiosounds
-from zeebeez.utils import ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE
+from zeebeez.utils import ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES
 
 
 def get_syllable_props(agg, stim_id, syllable_order, data_dir):
@@ -37,8 +37,13 @@ def get_syllable_props(agg, stim_id, syllable_order, data_dir):
     # get the raw sound pressure waveform
     sound_manager = SoundManager(HDF5Store, sfile, read_only=True, db_args={'read_only': True})
     wave = sound_manager.reconstruct(stim_id)
+
     wave_sr = wave.samplerate
     wave = np.array(wave).squeeze()
+
+    wave /= np.abs(wave).max()
+    wave *= aprops['maxAmp']
+
     wave_t = np.arange(len(wave)) / wave_sr
     wave_si = np.min(np.where(wave_t >= start_time)[0])
     wave_ei = wave_si + int(duration * wave_sr)
@@ -83,7 +88,7 @@ def get_syllable_examples(agg, aprop, data_dir, bird=None):
     dlist.sort(key=operator.itemgetter(-1))
     print dlist
 
-    med_index = int(len(dlist) / 2.)
+    med_index = int(len(dlist) / 2.) + 1
 
     slist = list()
     slist.append(dlist[2])
@@ -143,7 +148,7 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     spec_ei = sprops['spec_ei']
 
     aprop_specs = dict()
-    aprop_spec_props = ['entropytime', 'meanspect', 'sal']
+    aprop_spec_props = ['maxAmp', 'meanspect', 'sal']
     for aprop in aprop_spec_props:
         aprop_specs[aprop] = get_syllable_examples(agg, aprop, data_dir, bird='GreBlu9508M')
 
@@ -157,25 +162,26 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     ax = plt.subplot(gs[0, :sp_width])
     plt.plot((wave_t[wave_si:wave_ei] - start_time)*1e3, wave[wave_si:wave_ei], 'k-', linewidth=2.)
     plt.plot((wave_t[wave_si:wave_ei] - start_time)*1e3, amp_env[wave_si:wave_ei], 'r-', linewidth=4., alpha=0.7)
-    meantime = aprops['meantime']*1e3
+    # meantime = aprops['meantime']*1e3
     stdtime = aprops['stdtime']*1e3
-    plt.axvline(meantime, color='r', linestyle='--', linewidth=3.0, alpha=0.9)
-    plt.axvline(meantime-stdtime, color='r', linestyle='--', linewidth=3.0, alpha=0.8)
-    plt.axvline(meantime+stdtime, color='r', linestyle='--', linewidth=3.0, alpha=0.8)
+    # plt.axvline(meantime, color='r', linestyle='--', linewidth=3.0, alpha=0.9)
+    # plt.axvline(meantime-stdtime, color='r', linestyle='--', linewidth=3.0, alpha=0.8)
+    # plt.axvline(meantime+stdtime, color='r', linestyle='--', linewidth=3.0, alpha=0.8)
     plt.xlabel('Time (ms)')
     plt.ylabel('Waveform')
     plt.axis('tight')
 
-    aprops_to_get = ['meantime', 'stdtime', 'skewtime', 'kurtosistime', 'entropytime', 'maxAmp']
-    units = ['s', 's', '', '', '', '']
+    # aprops_to_get = ['meantime', 'stdtime', 'skewtime', 'kurtosistime', 'entropytime', 'maxAmp']
+    aprops_to_get = ['stdtime', 'skewtime', 'kurtosistime', 'entropytime', 'maxAmp']
+    units = ['s', '', '', 'bits', '']
     ax = plt.subplot(gs[0, sp_width:(sp_width+18)])
     txt_space = 0.1
     for k,aprop in enumerate(aprops_to_get):
         aval = aprops[aprop]
         if aval > 10:
-            txt = '%s: %d' % (aprop, aval)
+            txt = '%s: %d' % (ACOUSTIC_PROP_NAMES[aprop], aval)
         else:
-            txt = '%s: %0.2f' % (aprop, aval)
+            txt = '%s: %0.2f' % (ACOUSTIC_PROP_NAMES[aprop], aval)
         txt += ' %s' % units[k]
         plt.text(0.1, 1-((k+1)*txt_space), txt, fontsize=18)
     ax.set_axis_off()
@@ -195,14 +201,14 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     plt.axis('tight')
 
     aprops_to_get = ['meanspect', 'stdspect', 'skewspect', 'kurtosisspect', 'entropyspect', 'q1', 'q2', 'q3']
-    units = ['Hz', 'Hz', '', '', '', 'Hz', 'Hz', 'Hz']
+    units = ['Hz', 'Hz', '', '', 'bits', 'Hz', 'Hz', 'Hz']
     ax = plt.subplot(gs[1, sp_width:(sp_width+18)])
     for k,aprop in enumerate(aprops_to_get):
         aval = aprops[aprop]
         if aval > 10:
-            txt = '%s: %d' % (aprop, aval)
+            txt = '%s: %d' % (ACOUSTIC_PROP_NAMES[aprop], aval)
         else:
-            txt = '%s: %0.2f' % (aprop, aval)
+            txt = '%s: %0.2f' % (ACOUSTIC_PROP_NAMES[aprop], aval)
         txt += ' %s' % units[k]
         plt.text(0.1, 1-((k+1)*txt_space), txt, fontsize=18)
     ax.set_axis_off()
@@ -215,7 +221,7 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     ax = plt.subplot(gs[2, :sp_width])
     plot_spectrogram((spec_t[spec_si:spec_ei]-start_time)*1e3, spec_freq*1e-3, spec[:, spec_si:spec_ei], ax, colormap='SpectroColorMap', colorbar=False)
     plt.axhline(aprops['fund']*1e-3, color='k', linestyle='--', linewidth=3.0)
-    plt.ylabel("Frequency (kHz")
+    plt.ylabel("Frequency (kHz)")
     plt.xlabel('Time (ms)')
 
     for k,aprop in enumerate(aprop_spec_props):
@@ -234,7 +240,8 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
             else:
                 pstrs.append('%0.3f' % p)
         plt.xticks(centers, pstrs)
-        plt.xlabel(aprop)
+        plt.xlabel(ACOUSTIC_PROP_NAMES[aprop])
+        plt.ylabel('Frequency (kHz)')
 
     aprops_to_get = ['fund', 'fund2', 'sal', 'voice2percent', 'maxfund', 'minfund', 'cvfund']
     units = ['Hz', 'Hz', '', '', 'Hz', 'Hz', 'Hz']
@@ -242,9 +249,9 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     for k, aprop in enumerate(aprops_to_get):
         aval = aprops[aprop]
         if aval > 10:
-            txt = '%s: %d' % (aprop, aval)
+            txt = '%s: %d' % (ACOUSTIC_PROP_NAMES[aprop], aval)
         else:
-            txt = '%s: %0.2f' % (aprop, aval)
+            txt = '%s: %0.2f' % (ACOUSTIC_PROP_NAMES[aprop], aval)
         txt += ' %s' % units[k]
         plt.text(0.1, 1 - ((k + 1) * txt_space), txt, fontsize=18)
     ax.set_axis_off()
@@ -254,7 +261,7 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     plt.yticks([])
 
     fname = os.path.join(get_this_dir(), 'figure.svg')
-    # plt.savefig(fname, facecolor='w', edgecolor='none')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
 
     plt.show()
 
@@ -312,21 +319,23 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     fig.subplots_adjust(left=0.07, right=0.99, top=0.90, bottom=0.20, hspace=0.01, wspace=0.01)
     gs = plt.GridSpec(1, 100)
 
+    aprop_lbls = [ACOUSTIC_PROP_NAMES[aprop] for aprop in aprops]
+
     # plot data matrix
     absmax = np.abs(Xz).max()
     absmax = 4
     ax = plt.subplot(gs[0, :40])
     plt.imshow(Xz, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
     xt = range(len(aprops))
-    plt.xticks(xt, agg.acoustic_props, rotation=90)
+    plt.xticks(xt, aprop_lbls, rotation=90)
     plt.colorbar()
     plt.title('Z-scored Acoustic Feature Matrix')
 
     ax = plt.subplot(gs[0, 50:])
     plt.imshow(C, interpolation='nearest', aspect='auto', vmin=-1, vmax=1, cmap=plt.cm.seismic, origin='lower')
     xt = range(len(aprops))
-    plt.xticks(xt, aprops, rotation=90)
-    plt.yticks(xt, aprops)
+    plt.xticks(xt, aprop_lbls, rotation=90)
+    plt.yticks(xt, aprop_lbls)
     plt.colorbar(label='Correlation Coefficient')
     plt.title('Acoustic Feature Correlation Matrix')
 

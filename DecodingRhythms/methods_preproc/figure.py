@@ -12,7 +12,7 @@ from zeebeez.transforms.biosound import BiosoundTransform
 from zeebeez.transforms.pairwise_cf import PairwiseCFTransform
 from zeebeez.transforms.stim_event import StimEventTransform
 from zeebeez.utils import ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, DISPLAYED_ACOUSTIC_PROPS, \
-    ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE
+    ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES
 
 
 def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/mschachter/data'):
@@ -30,7 +30,7 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
     se_file = os.path.join(tdir, 'StimEvent_%s_%s_%s_%s.h5' % (bird,block,segment,hemi))
     print 'Loading %s...' % se_file
     se = StimEventTransform.load(se_file, rep_types_to_load=['raw'])
-    se.preprocess('raw')
+    se.zscore('raw')
     se.segment_stims_from_biosound(bs_file)
 
     # load the pairwise CF transform
@@ -139,8 +139,6 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
 
 def plot_full_data(d, syllable_index):
 
-
-
     syllable_start = d['syllable_props'][syllable_index]['start_time'] - 0.020
     syllable_end = d['syllable_props'][syllable_index]['end_time'] + 0.030
 
@@ -232,7 +230,7 @@ def plot_full_data(d, syllable_index):
     # plt.bar(range(len(aprops)), vals, color='#c0c0c0')
     plt.axis('tight')
     plt.ylim(-1.5, 1.5)
-    plt.xticks(np.arange(len(aprops))+0.5, aprops, rotation=90)
+    plt.xticks(np.arange(len(aprops))+0.5, [ACOUSTIC_PROP_NAMES[aprop] for aprop in aprops], rotation=90)
     plt.ylabel('Z-score')
 
     # plot the LFP power spectra
@@ -250,6 +248,8 @@ def plot_full_data(d, syllable_index):
 
     fname = os.path.join(get_this_dir(), 'figure.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
+
+    plt.show()
 
 
 def draw_figures():

@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 from DecodingRhythms.utils import COLOR_RED_SPIKE_RATE, set_font, get_this_dir
 from zeebeez.aggregators.tuning_curve import TuningCurveAggregator
+from zeebeez.utils import ACOUSTIC_PROP_NAMES
 
 
 def draw_curves(agg):
@@ -102,7 +103,7 @@ def draw_curves(agg):
             for x,y in zip(cx[:n, :], tc[:n, :]):
                 c = clrs[(decomp, f)]
                 plt.plot(x, y, '-', c=c, linewidth=1.0, alpha=0.7)
-                plt.xlabel(aprop)
+                plt.xlabel(ACOUSTIC_PROP_NAMES[aprop])
                 if decomp.endswith('rate'):
                     ylbl = 'Spike Rate (Hz)'
                     if k == 0:

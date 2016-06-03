@@ -10,25 +10,24 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   height="509.98312pt"
+   height="504pt"
    version="1.1"
-   viewBox="0 0 1608.4675 509.98312"
-   width="1608.4675pt"
+   viewBox="0 0 1656 504"
+   width="1656pt"
    id="svg2"
    inkscape:version="0.91 r"
    sodipodi:docname="decoder_perf_barplots.svg"
-   inkscape:export-filename="/auto/fhome/mschachter/Desktop/code/writings/DecodingRhythms/results_encoder+decoder/decoder_perf_barplots.png"
+   inkscape:export-filename="/auto/fhome/mschachter/code/writings/DecodingRhythms/results_acoustic_decoder/decoder_perf_barplots.png"
    inkscape:export-xdpi="150"
    inkscape:export-ydpi="150">
   <metadata
-     id="metadata1273">
+     id="metadata1192">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -43,22 +42,17 @@
      inkscape:pageshadow="2"
      inkscape:window-width="1855"
      inkscape:window-height="1056"
-     id="namedview1271"
+     id="namedview1190"
      showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
      inkscape:zoom="0.48233564"
-     inkscape:cx="1185.5699"
-     inkscape:cy="210.6055"
+     inkscape:cx="1254.7508"
+     inkscape:cy="253.92451"
      inkscape:window-x="65"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2" />
   <defs
-     id="defs4"
-     style="stroke-linecap:butt;stroke-linejoin:round">
+     id="defs4">
     <style
        type="text/css"
        id="style6">
@@ -67,8 +61,7 @@
   </defs>
   <g
      id="patch_2"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        d="m 82.8,428.4 1556.64,0 0,-403.2 -1556.64,0 z"
        style="fill:#ffffff;stroke-linecap:butt;stroke-linejoin:round"
@@ -77,8 +70,7 @@
   </g>
   <g
      id="patch_3"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 120.767,428.4 30.373,0 0,-129.759 -30.373,0 z"
@@ -88,8 +80,7 @@
   </g>
   <g
      id="patch_4"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 196.7,428.4 30.374,0 0,-141.523 -30.374,0 z"
@@ -99,8 +90,7 @@
   </g>
   <g
      id="patch_5"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 272.634,428.4 30.374,0 0,-122.981 -30.374,0 z"
@@ -110,8 +100,7 @@
   </g>
   <g
      id="patch_6"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 348.568,428.4 30.373,0 0,-152.349 -30.373,0 z"
@@ -121,8 +110,7 @@
   </g>
   <g
      id="patch_7"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 424.501,428.4 30.374,0 0,-110.961 -30.374,0 z"
@@ -132,8 +120,7 @@
   </g>
   <g
      id="patch_8"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 500.435,428.4 30.374,0 0,-117.973 -30.374,0 z"
@@ -143,8 +130,7 @@
   </g>
   <g
      id="patch_9"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 576.369,428.4 30.373,0 0,-98.249 -30.373,0 z"
@@ -154,8 +140,7 @@
   </g>
   <g
      id="patch_10"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 652.302,428.4 30.374,0 0,-87.298 -30.374,0 z"
@@ -165,8 +150,7 @@
   </g>
   <g
      id="patch_11"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 728.236,428.4 30.374,0 0,-83.235 -30.374,0 z"
@@ -176,8 +160,7 @@
   </g>
   <g
      id="patch_12"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 804.17,428.4 30.373,0 0,-81.322 -30.373,0 z"
@@ -187,8 +170,7 @@
   </g>
   <g
      id="patch_13"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 880.103,428.4 30.374,0 0,-61.429 -30.374,0 z"
@@ -198,8 +180,7 @@
   </g>
   <g
      id="patch_14"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 956.037,428.4 30.374,0 0,-32.669 -30.374,0 z"
@@ -209,8 +190,7 @@
   </g>
   <g
      id="patch_15"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1031.97,428.4 30.37,0 0,-46.334 -30.37,0 z"
@@ -220,8 +200,7 @@
   </g>
   <g
      id="patch_16"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1107.9,428.4 30.38,0 0,-30.802 -30.38,0 z"
@@ -231,8 +210,7 @@
   </g>
   <g
      id="patch_17"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1183.84,428.4 30.37,0 0,-16.511 -30.37,0 z"
@@ -242,8 +220,7 @@
   </g>
   <g
      id="patch_18"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1259.77,428.4 30.38,0 0,-19.746 -30.38,0 z"
@@ -253,8 +230,7 @@
   </g>
   <g
      id="patch_19"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1335.71,428.4 30.37,0 0,-2.258 -30.37,0 z"
@@ -264,8 +240,7 @@
   </g>
   <g
      id="patch_20"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1411.64,428.4 30.37,0 0,-4.676 -30.37,0 z"
@@ -275,8 +250,7 @@
   </g>
   <g
      id="patch_21"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1487.57,428.4 30.38,0 0,-0.059 -30.38,0 z"
@@ -286,8 +260,7 @@
   </g>
   <g
      id="patch_22"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1563.51,428.4 30.37,0 0,-0.081 -30.37,0 z"
@@ -297,8 +270,7 @@
   </g>
   <g
      id="patch_23"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 151.14,428.4 30.374,0 0,-304.34 -30.374,0 z"
@@ -308,8 +280,7 @@
   </g>
   <g
      id="patch_24"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 227.074,428.4 30.373,0 0,-204.055 -30.373,0 z"
@@ -319,8 +290,7 @@
   </g>
   <g
      id="patch_25"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 303.008,428.4 30.373,0 0,-192.597 -30.373,0 z"
@@ -330,8 +300,7 @@
   </g>
   <g
      id="patch_26"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 378.941,428.4 30.374,0 0,-188.056 -30.374,0 z"
@@ -341,8 +310,7 @@
   </g>
   <g
      id="patch_27"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 454.875,428.4 30.373,0 0,-180 -30.373,0 z"
@@ -352,8 +320,7 @@
   </g>
   <g
      id="patch_28"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 530.809,428.4 30.373,0 0,-179.527 -30.373,0 z"
@@ -363,8 +330,7 @@
   </g>
   <g
      id="patch_29"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 606.742,428.4 30.374,0 0,-167.795 -30.374,0 z"
@@ -374,8 +340,7 @@
   </g>
   <g
      id="patch_30"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 682.676,428.4 30.373,0 0,-146.641 -30.373,0 z"
@@ -385,8 +350,7 @@
   </g>
   <g
      id="patch_31"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 758.61,428.4 30.373,0 0,-141.507 -30.373,0 z"
@@ -396,8 +360,7 @@
   </g>
   <g
      id="patch_32"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 834.543,428.4 30.374,0 0,-130.45 -30.374,0 z"
@@ -407,8 +370,7 @@
   </g>
   <g
      id="patch_33"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 910.477,428.4 30.373,0 0,-90.406 -30.373,0 z"
@@ -418,8 +380,7 @@
   </g>
   <g
      id="patch_34"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 986.411,428.4 30.369,0 0,-82.505 -30.369,0 z"
@@ -429,8 +390,7 @@
   </g>
   <g
      id="patch_35"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1062.34,428.4 30.38,0 0,-76.553 -30.38,0 z"
@@ -440,8 +400,7 @@
   </g>
   <g
      id="patch_36"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1138.28,428.4 30.37,0 0,-66.9 -30.37,0 z"
@@ -451,8 +410,7 @@
   </g>
   <g
      id="patch_37"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1214.21,428.4 30.37,0 0,-57.865 -30.37,0 z"
@@ -462,8 +420,7 @@
   </g>
   <g
      id="patch_38"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1290.15,428.4 30.37,0 0,-31.121 -30.37,0 z"
@@ -473,8 +430,7 @@
   </g>
   <g
      id="patch_39"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1366.08,428.4 30.37,0 0,-7.325 -30.37,0 z"
@@ -484,8 +440,7 @@
   </g>
   <g
      id="patch_40"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1442.01,428.4 30.38,0 0,-7.144 -30.38,0 z"
@@ -495,8 +450,7 @@
   </g>
   <g
      id="patch_41"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1517.95,428.4 30.37,0 0,-3.765 -30.37,0 z"
@@ -506,8 +460,7 @@
   </g>
   <g
      id="patch_42"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 1593.88,428.4 30.37,0 0,-1.145 -30.37,0 z"
@@ -517,8 +470,7 @@
   </g>
   <g
      id="LineCollection_1"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 135.954,336.054 0,-74.826"
@@ -642,8 +594,7 @@
   </g>
   <g
      id="LineCollection_2"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        clip-path="url(#p882b81455c)"
        d="m 166.327,133.679 0,-19.237"
@@ -767,8 +718,7 @@
   </g>
   <g
      id="line2d_1"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <defs
        id="defs219">
       <path
@@ -945,8 +895,7 @@
   </g>
   <g
      id="line2d_2"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <g
        clip-path="url(#p882b81455c)"
        id="g265"
@@ -1115,8 +1064,7 @@
   </g>
   <g
      id="line2d_3"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <g
        clip-path="url(#p882b81455c)"
        id="g308"
@@ -1285,8 +1233,7 @@
   </g>
   <g
      id="line2d_4"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <g
        clip-path="url(#p882b81455c)"
        id="g351"
@@ -1455,8 +1402,7 @@
   </g>
   <g
      id="patch_43"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        d="m 82.8,25.2 1556.64,0"
        style="fill:none;stroke:#000000;stroke-linecap:square;stroke-linejoin:miter"
@@ -1465,8 +1411,7 @@
   </g>
   <g
      id="patch_44"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        d="m 1639.44,428.4 0,-403.2"
        style="fill:none;stroke:#000000;stroke-linecap:square;stroke-linejoin:miter"
@@ -1475,8 +1420,7 @@
   </g>
   <g
      id="patch_45"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        d="m 82.8,428.4 1556.64,0"
        style="fill:none;stroke:#000000;stroke-linecap:square;stroke-linejoin:miter"
@@ -1485,8 +1429,7 @@
   </g>
   <g
      id="patch_46"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <path
        d="m 82.8,428.4 0,-403.2"
        style="fill:none;stroke:#000000;stroke-linecap:square;stroke-linejoin:miter"
@@ -1495,8 +1438,7 @@
   </g>
   <g
      id="matplotlib.axis_1"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <g
        id="xtick_1"
        style="stroke-linecap:butt;stroke-linejoin:round">
@@ -1551,17 +1493,22 @@
       <g
          id="text_1"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- stdtime -->
+        <!-- Std T -->
         <defs
            id="defs424">
           <path
-             d="m 8.40625,54.6875 17.46875,0 L 25.875,0 8.40625,0 Z m 0,21.2969 17.46875,0 0,-14.2656 -17.46875,0 z"
-             id="BitstreamVeraSans-Bold-69"
+             id="BitstreamVeraSans-Bold-20"
+             d=""
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
           <path
-             d="m 51.125,52.9844 0,-13.2813 q -5.6094,2.3438 -10.8438,3.5157 -5.2187,1.1718 -9.8593,1.1718 -4.9844,0 -7.4063,-1.25 -2.4062,-1.25 -2.4062,-3.8281 0,-2.1094 1.8281,-3.2344 Q 24.2656,34.9688 29,34.4219 l 3.0781,-0.4375 q 13.4375,-1.7032 18.0625,-5.6094 4.6406,-3.9062 4.6406,-12.2656 0,-8.7344 -6.4531,-13.14065 -6.4375,-4.39063 -19.2187,-4.39063 -5.4219,0 -11.2188,0.85938 Q 12.1094,0.296875 6,2 l 0,13.2812 q 5.2344,-2.5312 10.7188,-3.8124 5.5,-1.2657 11.1562,-1.2657 5.1406,0 7.7188,1.4063 2.5937,1.4218 2.5937,4.2187 0,2.3438 -1.7813,3.4844 -1.7812,1.1406 -7.1093,1.7813 l -3.0781,0.3906 q -11.6719,1.4687 -16.35942,5.4218 -4.6875,3.9532 -4.6875,12.0157 0,8.6875 5.95312,12.875 Q 17.0938,56 29.3906,56 34.2344,56 39.5469,55.2656 44.875,54.5469 51.125,52.9844"
-             id="BitstreamVeraSans-Bold-73"
+             d="m 0.484375,72.9062 67.187525,0 0,-14.2187 -24.1719,0 L 43.5,0 24.7031,0 l 0,58.6875 -24.218725,0 z"
+             id="BitstreamVeraSans-Bold-54"
+             inkscape:connector-curvature="0"
+             style="stroke-linecap:butt;stroke-linejoin:round" />
+          <path
+             d="m 59.9062,70.6094 0,-15.4375 q -6,2.6875 -11.7187,4.0469 -5.7031,1.375 -10.7813,1.375 -6.7343,0 -9.9687,-1.8594 -3.2187,-1.8438 -3.2187,-5.75 0,-2.9375 2.1718,-4.5782 2.1719,-1.625 7.8906,-2.7968 l 8,-1.6094 q 12.1563,-2.4531 17.2813,-7.4375 5.1406,-4.9687 5.1406,-14.1563 0,-12.0468 -7.1562,-17.93745 -7.1563,-5.89063 -21.8594,-5.89063 -6.9219,0 -13.9063,1.32813 -6.9843,1.3125 -13.9687,3.90625 l 0,15.8594 q 6.9844,-3.7031 13.5,-5.5938 6.5156,-1.875 12.5781,-1.875 6.1563,0 9.4219,2.0469 3.2656,2.0625 3.2656,5.875 0,3.4062 -2.2187,5.2656 Q 42.1406,27.25 35.5,28.7188 l -7.2812,1.6093 q -10.9376,2.3438 -16,7.4688 -5.04692,5.125 -5.04692,13.8125 0,10.8906 7.03122,16.75 7.0313,5.8594 20.2188,5.8594 6.0156,0 12.3593,-0.9063 6.3438,-0.9063 13.125,-2.7031"
+             id="BitstreamVeraSans-Bold-53"
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
           <path
@@ -1574,73 +1521,47 @@
              id="BitstreamVeraSans-Bold-64"
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
-          <path
-             d="m 62.9844,27.4844 0,-4.9688 -40.8594,0 q 0.625,-6.1562 4.4375,-9.2344 3.8125,-3.0781 10.6406,-3.0781 5.5157,0 11.2969,1.6407 5.7969,1.6406 11.9062,4.9531 l 0,-13.46878 Q 54.2031,0.984375 48,-0.21875 41.7969,-1.42188 35.5938,-1.42188 q -14.8438,0 -23.0782,7.54688 -8.21872,7.5469 -8.21872,21.1719 0,13.375 8.07812,21.0312 Q 20.4531,56 34.625,56 q 12.8906,0 20.625,-7.7656 7.7344,-7.75 7.7344,-20.75 m -17.9688,5.8125 q 0,4.9843 -2.9062,8.0312 -2.9063,3.0625 -7.5938,3.0625 -5.0781,0 -8.25,-2.8594 -3.1718,-2.8593 -3.9531,-8.2343 z"
-             id="BitstreamVeraSans-Bold-65"
-             inkscape:connector-curvature="0"
-             style="stroke-linecap:butt;stroke-linejoin:round" />
-          <path
-             d="m 59.0781,45.6094 q 3.3281,5.0781 7.8907,7.7344 Q 71.5312,56 77,56 q 9.4219,0 14.3594,-5.8125 4.9375,-5.7969 4.9375,-16.8906 l 0,-33.2969 -17.5781,0 0,28.5156 q 0.0468,0.6406 0.0624,1.3125 0.0313,0.6875 0.0313,1.9531 0,5.8126 -1.7187,8.4219 -1.7032,2.625 -5.5157,2.625 -4.9687,0 -7.6875,-4.1093 Q 61.1875,34.625 61.0781,26.8594 L 61.0781,0 43.5,0 l 0,28.5156 q 0,9.0782 -1.5625,11.6875 -1.5625,2.625 -5.5625,2.625 -5.0312,0 -7.7656,-4.125 Q 25.875,34.5781 25.875,26.9062 L 25.875,0 8.29688,0 l 0,54.6875 17.57812,0 0,-8 q 3.2344,4.625 7.4062,6.9687 Q 37.4531,56 42.4844,56 q 5.6562,0 10,-2.7344 4.3594,-2.7344 6.5937,-7.6562"
-             id="BitstreamVeraSans-Bold-6d"
-             inkscape:connector-curvature="0"
-             style="stroke-linecap:butt;stroke-linejoin:round" />
         </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,158.24823,483.15812)"
-           id="g432"
+           transform="matrix(0,-0.12,-0.12,0,158.24823,467.665)"
+           id="g431"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use434"
+             xlink:href="#BitstreamVeraSans-Bold-53"
+             id="use433"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="59.521484"
+             x="72.021484"
              xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use436"
+             id="use435"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="107.32422"
+             x="119.82422"
              xlink:href="#BitstreamVeraSans-Bold-64"
-             id="use438"
+             id="use437"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="178.90625"
-             xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use440"
+             x="191.40625"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use439"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="226.70898"
-             xlink:href="#BitstreamVeraSans-Bold-69"
-             id="use442"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="260.98633"
-             xlink:href="#BitstreamVeraSans-Bold-6d"
-             id="use444"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="365.18555"
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use446"
+             x="226.2207"
+             xlink:href="#BitstreamVeraSans-Bold-54"
+             id="use441"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -1655,14 +1576,14 @@
          id="line2d_7"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g450"
+           id="g445"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="230.87064"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use452"
+             id="use447"
              width="100%"
              height="100%" />
         </g>
@@ -1671,14 +1592,14 @@
          id="line2d_8"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g455"
+           id="g450"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="230.87064"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use457"
+             id="use452"
              width="100%"
              height="100%" />
         </g>
@@ -1686,9 +1607,9 @@
       <g
          id="text_2"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- maxAmp -->
+        <!-- Max A -->
         <defs
-           id="defs460">
+           id="defs455">
           <path
              d="M 22.2188,27.9844 2.48438,54.6875 21,54.6875 32.1719,38.4844 43.5,54.6875 l 18.5156,0 L 42.2812,28.0781 62.9844,0 44.4844,0 32.1719,17.2812 20.0156,0 1.51562,0 Z"
              id="BitstreamVeraSans-Bold-78"
@@ -1700,8 +1621,8 @@
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
           <path
-             d="m 25.875,7.90625 0,-28.70315 -17.46875,0 0,75.4844 17.46875,0 0,-8 Q 29.5,51.4688 33.8906,53.7344 38.2812,56 44,56 q 10.1094,0 16.5938,-8.0312 6.5,-8.0313 6.5,-20.6719 0,-12.6407 -6.5,-20.68752 Q 54.1094,-1.42188 44,-1.42188 q -5.7188,0 -10.1094,2.26563 Q 29.5,3.125 25.875,7.90625 M 37.5,43.3125 q -5.6094,0 -8.625,-4.125 -3,-4.125 -3,-11.8906 0,-7.7657 3,-11.8907 3.0156,-4.125 8.625,-4.125 5.6094,0 8.5625,4.0938 2.9687,4.1094 2.9687,11.9219 0,7.8125 -2.9687,11.9062 -2.9531,4.1094 -8.5625,4.1094"
-             id="BitstreamVeraSans-Bold-70"
+             d="m 9.1875,72.9062 23.9219,0 16.5937,-39.0156 16.7031,39.0156 23.875,0 0,-72.9062 -17.7656,0 0,53.3281 -16.7968,-39.3125 -11.9219,0 L 27,53.3281 27,0 9.1875,0 Z"
+             id="BitstreamVeraSans-Bold-4d"
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
           <path
@@ -1711,53 +1632,45 @@
              style="stroke-linecap:butt;stroke-linejoin:round" />
         </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,234.18188,489.58938)"
-           id="g466"
+           transform="matrix(0,-0.12,-0.12,0,234.18188,473.58625)"
+           id="g461"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-6d"
-             id="use468"
+             xlink:href="#BitstreamVeraSans-Bold-4d"
+             id="use463"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="104.19922"
+             x="99.511719"
              xlink:href="#BitstreamVeraSans-Bold-61"
-             id="use470"
+             id="use465"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="171.67969"
+             x="166.99219"
              xlink:href="#BitstreamVeraSans-Bold-78"
-             id="use472"
+             id="use467"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="236.18164"
+             x="231.49414"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use469"
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="266.30859"
              xlink:href="#BitstreamVeraSans-Bold-41"
-             id="use474"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="313.57422"
-             xlink:href="#BitstreamVeraSans-Bold-6d"
-             id="use476"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="417.77344"
-             xlink:href="#BitstreamVeraSans-Bold-70"
-             id="use478"
+             id="use471"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -1772,14 +1685,14 @@
          id="line2d_9"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g482"
+           id="g475"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="306.80429"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use484"
+             id="use477"
              width="100%"
              height="100%" />
         </g>
@@ -1788,14 +1701,14 @@
          id="line2d_10"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g487"
+           id="g480"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="306.80429"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use489"
+             id="use482"
              width="100%"
              height="100%" />
         </g>
@@ -1803,92 +1716,68 @@
       <g
          id="text_3"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- meanspect -->
+        <!-- Mean S -->
         <defs
-           id="defs492">
-          <path
-             d="m 52.5938,52.9844 0,-14.2656 q -3.5626,2.4374 -7.1563,3.6093 -3.5937,1.1719 -7.4531,1.1719 -7.3125,0 -11.3906,-4.2656 -4.0782,-4.2656 -4.0782,-11.9375 0,-7.6719 4.0782,-11.9531 4.0781,-4.2657 11.3906,-4.2657 4.1094,0 7.7968,1.2188 3.6876,1.2343 6.8126,3.625 l 0,-14.31252 Q 48.4844,0.09375 44.2656,-0.65625 40.0469,-1.42188 35.7969,-1.42188 21,-1.42188 12.6406,6.17188 4.29688,13.7656 4.29688,27.2969 q 0,13.5312 8.34372,21.1093 Q 21,56 35.7969,56 q 4.2969,0 8.4687,-0.75 4.1719,-0.75 8.3282,-2.2656"
-             id="BitstreamVeraSans-Bold-63"
-             inkscape:connector-curvature="0"
-             style="stroke-linecap:butt;stroke-linejoin:round" />
+           id="defs485">
           <path
              d="M 63.375,33.2969 63.375,0 45.7969,0 l 0,5.42188 0,20.06252 q 0,7.0781 -0.3125,9.7656 -0.3125,2.6875 -1.0938,3.9531 -1.0312,1.7188 -2.7968,2.6719 -1.75,0.9531 -4,0.9531 Q 32.125,42.8281 29,38.5938 25.875,34.375 25.875,26.9062 L 25.875,0 8.40625,0 l 0,54.6875 17.46875,0 0,-8 q 3.9531,4.7813 8.3906,7.0469 Q 38.7188,56 44.0938,56 q 9.4687,0 14.375,-5.8125 4.9062,-5.7969 4.9062,-16.8906"
              id="BitstreamVeraSans-Bold-6e"
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
+          <path
+             d="m 62.9844,27.4844 0,-4.9688 -40.8594,0 q 0.625,-6.1562 4.4375,-9.2344 3.8125,-3.0781 10.6406,-3.0781 5.5157,0 11.2969,1.6407 5.7969,1.6406 11.9062,4.9531 l 0,-13.46878 Q 54.2031,0.984375 48,-0.21875 41.7969,-1.42188 35.5938,-1.42188 q -14.8438,0 -23.0782,7.54688 -8.21872,7.5469 -8.21872,21.1719 0,13.375 8.07812,21.0312 Q 20.4531,56 34.625,56 q 12.8906,0 20.625,-7.7656 7.7344,-7.75 7.7344,-20.75 m -17.9688,5.8125 q 0,4.9843 -2.9062,8.0312 -2.9063,3.0625 -7.5938,3.0625 -5.0781,0 -8.25,-2.8594 -3.1718,-2.8593 -3.9531,-8.2343 z"
+             id="BitstreamVeraSans-Bold-65"
+             inkscape:connector-curvature="0"
+             style="stroke-linecap:butt;stroke-linejoin:round" />
         </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,310.11554,505.135)"
-           id="g496"
+           transform="matrix(0,-0.12,-0.12,0,310.11554,481.06375)"
+           id="g489"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-6d"
-             id="use498"
+             xlink:href="#BitstreamVeraSans-Bold-4d"
+             id="use491"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="104.19922"
+             x="99.511719"
              xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use500"
+             id="use493"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="172.02148"
+             x="167.33398"
              xlink:href="#BitstreamVeraSans-Bold-61"
-             id="use502"
+             id="use495"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="239.50195"
+             x="234.81445"
              xlink:href="#BitstreamVeraSans-Bold-6e"
-             id="use504"
+             id="use497"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="310.69336"
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use506"
+             x="306.00586"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use499"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="370.21484"
-             xlink:href="#BitstreamVeraSans-Bold-70"
-             id="use508"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="441.79688"
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use510"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="509.61914"
-             xlink:href="#BitstreamVeraSans-Bold-63"
-             id="use512"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="568.89648"
-             xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use514"
+             x="340.82031"
+             xlink:href="#BitstreamVeraSans-Bold-53"
+             id="use501"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -1903,14 +1792,14 @@
          id="line2d_11"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g518"
+           id="g505"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="382.73795"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use520"
+             id="use507"
              width="100%"
              height="100%" />
         </g>
@@ -1919,14 +1808,14 @@
          id="line2d_12"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g523"
+           id="g510"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="382.73795"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use525"
+             id="use512"
              width="100%"
              height="100%" />
         </g>
@@ -1934,38 +1823,93 @@
       <g
          id="text_4"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- sal -->
+        <!-- Saliency -->
         <defs
-           id="defs528">
+           id="defs515">
+          <path
+             d="m 1.21875,54.6875 17.48435,0 14.7031,-37.1094 12.5,37.1094 17.4688,0 -23,-59.85938 Q 36.9219,-14.3125 32.2969,-17.9375 27.6875,-21.5781 20.125,-21.5781 l -10.1094,0 0,11.4687 5.4688,0 q 4.4375,0 6.4531,1.4219 2.0313,1.40625 3.1563,5.07812 l 0.5,1.51563 z"
+             id="BitstreamVeraSans-Bold-79"
+             inkscape:connector-curvature="0"
+             style="stroke-linecap:butt;stroke-linejoin:round" />
           <path
              d="m 8.40625,75.9844 17.46875,0 L 25.875,0 8.40625,0 Z"
              id="BitstreamVeraSans-Bold-6c"
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
+          <path
+             d="m 8.40625,54.6875 17.46875,0 L 25.875,0 8.40625,0 Z m 0,21.2969 17.46875,0 0,-14.2656 -17.46875,0 z"
+             id="BitstreamVeraSans-Bold-69"
+             inkscape:connector-curvature="0"
+             style="stroke-linecap:butt;stroke-linejoin:round" />
+          <path
+             d="m 52.5938,52.9844 0,-14.2656 q -3.5626,2.4374 -7.1563,3.6093 -3.5937,1.1719 -7.4531,1.1719 -7.3125,0 -11.3906,-4.2656 -4.0782,-4.2656 -4.0782,-11.9375 0,-7.6719 4.0782,-11.9531 4.0781,-4.2657 11.3906,-4.2657 4.1094,0 7.7968,1.2188 3.6876,1.2343 6.8126,3.625 l 0,-14.31252 Q 48.4844,0.09375 44.2656,-0.65625 40.0469,-1.42188 35.7969,-1.42188 21,-1.42188 12.6406,6.17188 4.29688,13.7656 4.29688,27.2969 q 0,13.5312 8.34372,21.1093 Q 21,56 35.7969,56 q 4.2969,0 8.4687,-0.75 4.1719,-0.75 8.3282,-2.2656"
+             id="BitstreamVeraSans-Bold-63"
+             inkscape:connector-curvature="0"
+             style="stroke-linecap:butt;stroke-linejoin:round" />
         </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,386.0492,450.12437)"
-           id="g531"
+           transform="matrix(0,-0.12,-0.12,0,386.00233,487.9075)"
+           id="g521"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use533"
+             xlink:href="#BitstreamVeraSans-Bold-53"
+             id="use523"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="59.521484"
+             x="72.021484"
              xlink:href="#BitstreamVeraSans-Bold-61"
+             id="use525"
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="139.50195"
+             xlink:href="#BitstreamVeraSans-Bold-6c"
+             id="use527"
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="173.7793"
+             xlink:href="#BitstreamVeraSans-Bold-69"
+             id="use529"
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="208.05664"
+             xlink:href="#BitstreamVeraSans-Bold-65"
+             id="use531"
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="275.87891"
+             xlink:href="#BitstreamVeraSans-Bold-6e"
+             id="use533"
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="347.07031"
+             xlink:href="#BitstreamVeraSans-Bold-63"
              id="use535"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="127.00195"
-             xlink:href="#BitstreamVeraSans-Bold-6c"
+             x="406.34766"
+             xlink:href="#BitstreamVeraSans-Bold-79"
              id="use537"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
@@ -2012,12 +1956,12 @@
       <g
          id="text_5"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- q2 -->
+        <!-- Q2 -->
         <defs
            id="defs551">
           <path
-             d="m 34.0781,43.3125 q -5.5625,0 -8.5156,-4.1094 -2.9531,-4.0937 -2.9531,-11.9062 0,-7.8125 2.9531,-11.9219 2.9531,-4.0938 8.5156,-4.0938 5.625,0 8.5781,4.0938 2.9532,4.1094 2.9532,11.9219 0,7.8125 -2.9532,11.9062 -2.9531,4.1094 -8.5781,4.1094 M 45.6094,7.90625 Q 42,3.07812 37.6406,0.828125 33.2969,-1.42188 27.5938,-1.42188 q -10.1094,0 -16.6094,8.03126 Q 4.5,14.6562 4.5,27.2969 q 0,12.6406 6.4844,20.625 6.5,7.9843 16.6094,7.9843 5.7031,0 10.0468,-2.25 Q 42,51.4219 45.6094,46.5781 l 0,8.1094 17.5781,0 0,-75.4844 -17.5781,0 z"
-             id="BitstreamVeraSans-Bold-71"
+             d="m 44.4844,-1.3125 -1.4688,0 Q 25,-1.3125 14.9844,8.64062 4.98438,18.6094 4.98438,36.375 q 0,17.7344 9.98442,27.7812 9.9843,10.0626 27.5156,10.0626 17.7187,0 27.6094,-9.9688 9.8906,-9.9531 9.8906,-27.875 0,-12.2969 -5.25,-21.1875 -5.25,-8.89062 -15.1094,-13.375 l 14.6875,-16.4063 -17.9219,0 z m -2,61.9063 q -8.5938,0 -13.3282,-6.3438 -4.7343,-6.3438 -4.7343,-17.875 0,-11.7188 4.625,-17.9531 4.6406,-6.2188 13.4375,-6.2188 8.6406,0 13.375,6.3438 4.7344,6.3593 4.7344,17.8281 0,11.5312 -4.7344,17.875 -4.7344,6.3438 -13.375,6.3438"
+             id="BitstreamVeraSans-Bold-51"
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
           <path
@@ -2027,11 +1971,11 @@
              style="stroke-linecap:butt;stroke-linejoin:round" />
         </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,461.98286,447.75625)"
+           transform="matrix(0,-0.12,-0.12,0,461.98286,449.31063)"
            id="g555"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-71"
+             xlink:href="#BitstreamVeraSans-Bold-51"
              id="use557"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
@@ -2039,7 +1983,7 @@
              width="100%"
              height="100%" />
           <use
-             x="71.582031"
+             x="85.009766"
              xlink:href="#BitstreamVeraSans-Bold-32"
              id="use559"
              style="stroke-linecap:butt;stroke-linejoin:round"
@@ -2087,7 +2031,7 @@
       <g
          id="text_6"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- q1 -->
+        <!-- Q1 -->
         <defs
            id="defs573">
           <path
@@ -2097,11 +2041,11 @@
              style="stroke-linecap:butt;stroke-linejoin:round" />
         </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,537.91652,447.97375)"
+           transform="matrix(0,-0.12,-0.12,0,537.91652,449.52812)"
            id="g576"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-71"
+             xlink:href="#BitstreamVeraSans-Bold-51"
              id="use578"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
@@ -2109,7 +2053,7 @@
              width="100%"
              height="100%" />
           <use
-             x="71.582031"
+             x="85.009766"
              xlink:href="#BitstreamVeraSans-Bold-31"
              id="use580"
              style="stroke-linecap:butt;stroke-linejoin:round"
@@ -2157,7 +2101,7 @@
       <g
          id="text_7"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- q3 -->
+        <!-- Q3 -->
         <defs
            id="defs594">
           <path
@@ -2167,11 +2111,11 @@
              style="stroke-linecap:butt;stroke-linejoin:round" />
         </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,613.85018,447.84438)"
+           transform="matrix(0,-0.12,-0.12,0,613.85018,449.39875)"
            id="g597"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-71"
+             xlink:href="#BitstreamVeraSans-Bold-51"
              id="use599"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
@@ -2179,7 +2123,7 @@
              width="100%"
              height="100%" />
           <use
-             x="71.582031"
+             x="85.009766"
              xlink:href="#BitstreamVeraSans-Bold-33"
              id="use601"
              style="stroke-linecap:butt;stroke-linejoin:round"
@@ -2227,121 +2171,55 @@
       <g
          id="text_8"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- entropyspect -->
+        <!-- Ent S -->
         <defs
            id="defs615">
           <path
-             d="m 1.21875,54.6875 17.48435,0 14.7031,-37.1094 12.5,37.1094 17.4688,0 -23,-59.85938 Q 36.9219,-14.3125 32.2969,-17.9375 27.6875,-21.5781 20.125,-21.5781 l -10.1094,0 0,11.4687 5.4688,0 q 4.4375,0 6.4531,1.4219 2.0313,1.40625 3.1563,5.07812 l 0.5,1.51563 z"
-             id="BitstreamVeraSans-Bold-79"
-             inkscape:connector-curvature="0"
-             style="stroke-linecap:butt;stroke-linejoin:round" />
-          <path
-             d="m 49.0312,39.7969 q -2.2968,1.0781 -4.5781,1.5781 -2.2656,0.5156 -4.5625,0.5156 -6.7344,0 -10.375,-4.3281 Q 25.875,33.25 25.875,25.2031 L 25.875,0 8.40625,0 l 0,54.6875 17.46875,0 0,-8.9844 q 3.375,5.375 7.7344,7.8281 Q 37.9844,56 44.0938,56 q 0.875,0 1.8906,-0.0781 1.0312,-0.0625 2.9844,-0.3125 z"
-             id="BitstreamVeraSans-Bold-72"
-             inkscape:connector-curvature="0"
-             style="stroke-linecap:butt;stroke-linejoin:round" />
-          <path
-             d="m 34.4219,43.5 q -5.8125,0 -8.8594,-4.1719 -3.0469,-4.1719 -3.0469,-12.0312 0,-7.8594 3.0469,-12.0469 3.0469,-4.1719 8.8594,-4.1719 5.7187,0 8.7343,4.1719 3.0313,4.1875 3.0313,12.0469 0,7.8593 -3.0313,12.0312 Q 40.1406,43.5 34.4219,43.5 m 0,12.5 q 14.1093,0 22.0469,-7.625 7.9374,-7.6094 7.9374,-21.0781 0,-13.4844 -7.9374,-21.1094 -7.9376,-7.60938 -22.0469,-7.60938 -14.1563,0 -22.1407,7.60938 -7.98432,7.625 -7.98432,21.1094 0,13.4687 7.98432,21.0781 Q 20.2656,56 34.4219,56"
-             id="BitstreamVeraSans-Bold-6f"
+             d="m 9.1875,72.9062 50.7187,0 0,-14.2187 -31.9218,0 0,-13.5625 30.0312,0 0,-14.2188 -30.0312,0 0,-16.7031 33,0 L 60.9844,0 9.1875,0 Z"
+             id="BitstreamVeraSans-Bold-45"
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
         </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,689.69009,521.32187)"
-           id="g620"
+           transform="matrix(0,-0.12,-0.12,0,689.78384,466.8175)"
+           id="g618"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use622"
+             xlink:href="#BitstreamVeraSans-Bold-45"
+             id="use620"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="67.822266"
+             x="68.310547"
              xlink:href="#BitstreamVeraSans-Bold-6e"
+             id="use622"
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="139.50195"
+             xlink:href="#BitstreamVeraSans-Bold-74"
              id="use624"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="139.01367"
-             xlink:href="#BitstreamVeraSans-Bold-74"
+             x="187.30469"
+             xlink:href="#BitstreamVeraSans-Bold-20"
              id="use626"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="186.81641"
-             xlink:href="#BitstreamVeraSans-Bold-72"
+             x="222.11914"
+             xlink:href="#BitstreamVeraSans-Bold-53"
              id="use628"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="236.13281"
-             xlink:href="#BitstreamVeraSans-Bold-6f"
-             id="use630"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="304.83398"
-             xlink:href="#BitstreamVeraSans-Bold-70"
-             id="use632"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="376.41602"
-             xlink:href="#BitstreamVeraSans-Bold-79"
-             id="use634"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="441.60156"
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use636"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="501.12305"
-             xlink:href="#BitstreamVeraSans-Bold-70"
-             id="use638"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="572.70508"
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use640"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="640.52734"
-             xlink:href="#BitstreamVeraSans-Bold-63"
-             id="use642"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="699.80469"
-             xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use644"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -2356,14 +2234,14 @@
          id="line2d_21"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g648"
+           id="g632"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="762.40625"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use650"
+             id="use634"
              width="100%"
              height="100%" />
         </g>
@@ -2372,14 +2250,14 @@
          id="line2d_22"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g653"
+           id="g637"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="762.40625"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use655"
+             id="use639"
              width="100%"
              height="100%" />
         </g>
@@ -2387,95 +2265,47 @@
       <g
          id="text_9"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- entropytime -->
+        <!-- Ent T -->
         <g
-           transform="matrix(0,-0.12,-0.12,0,765.67062,514.7875)"
-           id="g658"
+           transform="matrix(0,-0.12,-0.12,0,765.71749,467.17375)"
+           id="g642"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use660"
+             xlink:href="#BitstreamVeraSans-Bold-45"
+             id="use644"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="67.822266"
+             x="68.310547"
              xlink:href="#BitstreamVeraSans-Bold-6e"
-             id="use662"
+             id="use646"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="139.01367"
+             x="139.50195"
              xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use664"
+             id="use648"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="186.81641"
-             xlink:href="#BitstreamVeraSans-Bold-72"
-             id="use666"
+             x="187.30469"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use650"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="236.13281"
-             xlink:href="#BitstreamVeraSans-Bold-6f"
-             id="use668"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="304.83398"
-             xlink:href="#BitstreamVeraSans-Bold-70"
-             id="use670"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="376.41602"
-             xlink:href="#BitstreamVeraSans-Bold-79"
-             id="use672"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="441.60156"
-             xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use674"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="489.4043"
-             xlink:href="#BitstreamVeraSans-Bold-69"
-             id="use676"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="523.68164"
-             xlink:href="#BitstreamVeraSans-Bold-6d"
-             id="use678"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="627.88086"
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use680"
+             x="222.11914"
+             xlink:href="#BitstreamVeraSans-Bold-54"
+             id="use652"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -2490,14 +2320,14 @@
          id="line2d_23"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g684"
+           id="g656"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="838.3399"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use686"
+             id="use658"
              width="100%"
              height="100%" />
         </g>
@@ -2506,14 +2336,14 @@
          id="line2d_24"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g689"
+           id="g661"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="838.3399"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use691"
+             id="use663"
              width="100%"
              height="100%" />
         </g>
@@ -2521,9 +2351,9 @@
       <g
          id="text_10"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- skewspect -->
+        <!-- Skew S -->
         <defs
-           id="defs694">
+           id="defs666">
           <path
              d="m 8.40625,75.9844 17.46875,0 0,-41.3594 20.125,20.0625 20.3125,0 L 39.5938,29.5938 68.4062,0 47.2188,0 25.875,22.7969 25.875,0 8.40625,0 Z"
              id="BitstreamVeraSans-Bold-6b"
@@ -2536,77 +2366,53 @@
              style="stroke-linecap:butt;stroke-linejoin:round" />
         </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,841.65115,502.25875)"
-           id="g698"
+           transform="matrix(0,-0.12,-0.12,0,841.65115,479.875)"
+           id="g670"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use700"
+             xlink:href="#BitstreamVeraSans-Bold-53"
+             id="use672"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="59.521484"
+             x="72.021484"
              xlink:href="#BitstreamVeraSans-Bold-6b"
-             id="use702"
+             id="use674"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="123.40039"
+             x="135.90039"
              xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use704"
+             id="use676"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="191.22266"
+             x="203.72266"
              xlink:href="#BitstreamVeraSans-Bold-77"
-             id="use706"
+             id="use678"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="283.60547"
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use708"
+             x="296.10547"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use680"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="343.12695"
-             xlink:href="#BitstreamVeraSans-Bold-70"
-             id="use710"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="414.70898"
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use712"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="482.53125"
-             xlink:href="#BitstreamVeraSans-Bold-63"
-             id="use714"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="541.80859"
-             xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use716"
+             x="330.91992"
+             xlink:href="#BitstreamVeraSans-Bold-53"
+             id="use682"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -2621,14 +2427,14 @@
          id="line2d_25"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g720"
+           id="g686"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="914.27356"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use722"
+             id="use688"
              width="100%"
              height="100%" />
         </g>
@@ -2637,14 +2443,14 @@
          id="line2d_26"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g725"
+           id="g691"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="914.27356"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use727"
+             id="use693"
              width="100%"
              height="100%" />
         </g>
@@ -2652,71 +2458,47 @@
       <g
          id="text_11"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- stdspect -->
+        <!-- Std S -->
         <g
-           transform="matrix(0,-0.12,-0.12,0,917.58481,489.6925)"
-           id="g730"
+           transform="matrix(0,-0.12,-0.12,0,917.58481,467.30875)"
+           id="g696"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use732"
+             xlink:href="#BitstreamVeraSans-Bold-53"
+             id="use698"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="59.521484"
+             x="72.021484"
              xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use734"
+             id="use700"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="107.32422"
+             x="119.82422"
              xlink:href="#BitstreamVeraSans-Bold-64"
-             id="use736"
+             id="use702"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="178.90625"
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use738"
+             x="191.40625"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use704"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="238.42773"
-             xlink:href="#BitstreamVeraSans-Bold-70"
-             id="use740"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="310.00977"
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use742"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="377.83203"
-             xlink:href="#BitstreamVeraSans-Bold-63"
-             id="use744"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="437.10938"
-             xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use746"
+             x="226.2207"
+             xlink:href="#BitstreamVeraSans-Bold-53"
+             id="use706"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -2731,14 +2513,14 @@
          id="line2d_27"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g750"
+           id="g710"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="990.20721"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use752"
+             id="use712"
              width="100%"
              height="100%" />
         </g>
@@ -2747,14 +2529,14 @@
          id="line2d_28"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g755"
+           id="g715"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="990.20721"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use757"
+             id="use717"
              width="100%"
              height="100%" />
         </g>
@@ -2762,76 +2544,68 @@
       <g
          id="text_12"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- maxfund -->
+        <!-- Max F0 -->
         <defs
-           id="defs760">
+           id="defs720">
           <path
-             d="m 7.8125,21.2969 0,33.3906 17.5781,0 0,-5.4687 q 0,-4.4376 -0.0468,-11.1563 -0.0469,-6.7187 -0.0469,-8.9531 0,-6.5938 0.3437,-9.5 0.3438,-2.9063 1.1719,-4.2344 1.0625,-1.7031 2.7969,-2.6406 1.7344,-0.9219 3.9844,-0.9219 5.4687,0 8.5937,4.2031 3.125,4.2032 3.125,11.6719 l 0,27 17.4844,0 0,-54.6875 -17.4844,0 0,7.90625 q -3.9531,-4.78125 -8.375,-7.0625 -4.4219,-2.26563 -9.7344,-2.26563 -9.4843,0 -14.4375,5.8125 Q 7.8125,10.2031 7.8125,21.2969"
-             id="BitstreamVeraSans-Bold-75"
+             d="m 46,36.5312 q 0,13.6719 -2.5625,19.25 -2.5625,5.5938 -8.625,5.5938 -6.0469,0 -8.6406,-5.5938 -2.5938,-5.5781 -2.5938,-19.25 0,-13.8281 2.5938,-19.5 2.5937,-5.6562 8.6406,-5.6562 6.0156,0 8.5937,5.6562 Q 46,22.7031 46,36.5312 M 64.7969,36.375 q 0,-18.1094 -7.8125,-27.95312 -7.8125,-9.84376 -22.1719,-9.84376 -14.4063,0 -22.2187,9.84376 -7.81255,9.84372 -7.81255,27.95312 0,18.1719 7.81255,28 7.8124,9.8438 22.2187,9.8438 14.3594,0 22.1719,-9.8438 7.8125,-9.8281 7.8125,-28"
+             id="BitstreamVeraSans-Bold-30"
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
           <path
-             d="m 44.3906,75.9844 0,-11.4844 -9.6718,0 Q 31,64.5 29.5312,63.1562 28.0781,61.8125 28.0781,58.5 l 0,-3.8125 14.9375,0 0,-12.5 -14.9375,0 0,-42.1875 -17.4843,0 0,42.1875 -8.68755,0 0,12.5 8.68755,0 0,3.8125 q 0,8.9375 4.9843,13.2031 4.9844,4.2813 15.4219,4.2813 z"
-             id="BitstreamVeraSans-Bold-66"
+             d="m 9.1875,72.9062 50.7187,0 0,-14.2187 -31.9218,0 0,-13.5625 30.0312,0 0,-14.2188 -30.0312,0 L 27.9844,0 9.1875,0 Z"
+             id="BitstreamVeraSans-Bold-46"
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
         </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,993.51847,489.63437)"
-           id="g764"
+           transform="matrix(0,-0.12,-0.12,0,993.51847,480.33062)"
+           id="g724"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-6d"
-             id="use766"
+             xlink:href="#BitstreamVeraSans-Bold-4d"
+             id="use726"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="104.19922"
+             x="99.511719"
              xlink:href="#BitstreamVeraSans-Bold-61"
-             id="use768"
+             id="use728"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="171.67969"
+             x="166.99219"
              xlink:href="#BitstreamVeraSans-Bold-78"
-             id="use770"
+             id="use730"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="236.18164"
-             xlink:href="#BitstreamVeraSans-Bold-66"
-             id="use772"
+             x="231.49414"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use732"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="279.6875"
-             xlink:href="#BitstreamVeraSans-Bold-75"
-             id="use774"
+             x="266.30859"
+             xlink:href="#BitstreamVeraSans-Bold-46"
+             id="use734"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="350.87891"
-             xlink:href="#BitstreamVeraSans-Bold-6e"
-             id="use776"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="422.07031"
-             xlink:href="#BitstreamVeraSans-Bold-64"
-             id="use778"
+             x="334.61914"
+             xlink:href="#BitstreamVeraSans-Bold-30"
+             id="use736"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -2846,14 +2620,14 @@
          id="line2d_29"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g782"
+           id="g740"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1066.1409"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use784"
+             id="use742"
              width="100%"
              height="100%" />
         </g>
@@ -2862,14 +2636,14 @@
          id="line2d_30"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g787"
+           id="g745"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1066.1409"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use789"
+             id="use747"
              width="100%"
              height="100%" />
         </g>
@@ -2877,71 +2651,55 @@
       <g
          id="text_13"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- skewtime -->
+        <!-- Skew T -->
         <g
-           transform="matrix(0,-0.12,-0.12,0,1069.4521,495.72437)"
-           id="g792"
+           transform="matrix(0,-0.12,-0.12,0,1069.4521,480.23125)"
+           id="g750"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use794"
+             xlink:href="#BitstreamVeraSans-Bold-53"
+             id="use752"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="59.521484"
+             x="72.021484"
              xlink:href="#BitstreamVeraSans-Bold-6b"
-             id="use796"
+             id="use754"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="123.40039"
+             x="135.90039"
              xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use798"
+             id="use756"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="191.22266"
+             x="203.72266"
              xlink:href="#BitstreamVeraSans-Bold-77"
-             id="use800"
+             id="use758"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="283.60547"
-             xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use802"
+             x="296.10547"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use760"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="331.4082"
-             xlink:href="#BitstreamVeraSans-Bold-69"
-             id="use804"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="365.68555"
-             xlink:href="#BitstreamVeraSans-Bold-6d"
-             id="use806"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="469.88477"
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use808"
+             x="330.91992"
+             xlink:href="#BitstreamVeraSans-Bold-54"
+             id="use762"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -2956,14 +2714,14 @@
          id="line2d_31"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g812"
+           id="g766"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1142.0746"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use814"
+             id="use768"
              width="100%"
              height="100%" />
         </g>
@@ -2972,14 +2730,14 @@
          id="line2d_32"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g817"
+           id="g771"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1142.0746"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use819"
+             id="use773"
              width="100%"
              height="100%" />
         </g>
@@ -2987,119 +2745,55 @@
       <g
          id="text_14"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- voice2percent -->
+        <!-- 2nd V -->
         <defs
-           id="defs822">
+           id="defs776">
           <path
-             d="m 1.51562,54.6875 17.48438,0 13.625,-37.7969 13.5625,37.7969 17.5313,0 L 42.1875,0 23,0 Z"
-             id="BitstreamVeraSans-Bold-76"
+             d="m 0.484375,72.9062 18.906225,0 19.3282,-53.8124 19.2968,53.8124 18.8906,0 L 49.9062,0 27.4844,0 Z"
+             id="BitstreamVeraSans-Bold-56"
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
         </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,1145.3858,527.905)"
-           id="g825"
+           transform="matrix(0,-0.12,-0.12,0,1145.3858,471.2875)"
+           id="g779"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-76"
-             id="use827"
+             xlink:href="#BitstreamVeraSans-Bold-32"
+             id="use781"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="65.185547"
-             xlink:href="#BitstreamVeraSans-Bold-6f"
-             id="use829"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="133.88672"
-             xlink:href="#BitstreamVeraSans-Bold-69"
-             id="use831"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="168.16406"
-             xlink:href="#BitstreamVeraSans-Bold-63"
-             id="use833"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="227.44141"
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use835"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="295.26367"
-             xlink:href="#BitstreamVeraSans-Bold-32"
-             id="use837"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="364.84375"
-             xlink:href="#BitstreamVeraSans-Bold-70"
-             id="use839"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="436.42578"
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use841"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="504.24805"
-             xlink:href="#BitstreamVeraSans-Bold-72"
-             id="use843"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="553.56445"
-             xlink:href="#BitstreamVeraSans-Bold-63"
-             id="use845"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="612.8418"
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use847"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="680.66406"
+             x="69.580078"
              xlink:href="#BitstreamVeraSans-Bold-6e"
-             id="use849"
+             id="use783"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="751.85547"
-             xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use851"
+             x="140.77148"
+             xlink:href="#BitstreamVeraSans-Bold-64"
+             id="use785"
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="212.35352"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use787"
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="247.16797"
+             xlink:href="#BitstreamVeraSans-Bold-56"
+             id="use789"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -3114,14 +2808,14 @@
          id="line2d_33"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g855"
+           id="g793"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1218.0082"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use857"
+             id="use795"
              width="100%"
              height="100%" />
         </g>
@@ -3130,14 +2824,14 @@
          id="line2d_34"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g860"
+           id="g798"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1218.0082"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use862"
+             id="use800"
              width="100%"
              height="100%" />
         </g>
@@ -3145,55 +2839,55 @@
       <g
          id="text_15"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- cvfund -->
+        <!-- CV F0 -->
+        <defs
+           id="defs803">
+          <path
+             d="M 67,4 Q 61.8125,1.3125 56.2031,-0.046875 50.5938,-1.42188 44.4844,-1.42188 26.2656,-1.42188 15.625,8.76562 4.98438,18.9531 4.98438,36.375 q 0,17.4844 10.64062,27.6562 10.6406,10.1876 28.8594,10.1876 6.1094,0 11.7187,-1.375 Q 61.8125,71.4844 67,68.7969 L 67,53.7188 Q 61.7656,57.2812 56.6875,58.9375 51.6094,60.5938 46,60.5938 q -10.0625,0 -15.8281,-6.4532 -5.75,-6.4375 -5.75,-17.7656 0,-11.2812 5.75,-17.7344 5.7656,-6.4375 15.8281,-6.4375 5.6094,0 10.6875,1.6563 5.0781,1.6718 10.3125,5.2344 z"
+             id="BitstreamVeraSans-Bold-43"
+             inkscape:connector-curvature="0"
+             style="stroke-linecap:butt;stroke-linejoin:round" />
+        </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,1221.3194,476.70812)"
-           id="g865"
+           transform="matrix(0,-0.12,-0.12,0,1221.3194,470.64438)"
+           id="g806"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-63"
-             id="use867"
+             xlink:href="#BitstreamVeraSans-Bold-43"
+             id="use808"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="59.277344"
-             xlink:href="#BitstreamVeraSans-Bold-76"
-             id="use869"
+             x="73.388672"
+             xlink:href="#BitstreamVeraSans-Bold-56"
+             id="use810"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="124.46289"
-             xlink:href="#BitstreamVeraSans-Bold-66"
-             id="use871"
+             x="150.78125"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use812"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="167.96875"
-             xlink:href="#BitstreamVeraSans-Bold-75"
-             id="use873"
+             x="185.5957"
+             xlink:href="#BitstreamVeraSans-Bold-46"
+             id="use814"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="239.16016"
-             xlink:href="#BitstreamVeraSans-Bold-6e"
-             id="use875"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="310.35156"
-             xlink:href="#BitstreamVeraSans-Bold-64"
-             id="use877"
+             x="253.90625"
+             xlink:href="#BitstreamVeraSans-Bold-30"
+             id="use816"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -3208,14 +2902,14 @@
          id="line2d_35"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g881"
+           id="g820"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1293.9419"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use883"
+             id="use822"
              width="100%"
              height="100%" />
         </g>
@@ -3224,14 +2918,14 @@
          id="line2d_36"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g886"
+           id="g825"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1293.9419"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use888"
+             id="use827"
              width="100%"
              height="100%" />
         </g>
@@ -3239,39 +2933,63 @@
       <g
          id="text_16"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- fund -->
+        <!-- Mean F0 -->
         <g
-           transform="matrix(0,-0.12,-0.12,0,1297.2531,462.05875)"
-           id="g891"
+           transform="matrix(0,-0.12,-0.12,0,1297.2531,489.2725)"
+           id="g830"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-66"
-             id="use893"
+             xlink:href="#BitstreamVeraSans-Bold-4d"
+             id="use832"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="43.505859"
-             xlink:href="#BitstreamVeraSans-Bold-75"
-             id="use895"
+             x="99.511719"
+             xlink:href="#BitstreamVeraSans-Bold-65"
+             id="use834"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="114.69727"
+             x="167.33398"
+             xlink:href="#BitstreamVeraSans-Bold-61"
+             id="use836"
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="234.81445"
              xlink:href="#BitstreamVeraSans-Bold-6e"
-             id="use897"
+             id="use838"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="185.88867"
-             xlink:href="#BitstreamVeraSans-Bold-64"
-             id="use899"
+             x="306.00586"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use840"
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="340.82031"
+             xlink:href="#BitstreamVeraSans-Bold-46"
+             id="use842"
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             x="409.13086"
+             xlink:href="#BitstreamVeraSans-Bold-30"
+             id="use844"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -3286,14 +3004,14 @@
          id="line2d_37"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g903"
+           id="g848"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1369.8755"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use905"
+             id="use850"
              width="100%"
              height="100%" />
         </g>
@@ -3302,14 +3020,14 @@
          id="line2d_38"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g908"
+           id="g853"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1369.8755"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use910"
+             id="use855"
              width="100%"
              height="100%" />
         </g>
@@ -3317,47 +3035,47 @@
       <g
          id="text_17"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- fund2 -->
+        <!-- Pk 2 -->
+        <defs
+           id="defs858">
+          <path
+             d="m 9.1875,72.9062 31.1875,0 q 13.9219,0 21.3594,-6.1874 7.4531,-6.1719 7.4531,-17.5938 0,-11.4844 -7.4531,-17.6562 -7.4375,-6.1719 -21.3594,-6.1719 l -12.3906,0 L 27.9844,0 9.1875,0 Z m 18.7969,-13.625 0,-20.3593 10.3906,0 q 5.4688,0 8.4531,2.6562 2.9844,2.6563 2.9844,7.5469 0,4.875 -2.9844,7.5156 -2.9843,2.6406 -8.4531,2.6406 z"
+             id="BitstreamVeraSans-Bold-50"
+             inkscape:connector-curvature="0"
+             style="stroke-linecap:butt;stroke-linejoin:round" />
+        </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,1373.1868,470.3725)"
-           id="g913"
+           transform="matrix(0,-0.12,-0.12,0,1373.1868,460.66)"
+           id="g861"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-66"
-             id="use915"
+             xlink:href="#BitstreamVeraSans-Bold-50"
+             id="use863"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="43.505859"
-             xlink:href="#BitstreamVeraSans-Bold-75"
-             id="use917"
+             x="73.291016"
+             xlink:href="#BitstreamVeraSans-Bold-6b"
+             id="use865"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="114.69727"
-             xlink:href="#BitstreamVeraSans-Bold-6e"
-             id="use919"
+             x="139.79492"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use867"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="185.88867"
-             xlink:href="#BitstreamVeraSans-Bold-64"
-             id="use921"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="257.4707"
+             x="174.60938"
              xlink:href="#BitstreamVeraSans-Bold-32"
-             id="use923"
+             id="use869"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -3372,14 +3090,14 @@
          id="line2d_39"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g927"
+           id="g873"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1445.8092"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use929"
+             id="use875"
              width="100%"
              height="100%" />
         </g>
@@ -3388,14 +3106,14 @@
          id="line2d_40"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g932"
+           id="g878"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1445.8092"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use934"
+             id="use880"
              width="100%"
              height="100%" />
         </g>
@@ -3403,63 +3121,55 @@
       <g
          id="text_18"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- minfund -->
+        <!-- Min F0 -->
         <g
-           transform="matrix(0,-0.12,-0.12,0,1449.1204,486.4525)"
-           id="g937"
+           transform="matrix(0,-0.12,-0.12,0,1449.1204,477.14875)"
+           id="g883"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-6d"
-             id="use939"
+             xlink:href="#BitstreamVeraSans-Bold-4d"
+             id="use885"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="104.19922"
+             x="99.511719"
              xlink:href="#BitstreamVeraSans-Bold-69"
-             id="use941"
+             id="use887"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="138.47656"
+             x="133.78906"
              xlink:href="#BitstreamVeraSans-Bold-6e"
-             id="use943"
+             id="use889"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="209.66797"
-             xlink:href="#BitstreamVeraSans-Bold-66"
-             id="use945"
+             x="204.98047"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use891"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="253.17383"
-             xlink:href="#BitstreamVeraSans-Bold-75"
-             id="use947"
+             x="239.79492"
+             xlink:href="#BitstreamVeraSans-Bold-46"
+             id="use893"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="324.36523"
-             xlink:href="#BitstreamVeraSans-Bold-6e"
-             id="use949"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="395.55664"
-             xlink:href="#BitstreamVeraSans-Bold-64"
-             id="use951"
+             x="308.10547"
+             xlink:href="#BitstreamVeraSans-Bold-30"
+             id="use895"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -3474,14 +3184,14 @@
          id="line2d_41"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g955"
+           id="g899"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1521.7428"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use957"
+             id="use901"
              width="100%"
              height="100%" />
         </g>
@@ -3490,14 +3200,14 @@
          id="line2d_42"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g960"
+           id="g904"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1521.7428"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use962"
+             id="use906"
              width="100%"
              height="100%" />
         </g>
@@ -3505,103 +3215,73 @@
       <g
          id="text_19"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- kurtosistime -->
+        <!-- Kurt T -->
+        <defs
+           id="defs909">
+          <path
+             d="m 9.1875,72.9062 18.7969,0 0,-26.6093 27.0937,26.6093 21.8281,0 L 41.7969,38.375 80.5156,0 56.9844,0 27.9844,28.7188 27.9844,0 9.1875,0 Z"
+             id="BitstreamVeraSans-Bold-4b"
+             inkscape:connector-curvature="0"
+             style="stroke-linecap:butt;stroke-linejoin:round" />
+          <path
+             d="m 49.0312,39.7969 q -2.2968,1.0781 -4.5781,1.5781 -2.2656,0.5156 -4.5625,0.5156 -6.7344,0 -10.375,-4.3281 Q 25.875,33.25 25.875,25.2031 L 25.875,0 8.40625,0 l 0,54.6875 17.46875,0 0,-8.9844 q 3.375,5.375 7.7344,7.8281 Q 37.9844,56 44.0938,56 q 0.875,0 1.8906,-0.0781 1.0312,-0.0625 2.9844,-0.3125 z"
+             id="BitstreamVeraSans-Bold-72"
+             inkscape:connector-curvature="0"
+             style="stroke-linecap:butt;stroke-linejoin:round" />
+          <path
+             d="m 7.8125,21.2969 0,33.3906 17.5781,0 0,-5.4687 q 0,-4.4376 -0.0468,-11.1563 -0.0469,-6.7187 -0.0469,-8.9531 0,-6.5938 0.3437,-9.5 0.3438,-2.9063 1.1719,-4.2344 1.0625,-1.7031 2.7969,-2.6406 1.7344,-0.9219 3.9844,-0.9219 5.4687,0 8.5937,4.2031 3.125,4.2032 3.125,11.6719 l 0,27 17.4844,0 0,-54.6875 -17.4844,0 0,7.90625 q -3.9531,-4.78125 -8.375,-7.0625 -4.4219,-2.26563 -9.7344,-2.26563 -9.4843,0 -14.4375,5.8125 Q 7.8125,10.2031 7.8125,21.2969"
+             id="BitstreamVeraSans-Bold-75"
+             inkscape:connector-curvature="0"
+             style="stroke-linecap:butt;stroke-linejoin:round" />
+        </defs>
         <g
-           transform="matrix(0,-0.12,-0.12,0,1525.0541,516.12063)"
-           id="g965"
+           transform="matrix(0,-0.12,-0.12,0,1525.0541,473.98187)"
+           id="g914"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-6b"
-             id="use967"
+             xlink:href="#BitstreamVeraSans-Bold-4b"
+             id="use916"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="66.503906"
+             x="75.740234"
              xlink:href="#BitstreamVeraSans-Bold-75"
-             id="use969"
+             id="use918"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="137.69531"
+             x="146.93164"
              xlink:href="#BitstreamVeraSans-Bold-72"
-             id="use971"
+             id="use920"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="187.01172"
+             x="196.24805"
              xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use973"
+             id="use922"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="234.81445"
-             xlink:href="#BitstreamVeraSans-Bold-6f"
-             id="use975"
+             x="244.05078"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use924"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="303.51562"
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use977"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="363.03711"
-             xlink:href="#BitstreamVeraSans-Bold-69"
-             id="use979"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="397.31445"
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use981"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="456.83594"
-             xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use983"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="504.63867"
-             xlink:href="#BitstreamVeraSans-Bold-69"
-             id="use985"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="538.91602"
-             xlink:href="#BitstreamVeraSans-Bold-6d"
-             id="use987"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="643.11523"
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use989"
+             x="278.86523"
+             xlink:href="#BitstreamVeraSans-Bold-54"
+             id="use926"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -3616,14 +3296,14 @@
          id="line2d_43"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g993"
+           id="g930"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1597.6765"
              xlink:href="#m93b0483c22"
              y="428.39999"
-             id="use995"
+             id="use932"
              width="100%"
              height="100%" />
         </g>
@@ -3632,14 +3312,14 @@
          id="line2d_44"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g998"
+           id="g935"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1597.6765"
              xlink:href="#m741efc42ff"
              y="25.200001"
-             id="use1000"
+             id="use937"
              width="100%"
              height="100%" />
         </g>
@@ -3647,111 +3327,55 @@
       <g
          id="text_20"
          style="stroke-linecap:butt;stroke-linejoin:round">
-        <!-- kurtosisspect -->
+        <!-- Kurt S -->
         <g
-           transform="matrix(0,-0.12,-0.12,0,1600.9877,522.655)"
-           id="g1003"
+           transform="matrix(0,-0.12,-0.12,0,1600.9877,473.62563)"
+           id="g940"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
-             xlink:href="#BitstreamVeraSans-Bold-6b"
-             id="use1005"
+             xlink:href="#BitstreamVeraSans-Bold-4b"
+             id="use942"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="66.503906"
+             x="75.740234"
              xlink:href="#BitstreamVeraSans-Bold-75"
-             id="use1007"
+             id="use944"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="137.69531"
+             x="146.93164"
              xlink:href="#BitstreamVeraSans-Bold-72"
-             id="use1009"
+             id="use946"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="187.01172"
+             x="196.24805"
              xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use1011"
+             id="use948"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="234.81445"
-             xlink:href="#BitstreamVeraSans-Bold-6f"
-             id="use1013"
+             x="244.05078"
+             xlink:href="#BitstreamVeraSans-Bold-20"
+             id="use950"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
              height="100%" />
           <use
-             x="303.51562"
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use1015"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="363.03711"
-             xlink:href="#BitstreamVeraSans-Bold-69"
-             id="use1017"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="397.31445"
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use1019"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="456.83594"
-             xlink:href="#BitstreamVeraSans-Bold-73"
-             id="use1021"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="516.35742"
-             xlink:href="#BitstreamVeraSans-Bold-70"
-             id="use1023"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="587.93945"
-             xlink:href="#BitstreamVeraSans-Bold-65"
-             id="use1025"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="655.76172"
-             xlink:href="#BitstreamVeraSans-Bold-63"
-             id="use1027"
-             style="stroke-linecap:butt;stroke-linejoin:round"
-             y="0"
-             width="100%"
-             height="100%" />
-          <use
-             x="715.03906"
-             xlink:href="#BitstreamVeraSans-Bold-74"
-             id="use1029"
+             x="278.86523"
+             xlink:href="#BitstreamVeraSans-Bold-53"
+             id="use952"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -3762,8 +3386,7 @@
   </g>
   <g
      id="matplotlib.axis_2"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <g
        id="ytick_1"
        style="stroke-linecap:butt;stroke-linejoin:round">
@@ -3771,7 +3394,7 @@
          id="line2d_45"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <defs
-           id="defs1034">
+           id="defs957">
           <path
              d="M 0,0 4,0"
              id="m728421d6d4"
@@ -3779,14 +3402,14 @@
              inkscape:connector-curvature="0" />
         </defs>
         <g
-           id="g1037"
+           id="g960"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="82.800003"
              xlink:href="#m728421d6d4"
              y="428.39999"
-             id="use1039"
+             id="use962"
              width="100%"
              height="100%" />
         </g>
@@ -3795,7 +3418,7 @@
          id="line2d_46"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <defs
-           id="defs1042">
+           id="defs965">
           <path
              d="M 0,0 -4,0"
              id="mcb0005524f"
@@ -3803,14 +3426,14 @@
              inkscape:connector-curvature="0" />
         </defs>
         <g
-           id="g1045"
+           id="g968"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1639.4399"
              xlink:href="#mcb0005524f"
              y="428.39999"
-             id="use1047"
+             id="use970"
              width="100%"
              height="100%" />
         </g>
@@ -3820,25 +3443,20 @@
          style="stroke-linecap:butt;stroke-linejoin:round">
         <!-- 0.0 -->
         <defs
-           id="defs1050">
+           id="defs973">
           <path
              d="m 10.2031,18.8906 17.5781,0 0,-18.8906 -17.5781,0 z"
              id="BitstreamVeraSans-Bold-2e"
              inkscape:connector-curvature="0"
              style="stroke-linecap:butt;stroke-linejoin:round" />
-          <path
-             d="m 46,36.5312 q 0,13.6719 -2.5625,19.25 -2.5625,5.5938 -8.625,5.5938 -6.0469,0 -8.6406,-5.5938 -2.5938,-5.5781 -2.5938,-19.25 0,-13.8281 2.5938,-19.5 2.5937,-5.6562 8.6406,-5.6562 6.0156,0 8.5937,5.6562 Q 46,22.7031 46,36.5312 M 64.7969,36.375 q 0,-18.1094 -7.8125,-27.95312 -7.8125,-9.84376 -22.1719,-9.84376 -14.4063,0 -22.2187,9.84376 -7.81255,9.84372 -7.81255,27.95312 0,18.1719 7.81255,28 7.8124,9.8438 22.2187,9.8438 14.3594,0 22.1719,-9.8438 7.8125,-9.8281 7.8125,-28"
-             id="BitstreamVeraSans-Bold-30"
-             inkscape:connector-curvature="0"
-             style="stroke-linecap:butt;stroke-linejoin:round" />
         </defs>
         <g
            transform="matrix(0.16,0,0,-0.16,51.9875,432.815)"
-           id="g1054"
+           id="g976"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              xlink:href="#BitstreamVeraSans-Bold-30"
-             id="use1056"
+             id="use978"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
@@ -3847,7 +3465,7 @@
           <use
              x="69.580078"
              xlink:href="#BitstreamVeraSans-Bold-2e"
-             id="use1058"
+             id="use980"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -3855,7 +3473,7 @@
           <use
              x="107.56836"
              xlink:href="#BitstreamVeraSans-Bold-30"
-             id="use1060"
+             id="use982"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -3870,14 +3488,14 @@
          id="line2d_47"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g1064"
+           id="g986"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="82.800003"
              xlink:href="#m728421d6d4"
              y="347.76001"
-             id="use1066"
+             id="use988"
              width="100%"
              height="100%" />
         </g>
@@ -3886,14 +3504,14 @@
          id="line2d_48"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g1069"
+           id="g991"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1639.4399"
              xlink:href="#mcb0005524f"
              y="347.76001"
-             id="use1071"
+             id="use993"
              width="100%"
              height="100%" />
         </g>
@@ -3904,11 +3522,11 @@
         <!-- 0.2 -->
         <g
            transform="matrix(0.16,0,0,-0.16,52.6125,352.175)"
-           id="g1074"
+           id="g996"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              xlink:href="#BitstreamVeraSans-Bold-30"
-             id="use1076"
+             id="use998"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
@@ -3917,7 +3535,7 @@
           <use
              x="69.580078"
              xlink:href="#BitstreamVeraSans-Bold-2e"
-             id="use1078"
+             id="use1000"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -3925,7 +3543,7 @@
           <use
              x="107.56836"
              xlink:href="#BitstreamVeraSans-Bold-32"
-             id="use1080"
+             id="use1002"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -3940,14 +3558,14 @@
          id="line2d_49"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g1084"
+           id="g1006"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="82.800003"
              xlink:href="#m728421d6d4"
              y="267.12"
-             id="use1086"
+             id="use1008"
              width="100%"
              height="100%" />
         </g>
@@ -3956,14 +3574,14 @@
          id="line2d_50"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g1089"
+           id="g1011"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1639.4399"
              xlink:href="#mcb0005524f"
              y="267.12"
-             id="use1091"
+             id="use1013"
              width="100%"
              height="100%" />
         </g>
@@ -3973,7 +3591,7 @@
          style="stroke-linecap:butt;stroke-linejoin:round">
         <!-- 0.4 -->
         <defs
-           id="defs1094">
+           id="defs1016">
           <path
              d="m 36.8125,57.4219 -20.5937,-30.5157 20.5937,0 z m -3.125,15.4843 20.9063,0 0,-46 10.3906,0 0,-13.625 -10.3906,0 0,-13.2812 -17.7813,0 0,13.2812 -32.3125,0 0,16.1094 z"
              id="BitstreamVeraSans-Bold-34"
@@ -3982,11 +3600,11 @@
         </defs>
         <g
            transform="matrix(0.16,0,0,-0.16,51.9575,271.535)"
-           id="g1097"
+           id="g1019"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              xlink:href="#BitstreamVeraSans-Bold-30"
-             id="use1099"
+             id="use1021"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
@@ -3995,7 +3613,7 @@
           <use
              x="69.580078"
              xlink:href="#BitstreamVeraSans-Bold-2e"
-             id="use1101"
+             id="use1023"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -4003,7 +3621,7 @@
           <use
              x="107.56836"
              xlink:href="#BitstreamVeraSans-Bold-34"
-             id="use1103"
+             id="use1025"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -4018,14 +3636,14 @@
          id="line2d_51"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g1107"
+           id="g1029"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="82.800003"
              xlink:href="#m728421d6d4"
              y="186.48"
-             id="use1109"
+             id="use1031"
              width="100%"
              height="100%" />
         </g>
@@ -4034,14 +3652,14 @@
          id="line2d_52"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g1112"
+           id="g1034"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1639.4399"
              xlink:href="#mcb0005524f"
              y="186.48"
-             id="use1114"
+             id="use1036"
              width="100%"
              height="100%" />
         </g>
@@ -4051,7 +3669,7 @@
          style="stroke-linecap:butt;stroke-linejoin:round">
         <!-- 0.6 -->
         <defs
-           id="defs1117">
+           id="defs1039">
           <path
              d="m 36.1875,35.9844 q -4.9375,0 -7.4063,-3.2032 -2.4687,-3.1874 -2.4687,-9.5937 0,-6.3906 2.4687,-9.5937 2.4688,-3.1876 7.4063,-3.1876 4.9687,0 7.4375,3.1876 2.4688,3.2031 2.4688,9.5937 0,6.4063 -2.4688,9.5937 -2.4688,3.2032 -7.4375,3.2032 M 59.4219,71 l 0,-13.4844 q -4.6407,2.2032 -8.75,3.25 -4.0938,1.0469 -8,1.0469 -8.3907,0 -13.0781,-4.6719 -4.6876,-4.6562 -5.4688,-13.8281 3.2188,2.3906 6.9688,3.5781 3.7656,1.2032 8.2187,1.2032 11.1719,0 18.0313,-6.5469 6.8593,-6.5313 6.8593,-17.125 0,-11.7188 -7.6719,-18.78128 -7.6562,-7.0625 -20.5468,-7.0625 -14.2032,0 -22,9.59376 -7.78128,9.60932 -7.78128,27.23432 0,18.0626 9.10938,28.3907 9.1094,10.3281 24.9687,10.3281 5.0313,0 9.7657,-0.7812 4.7343,-0.7813 9.375,-2.3438"
              id="BitstreamVeraSans-Bold-36"
@@ -4060,11 +3678,11 @@
         </defs>
         <g
            transform="matrix(0.16,0,0,-0.16,52.0825,190.895)"
-           id="g1120"
+           id="g1042"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              xlink:href="#BitstreamVeraSans-Bold-30"
-             id="use1122"
+             id="use1044"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
@@ -4073,7 +3691,7 @@
           <use
              x="69.580078"
              xlink:href="#BitstreamVeraSans-Bold-2e"
-             id="use1124"
+             id="use1046"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -4081,7 +3699,7 @@
           <use
              x="107.56836"
              xlink:href="#BitstreamVeraSans-Bold-36"
-             id="use1126"
+             id="use1048"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -4096,14 +3714,14 @@
          id="line2d_53"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g1130"
+           id="g1052"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="82.800003"
              xlink:href="#m728421d6d4"
              y="105.84"
-             id="use1132"
+             id="use1054"
              width="100%"
              height="100%" />
         </g>
@@ -4112,14 +3730,14 @@
          id="line2d_54"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g1135"
+           id="g1057"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1639.4399"
              xlink:href="#mcb0005524f"
              y="105.84"
-             id="use1137"
+             id="use1059"
              width="100%"
              height="100%" />
         </g>
@@ -4129,7 +3747,7 @@
          style="stroke-linecap:butt;stroke-linejoin:round">
         <!-- 0.8 -->
         <defs
-           id="defs1140">
+           id="defs1062">
           <path
              d="m 34.8125,32.625 q -5.2656,0 -8.1094,-2.8906 -2.8281,-2.875 -2.8281,-8.25 0,-5.375 2.8281,-8.2344 2.8438,-2.8438 8.1094,-2.8438 5.2344,0 8.0156,2.8438 2.7813,2.8594 2.7813,8.2344 0,5.4218 -2.7813,8.2812 -2.7812,2.8594 -8.0156,2.8594 m -13.7187,6.1875 q -6.6407,2.0156 -10.0157,6.1563 -3.35935,4.1562 -3.35935,10.3593 0,9.2188 6.87505,14.0469 6.8906,4.8438 20.2187,4.8438 13.2344,0 20.1094,-4.8126 6.8906,-4.8124 6.8906,-14.0781 0,-6.2031 -3.3906,-10.3593 -3.3907,-4.1407 -10.0313,-6.1563 7.4219,-2.0469 11.2032,-6.6563 3.7812,-4.6093 3.7812,-11.6406 0,-10.84372 -7.2031,-16.3906 -7.2031,-5.54688 -21.3594,-5.54688 -14.2031,0 -21.4531,5.54688 -7.25002,5.54688 -7.25002,16.3906 0,7.0313 3.78124,11.6406 3.78128,4.6094 11.20318,6.6563 m 4.3906,14.6094 q 0,-4.3438 2.4218,-6.6875 2.4219,-2.3438 6.9063,-2.3438 4.3906,0 6.7813,2.3438 Q 44,49.0781 44,53.4219 q 0,4.3437 -2.4062,6.6562 -2.3907,2.3281 -6.7813,2.3281 -4.4844,0 -6.9063,-2.3437 -2.4218,-2.3437 -2.4218,-6.6406"
              id="BitstreamVeraSans-Bold-38"
@@ -4138,11 +3756,11 @@
         </defs>
         <g
            transform="matrix(0.16,0,0,-0.16,52.215,110.255)"
-           id="g1143"
+           id="g1065"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              xlink:href="#BitstreamVeraSans-Bold-30"
-             id="use1145"
+             id="use1067"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
@@ -4151,7 +3769,7 @@
           <use
              x="69.580078"
              xlink:href="#BitstreamVeraSans-Bold-2e"
-             id="use1147"
+             id="use1069"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -4159,7 +3777,7 @@
           <use
              x="107.56836"
              xlink:href="#BitstreamVeraSans-Bold-38"
-             id="use1149"
+             id="use1071"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -4174,14 +3792,14 @@
          id="line2d_55"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g1153"
+           id="g1075"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="82.800003"
              xlink:href="#m728421d6d4"
              y="25.200001"
-             id="use1155"
+             id="use1077"
              width="100%"
              height="100%" />
         </g>
@@ -4190,14 +3808,14 @@
          id="line2d_56"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <g
-           id="g1158"
+           id="g1080"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              style="stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round"
              x="1639.4399"
              xlink:href="#mcb0005524f"
              y="25.200001"
-             id="use1160"
+             id="use1082"
              width="100%"
              height="100%" />
         </g>
@@ -4208,11 +3826,11 @@
         <!-- 1.0 -->
         <g
            transform="matrix(0.16,0,0,-0.16,53.0275,29.615)"
-           id="g1163"
+           id="g1085"
            style="stroke-linecap:butt;stroke-linejoin:round">
           <use
              xlink:href="#BitstreamVeraSans-Bold-31"
-             id="use1165"
+             id="use1087"
              style="stroke-linecap:butt;stroke-linejoin:round"
              x="0"
              y="0"
@@ -4221,7 +3839,7 @@
           <use
              x="69.580078"
              xlink:href="#BitstreamVeraSans-Bold-2e"
-             id="use1167"
+             id="use1089"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -4229,7 +3847,7 @@
           <use
              x="107.56836"
              xlink:href="#BitstreamVeraSans-Bold-30"
-             id="use1169"
+             id="use1091"
              style="stroke-linecap:butt;stroke-linejoin:round"
              y="0"
              width="100%"
@@ -4242,7 +3860,7 @@
        style="stroke-linecap:butt;stroke-linejoin:round">
       <!-- Decoder R2 -->
       <defs
-         id="defs1172">
+         id="defs1094">
         <path
            d="m 19.1875,8.29688 34.4219,0 0,-8.29688 -46.28128,0 0,8.29688 Q 12.9375,14.1094 22.625,23.8906 q 9.7031,9.7969 12.1875,12.6406 4.7344,5.3126 6.6094,9 1.8906,3.6876 1.8906,7.25 0,5.8126 -4.0781,9.4688 -4.0782,3.6719 -10.625,3.6719 -4.6406,0 -9.7969,-1.6094 -5.1406,-1.6094 -11,-4.8906 l 0,9.9687 q 5.9531,2.3906 11.125,3.6094 5.1875,1.2188 9.4844,1.2188 11.3281,0 18.0625,-5.6719 6.7344,-5.6563 6.7344,-15.125 0,-4.5 -1.6876,-8.5313 Q 49.8594,40.875 45.4062,35.4062 44.1875,33.9844 37.6406,27.2188 31.1094,20.4531 19.1875,8.29688"
            id="BitstreamVeraSans-Roman-32"
@@ -4291,11 +3909,11 @@
       </defs>
       <g
          transform="matrix(0,-0.16,-0.16,0,43.63,272.85625)"
-         id="g1183"
+         id="g1105"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <use
            xlink:href="#BitstreamVeraSans-Roman-44"
-           id="use1185"
+           id="use1107"
            style="stroke-linecap:butt;stroke-linejoin:round"
            x="0"
            y="0"
@@ -4304,7 +3922,7 @@
         <use
            x="77.001953"
            xlink:href="#BitstreamVeraSans-Roman-65"
-           id="use1187"
+           id="use1109"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4312,7 +3930,7 @@
         <use
            x="138.52539"
            xlink:href="#BitstreamVeraSans-Roman-63"
-           id="use1189"
+           id="use1111"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4320,7 +3938,7 @@
         <use
            x="193.50586"
            xlink:href="#BitstreamVeraSans-Roman-6f"
-           id="use1191"
+           id="use1113"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4328,7 +3946,7 @@
         <use
            x="254.6875"
            xlink:href="#BitstreamVeraSans-Roman-64"
-           id="use1193"
+           id="use1115"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4336,7 +3954,7 @@
         <use
            x="318.16406"
            xlink:href="#BitstreamVeraSans-Roman-65"
-           id="use1195"
+           id="use1117"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4344,7 +3962,7 @@
         <use
            x="379.6875"
            xlink:href="#BitstreamVeraSans-Roman-72"
-           id="use1197"
+           id="use1119"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4352,7 +3970,7 @@
         <use
            x="420.80078"
            xlink:href="#BitstreamVeraSans-Roman-20"
-           id="use1199"
+           id="use1121"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4360,7 +3978,7 @@
         <use
            x="452.58789"
            xlink:href="#BitstreamVeraSans-Roman-52"
-           id="use1201"
+           id="use1123"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4368,7 +3986,7 @@
         <use
            x="522.07031"
            xlink:href="#BitstreamVeraSans-Roman-32"
-           id="use1203"
+           id="use1125"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4378,15 +3996,14 @@
   </g>
   <g
      id="legend_1"
-     style="stroke-linecap:butt;stroke-linejoin:round"
-     transform="translate(-31.472496,-17.739992)">
+     style="stroke-linecap:butt;stroke-linejoin:round">
     <g
        id="patch_47"
        style="stroke-linecap:butt;stroke-linejoin:round">
       <path
          d="m 1445.59,96.924 184.25,0 0,-62.124 -184.25,0 z"
          style="fill:#ffffff;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter"
-         id="path1207"
+         id="path1129"
          inkscape:connector-curvature="0" />
     </g>
     <g
@@ -4395,7 +4012,7 @@
       <path
          d="m 1453.27,57.069 38.4,0 0,-13.44 -38.4,0 z"
          style="fill:#e90027;stroke:#e90027;stroke-linecap:butt;stroke-linejoin:miter"
-         id="path1210"
+         id="path1132"
          inkscape:connector-curvature="0" />
     </g>
     <g
@@ -4403,10 +4020,10 @@
        style="stroke-linecap:butt;stroke-linejoin:round">
       <!-- Spike Rate -->
       <defs
-         id="defs1213">
+         id="defs1135">
         <path
-           d="m 59.9062,70.6094 0,-15.4375 q -6,2.6875 -11.7187,4.0469 -5.7031,1.375 -10.7813,1.375 -6.7343,0 -9.9687,-1.8594 -3.2187,-1.8438 -3.2187,-5.75 0,-2.9375 2.1718,-4.5782 2.1719,-1.625 7.8906,-2.7968 l 8,-1.6094 q 12.1563,-2.4531 17.2813,-7.4375 5.1406,-4.9687 5.1406,-14.1563 0,-12.0468 -7.1562,-17.93745 -7.1563,-5.89063 -21.8594,-5.89063 -6.9219,0 -13.9063,1.32813 -6.9843,1.3125 -13.9687,3.90625 l 0,15.8594 q 6.9844,-3.7031 13.5,-5.5938 6.5156,-1.875 12.5781,-1.875 6.1563,0 9.4219,2.0469 3.2656,2.0625 3.2656,5.875 0,3.4062 -2.2187,5.2656 Q 42.1406,27.25 35.5,28.7188 l -7.2812,1.6093 q -10.9376,2.3438 -16,7.4688 -5.04692,5.125 -5.04692,13.8125 0,10.8906 7.03122,16.75 7.0313,5.8594 20.2188,5.8594 6.0156,0 12.3593,-0.9063 6.3438,-0.9063 13.125,-2.7031"
-           id="BitstreamVeraSans-Bold-53"
+           d="m 25.875,7.90625 0,-28.70315 -17.46875,0 0,75.4844 17.46875,0 0,-8 Q 29.5,51.4688 33.8906,53.7344 38.2812,56 44,56 q 10.1094,0 16.5938,-8.0312 6.5,-8.0313 6.5,-20.6719 0,-12.6407 -6.5,-20.68752 Q 54.1094,-1.42188 44,-1.42188 q -5.7188,0 -10.1094,2.26563 Q 29.5,3.125 25.875,7.90625 M 37.5,43.3125 q -5.6094,0 -8.625,-4.125 -3,-4.125 -3,-11.8906 0,-7.7657 3,-11.8907 3.0156,-4.125 8.625,-4.125 5.6094,0 8.5625,4.0938 2.9687,4.1094 2.9687,11.9219 0,7.8125 -2.9687,11.9062 -2.9531,4.1094 -8.5625,4.1094"
+           id="BitstreamVeraSans-Bold-70"
            inkscape:connector-curvature="0"
            style="stroke-linecap:butt;stroke-linejoin:round" />
         <path
@@ -4414,19 +4031,14 @@
            id="BitstreamVeraSans-Bold-52"
            inkscape:connector-curvature="0"
            style="stroke-linecap:butt;stroke-linejoin:round" />
-        <path
-           id="BitstreamVeraSans-Bold-20"
-           d=""
-           inkscape:connector-curvature="0"
-           style="stroke-linecap:butt;stroke-linejoin:round" />
       </defs>
       <g
          transform="matrix(0.192,0,0,-0.192,1507.026,57.069)"
-         id="g1218"
+         id="g1139"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <use
            xlink:href="#BitstreamVeraSans-Bold-53"
-           id="use1220"
+           id="use1141"
            style="stroke-linecap:butt;stroke-linejoin:round"
            x="0"
            y="0"
@@ -4435,7 +4047,7 @@
         <use
            x="72.021484"
            xlink:href="#BitstreamVeraSans-Bold-70"
-           id="use1222"
+           id="use1143"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4443,7 +4055,7 @@
         <use
            x="143.60352"
            xlink:href="#BitstreamVeraSans-Bold-69"
-           id="use1224"
+           id="use1145"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4451,7 +4063,7 @@
         <use
            x="177.88086"
            xlink:href="#BitstreamVeraSans-Bold-6b"
-           id="use1226"
+           id="use1147"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4459,7 +4071,7 @@
         <use
            x="241.75977"
            xlink:href="#BitstreamVeraSans-Bold-65"
-           id="use1228"
+           id="use1149"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4467,7 +4079,7 @@
         <use
            x="309.58203"
            xlink:href="#BitstreamVeraSans-Bold-20"
-           id="use1230"
+           id="use1151"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4475,7 +4087,7 @@
         <use
            x="344.39648"
            xlink:href="#BitstreamVeraSans-Bold-52"
-           id="use1232"
+           id="use1153"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4483,7 +4095,7 @@
         <use
            x="421.39844"
            xlink:href="#BitstreamVeraSans-Bold-61"
-           id="use1234"
+           id="use1155"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4491,7 +4103,7 @@
         <use
            x="488.87891"
            xlink:href="#BitstreamVeraSans-Bold-74"
-           id="use1236"
+           id="use1157"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4499,7 +4111,7 @@
         <use
            x="536.68164"
            xlink:href="#BitstreamVeraSans-Bold-65"
-           id="use1238"
+           id="use1159"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4512,7 +4124,7 @@
       <path
          d="m 1453.27,85.251 38.4,0 0,-13.44 -38.4,0 z"
          style="fill:#0068a5;stroke:#0068a5;stroke-linecap:butt;stroke-linejoin:miter"
-         id="path1241"
+         id="path1162"
          inkscape:connector-curvature="0" />
     </g>
     <g
@@ -4520,7 +4132,7 @@
        style="stroke-linecap:butt;stroke-linejoin:round">
       <!-- LFP PSD -->
       <defs
-         id="defs1244">
+         id="defs1165">
         <path
            d="m 9.1875,72.9062 18.7969,0 0,-58.7031 33,0 L 60.9844,0 9.1875,0 Z"
            id="BitstreamVeraSans-Bold-4c"
@@ -4531,24 +4143,14 @@
            id="BitstreamVeraSans-Bold-44"
            inkscape:connector-curvature="0"
            style="stroke-linecap:butt;stroke-linejoin:round" />
-        <path
-           d="m 9.1875,72.9062 50.7187,0 0,-14.2187 -31.9218,0 0,-13.5625 30.0312,0 0,-14.2188 -30.0312,0 L 27.9844,0 9.1875,0 Z"
-           id="BitstreamVeraSans-Bold-46"
-           inkscape:connector-curvature="0"
-           style="stroke-linecap:butt;stroke-linejoin:round" />
-        <path
-           d="m 9.1875,72.9062 31.1875,0 q 13.9219,0 21.3594,-6.1874 7.4531,-6.1719 7.4531,-17.5938 0,-11.4844 -7.4531,-17.6562 -7.4375,-6.1719 -21.3594,-6.1719 l -12.3906,0 L 27.9844,0 9.1875,0 Z m 18.7969,-13.625 0,-20.3593 10.3906,0 q 5.4688,0 8.4531,2.6562 2.9844,2.6563 2.9844,7.5469 0,4.875 -2.9844,7.5156 -2.9843,2.6406 -8.4531,2.6406 z"
-           id="BitstreamVeraSans-Bold-50"
-           inkscape:connector-curvature="0"
-           style="stroke-linecap:butt;stroke-linejoin:round" />
       </defs>
       <g
          transform="matrix(0.192,0,0,-0.192,1507.026,85.251)"
-         id="g1250"
+         id="g1169"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <use
            xlink:href="#BitstreamVeraSans-Bold-4c"
-           id="use1252"
+           id="use1171"
            style="stroke-linecap:butt;stroke-linejoin:round"
            x="0"
            y="0"
@@ -4557,7 +4159,7 @@
         <use
            x="63.720703"
            xlink:href="#BitstreamVeraSans-Bold-46"
-           id="use1254"
+           id="use1173"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4565,7 +4167,7 @@
         <use
            x="132.03125"
            xlink:href="#BitstreamVeraSans-Bold-50"
-           id="use1256"
+           id="use1175"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4573,7 +4175,7 @@
         <use
            x="205.32227"
            xlink:href="#BitstreamVeraSans-Bold-20"
-           id="use1258"
+           id="use1177"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4581,7 +4183,7 @@
         <use
            x="240.13672"
            xlink:href="#BitstreamVeraSans-Bold-50"
-           id="use1260"
+           id="use1179"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4589,7 +4191,7 @@
         <use
            x="313.42773"
            xlink:href="#BitstreamVeraSans-Bold-53"
-           id="use1262"
+           id="use1181"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4597,7 +4199,7 @@
         <use
            x="385.44922"
            xlink:href="#BitstreamVeraSans-Bold-44"
-           id="use1264"
+           id="use1183"
            style="stroke-linecap:butt;stroke-linejoin:round"
            y="0"
            width="100%"
@@ -4606,17 +4208,15 @@
     </g>
   </g>
   <defs
-     id="defs1266">
+     id="defs1185">
     <clipPath
-       id="p882b81455c"
-       style="stroke-linecap:butt;stroke-linejoin:round">
+       id="p882b81455c">
       <rect
-         height="403.20001"
+         height="403.2"
          width="1556.64"
-         x="82.800003"
-         y="25.200001"
-         id="rect1269"
-         style="stroke-linecap:butt;stroke-linejoin:round" />
+         x="82.8"
+         y="25.2"
+         id="rect1188" />
     </clipPath>
   </defs>
 </svg>

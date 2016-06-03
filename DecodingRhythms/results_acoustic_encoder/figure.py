@@ -17,7 +17,7 @@ from zeebeez.aggregators.biosound import AggregateBiosounds
 
 from zeebeez.aggregators.pard import PARDAggregator
 from zeebeez.utils import REDUCED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, \
-    ACOUSTIC_FEATURE_COLORS, ALL_ACOUSTIC_PROPS
+    ACOUSTIC_FEATURE_COLORS, ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_NAMES
 
 
 def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
@@ -363,18 +363,19 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data', d
     ax = plt.subplot(gs[:25, :32])
     plt.errorbar(freqs, perf_by_freq[:,0], yerr=perf_by_freq[:, 1], fmt='k-',
                  linewidth=5.0, ecolor='#b8b8b8', elinewidth=5.0, capthick=0.)
-    plt.xlabel('Frequency (Hz)')
+    plt.xlabel('LFP Frequency (Hz)')
     plt.ylabel('Encoder R2')
     plt.axis('tight')
+    plt.ylim(0, 0.50)
 
     # plot the average encoder effect sizes
     absmax = np.percentile(Wsq.ravel(), 96)
     ax = plt.subplot(gs[35:100, :40])
     plt.imshow(Wsq_by_freq, origin='upper', interpolation='nearest', aspect='auto', vmin=0, vmax=absmax, cmap=magma)
     plt.xticks(range(len(freqs)), ['%d' % int(f) for f in freqs])
-    aprops = [ALL_ACOUSTIC_PROPS[k] for k in aprop_order]
-    plt.yticks(range(len(aprops)), aprops)
-    plt.xlabel('Frequency (Hz)')
+    aprop_lbls = [ACOUSTIC_PROP_NAMES[ALL_ACOUSTIC_PROPS[k]] for k in aprop_order]
+    plt.yticks(range(len(aprop_lbls)), aprop_lbls)
+    plt.xlabel('LFP Frequency (Hz)')
     plt.colorbar(label='Mean Encoder Effect')
 
     fname = os.path.join(get_this_dir(), 'average_encoder_weights.svg')
@@ -510,7 +511,7 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg = PARDAggregator.load(agg_file)
 
     # ###### figure with encoder effects per frequency
-    # plot_avg_psd_encoder_weights(agg, decomp='full_psds')
+    plot_avg_psd_encoder_weights(agg, decomp='full_psds')
 
     # ###### figure with encoder effects per lag
     # plot_avg_pairwise_encoder_weights(agg)
@@ -519,17 +520,7 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     # export_decoder_datasets_for_glm(agg)
     # draw_decoder_perf_barplots()
 
-    # ###### this function draws pairwise decoder weight effect size as a function of distance
-
-
-    # draw_all_encoder_perfs_and_decoder_weights(agg)
-
-    # export_psd_encoder_datasets_for_glm(agg)
-    # export_decoder_datasets_for_glm(agg)
     # export_pairwise_encoder_datasets_for_glm(agg)
-
-    # read_encoder_weights_weights()
-    # read_pairwise_encoder_perfs_weights(agg)
 
     # draw_encoder_perfs(agg)
     # draw_all_encoder_perfs_and_decoder_weights(agg)

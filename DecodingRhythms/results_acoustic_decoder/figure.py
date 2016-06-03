@@ -14,7 +14,7 @@ from DecodingRhythms.utils import set_font, get_this_dir, clean_region, COLOR_RE
 
 from zeebeez.aggregators.pard import PARDAggregator
 from zeebeez.utils import REDUCED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, \
-    ACOUSTIC_FEATURE_COLORS, ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE
+    ACOUSTIC_FEATURE_COLORS, ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES
 
 
 def get_freqs_and_lags():
@@ -206,7 +206,7 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all
         spike_sync_r2 = [bdict['bd']['spike_rate+spike_sync'].mean() for bdict in bprop_data]
         spike_sync_r2_std = [bdict['bd']['spike_rate+spike_sync'].std(ddof=1) for bdict in bprop_data]
 
-    aprops_xticks = [bdict['aprop'] for bdict in bprop_data]
+    aprops_xticks = [ACOUSTIC_PROP_NAMES[bdict['aprop']] for bdict in bprop_data]
 
     figsize = (23, 7.)
     fig = plt.figure(figsize=figsize)
@@ -270,7 +270,7 @@ def draw_pairwise_weights_vs_dist(agg):
 
     decomp_labels = {'full_psds+full_cfs':'LFP Pairwise Correlations', 'spike_rate+spike_sync':'Spike Synchrony'}
 
-    figsize = (14, 6)
+    figsize = (14, 5)
     fig = plt.figure(figsize=figsize)
     fig.subplots_adjust(left=0.10, right=0.98)
 
@@ -292,8 +292,9 @@ def draw_pairwise_weights_vs_dist(agg):
         plt.xlabel('Pairwise Distance (mm)')
         plt.title(decomp_labels[decomp])
 
+        aprop_lbls = [ACOUSTIC_PROP_NAMES[aprop] for aprop in aprops]
         aclrs = [aprop_clrs[aprop] for aprop in aprops]
-        leg = custom_legend(aclrs, aprops)
+        leg = custom_legend(aclrs, aprop_lbls)
         plt.legend(handles=leg, loc='lower left')
 
     fname = os.path.join(get_this_dir(), 'pairwise_decoder_effect_vs_dist.svg')
@@ -309,7 +310,7 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
 
     # ###### these two functions write a csv file for decoder weights and draw barplots for decoder performance
     # export_decoder_datasets_for_glm(agg)
-    # draw_decoder_perf_barplots()
+    # draw_decoder_perf_barplots(show_all=True)
 
     # ###### these two functions draw the relationship between pairwise decoder weights and distance
     draw_pairwise_weights_vs_dist(agg)
