@@ -369,6 +369,7 @@ def plot_meantime_stuff(agg):
     plt.plot(stdtime, durs, 'ko')
     plt.xlabel('Stdtime')
     plt.ylabel('Duration')
+    plt.title('cc=%0.2f' % np.corrcoef(stdtime, durs)[0, 1])
 
     plt.show()
 
@@ -381,6 +382,6 @@ if __name__ == '__main__':
     agg = AggregateBiosounds.load(agg_file)
 
     # plot_syllable_comps(agg)
-    plot_acoustic_stats(agg)
-    # plot_meantime_stuff(agg)
+    # plot_acoustic_stats(agg)
+    plot_meantime_stuff(agg)
 
