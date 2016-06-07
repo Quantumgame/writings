@@ -207,7 +207,7 @@ def export_psd_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/d
         wkey = gdf['wkey'].values[0]
         iindex = gdf['iindex'].values[0]
 
-        eperf = agg.encoder_perfs[wkey]
+        eperf = agg.encoder_cv_perfs[wkey]
         eweights = agg.encoder_weights[wkey]
         # normalize weights!
         eweights /= np.abs(eweights).max()
@@ -257,7 +257,7 @@ def export_psd_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/d
 
 def get_freqs_and_lags():
     #TODO hack
-    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_Site1_Call1_L_full_psds.h5')
+    hf = h5py.File('/auto/tdrive/mschachter/data/GreBlu9508M/preprocess/preproc_Site4_Call1_L_full_psds.h5')
     lags = hf.attrs['lags']
     freqs = hf.attrs['freqs']
     hf.close()
@@ -285,7 +285,7 @@ def get_encoder_weights_squared(agg, decomp, data_dir='/auto/tdrive/mschachter/d
         wkey = gdf['wkey'].values[0]
         iindex = gdf['iindex'].values[0]
 
-        eperf = agg.encoder_perfs[wkey]
+        eperf = agg.encoder_cv_perfs[wkey]
         eweights = agg.encoder_weights[wkey]
         index2electrode = agg.index2electrode[wkey]
 
@@ -405,7 +405,7 @@ def draw_encoder_perfs(agg):
         ii = i & (agg.df.decomp == 'self_locked')
         assert ii.sum() == 1
         wkey = agg.df[ii]['wkey'].values[0]
-        lfp_eperf = agg.encoder_perfs[wkey]
+        lfp_eperf = agg.encoder_cv_perfs[wkey]
 
         lfp_decoder_weights = agg.decoder_weights[wkey]
         print 'lfp_decoder_weights.shape=',lfp_decoder_weights.shape

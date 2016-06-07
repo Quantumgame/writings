@@ -47,7 +47,7 @@ def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
         assert len(gdf) == 1
 
         wkey = gdf['wkey'].values[0]
-        dperf = agg.decoder_perfs[wkey]
+        dperf = agg.decoder_cv_perfs[wkey]
 
         for k,aprop in enumerate(ALL_ACOUSTIC_PROPS):
 
@@ -309,11 +309,11 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg = PARDAggregator.load(agg_file)
 
     # ###### these two functions write a csv file for decoder weights and draw barplots for decoder performance
-    # export_decoder_datasets_for_glm(agg)
-    # draw_decoder_perf_barplots(show_all=True)
+    export_decoder_datasets_for_glm(agg)
+    draw_decoder_perf_barplots(show_all=True)
 
     # ###### these two functions draw the relationship between pairwise decoder weights and distance
-    draw_pairwise_weights_vs_dist(agg)
+    # draw_pairwise_weights_vs_dist(agg)
 
 
 if __name__ == '__main__':
