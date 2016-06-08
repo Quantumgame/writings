@@ -15,7 +15,7 @@ from DecodingRhythms.utils import set_font, get_this_dir, clean_region, COLOR_RE
 from lasp.colormaps import magma
 from zeebeez.aggregators.biosound import AggregateBiosounds
 
-from zeebeez.aggregators.pard import PARDAggregator
+from zeebeez.aggregators.acoustic_encoder_decoder import AcousticEncoderDecoderAggregator
 from zeebeez.utils import REDUCED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, \
     ACOUSTIC_FEATURE_COLORS, ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_NAMES
 
@@ -207,7 +207,7 @@ def export_psd_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/d
         wkey = gdf['wkey'].values[0]
         iindex = gdf['iindex'].values[0]
 
-        eperf = agg.encoder_cv_perfs[wkey]
+        eperf = agg.encoder_perfs[wkey]
         eweights = agg.encoder_weights[wkey]
         # normalize weights!
         eweights /= np.abs(eweights).max()
@@ -285,7 +285,7 @@ def get_encoder_weights_squared(agg, decomp, data_dir='/auto/tdrive/mschachter/d
         wkey = gdf['wkey'].values[0]
         iindex = gdf['iindex'].values[0]
 
-        eperf = agg.encoder_cv_perfs[wkey]
+        eperf = agg.encoder_perfs[wkey]
         eweights = agg.encoder_weights[wkey]
         index2electrode = agg.index2electrode[wkey]
 
@@ -405,7 +405,7 @@ def draw_encoder_perfs(agg):
         ii = i & (agg.df.decomp == 'self_locked')
         assert ii.sum() == 1
         wkey = agg.df[ii]['wkey'].values[0]
-        lfp_eperf = agg.encoder_cv_perfs[wkey]
+        lfp_eperf = agg.encoder_perfs[wkey]
 
         lfp_decoder_weights = agg.decoder_weights[wkey]
         print 'lfp_decoder_weights.shape=',lfp_decoder_weights.shape
@@ -507,8 +507,8 @@ def draw_all_encoder_perfs_and_decoder_weights(agg, aprops=('sal', 'q2', 'maxAmp
 
 def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder+decoder'):
 
-    agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
-    agg = PARDAggregator.load(agg_file)
+    agg_file = os.path.join(data_dir, 'aggregate', 'acoustic_encoder_decoder.h5')
+    agg = AcousticEncoderDecoderAggregator.load(agg_file)
 
     # ###### figure with encoder effects per frequency
     plot_avg_psd_encoder_weights(agg, decomp='full_psds')

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from lasp.plots import grouped_boxplot, plot_mean_from_scatter, custom_legend
 
-from zeebeez.aggregators.lfp_encoder import LFPEncoderAggregator
+from zeebeez.aggregators.cell2lfp_encoder import Cell2LFPEncoderAggregator
 from DecodingRhythms.utils import clean_region, COLOR_RED_SPIKE_RATE, COLOR_CRIMSON_SPIKE_SYNC, set_font, get_this_dir, \
     get_e2e_dists
 
@@ -311,14 +311,11 @@ def draw_figures(agg, data_dir='/auto/tdrive/mschachter/data'):
     fname = os.path.join(get_this_dir(), 'figure.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
 
-    # draw_rate_weight_by_same(agg)
-    # fname = os.path.join(get_this_dir(), 'figure_inset.svg')
-    # plt.savefig(fname, facecolor='w', edgecolor='none')
+    draw_rate_weight_by_same(agg)
+    fname = os.path.join(get_this_dir(), 'figure_inset.svg')
+    plt.savefig(fname, facecolor='w', edgecolor='none')
 
     plt.show()
-
-
-
 
     # wdf = get_encoder_weight_data_for_psd(agg)
 
@@ -330,5 +327,5 @@ if __name__ == '__main__':
     data_dir = '/auto/tdrive/mschachter/data'
     agg_dir = os.path.join(data_dir, 'aggregate')
 
-    agg = LFPEncoderAggregator.load(os.path.join(agg_dir, 'lfp_encoder.h5'))
+    agg = Cell2LFPEncoderAggregator.load(os.path.join(agg_dir, 'cell2lfp_encoder.h5'))
     draw_figures(agg)

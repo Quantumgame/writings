@@ -4,13 +4,13 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from zeebeez.aggregators.pard import PARDAggregator
+from zeebeez.aggregators.acoustic_encoder_decoder import AcousticEncoderDecoderAggregator
 
 
 def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
 
     agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
-    agg = PARDAggregator.load(agg_file)
+    agg = AcousticEncoderDecoderAggregator.load(agg_file)
 
     decomps = ['spike_rate', 'full_psds', 'spike_rate+spike_sync', 'full_psds+full_cfs']
 

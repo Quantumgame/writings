@@ -12,7 +12,7 @@ from lasp.plots import custom_legend, compute_mean_from_scatter
 from DecodingRhythms.utils import set_font, get_this_dir, clean_region, COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, \
     COLOR_PURPLE_LFP_CROSS, COLOR_CRIMSON_SPIKE_SYNC, get_e2e_dists
 
-from zeebeez.aggregators.pard import PARDAggregator
+from zeebeez.aggregators.acoustic_encoder_decoder import AcousticEncoderDecoderAggregator
 from zeebeez.utils import REDUCED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, \
     ACOUSTIC_FEATURE_COLORS, ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES
 
@@ -47,7 +47,7 @@ def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
         assert len(gdf) == 1
 
         wkey = gdf['wkey'].values[0]
-        dperf = agg.decoder_cv_perfs[wkey]
+        dperf = agg.decoder_perfs[wkey]
 
         for k,aprop in enumerate(ALL_ACOUSTIC_PROPS):
 
@@ -85,7 +85,7 @@ def export_pairwise_decoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'
         i = agg.df.decomp == decomp
         assert i.sum() > 0
 
-        assert isinstance(agg, PARDAggregator)
+        assert isinstance(agg, AcousticEncoderDecoderAggregator)
 
         lags_i = np.abs(lags) < 6
 
@@ -305,12 +305,12 @@ def draw_pairwise_weights_vs_dist(agg):
 
 def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder+decoder'):
 
-    agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
-    agg = PARDAggregator.load(agg_file)
+    agg_file = os.path.join(data_dir, 'aggregate', 'acoustic_encoder_decoder.h5')
+    agg = AcousticEncoderDecoderAggregator.load(agg_file)
 
     # ###### these two functions write a csv file for decoder weights and draw barplots for decoder performance
     export_decoder_datasets_for_glm(agg)
-    draw_decoder_perf_barplots(show_all=True)
+    draw_decoder_perf_barplots(show_all=False)
 
     # ###### these two functions draw the relationship between pairwise decoder weights and distance
     # draw_pairwise_weights_vs_dist(agg)

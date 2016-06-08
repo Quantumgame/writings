@@ -11,7 +11,7 @@ from lasp.colormaps import magma
 
 from DecodingRhythms.utils import set_font, clean_region, get_this_dir
 from zeebeez.aggregators.lfp_and_spike_psd_decoders import AggregateLFPAndSpikePSDDecoder
-from zeebeez.aggregators.pard import PARDAggregator
+from zeebeez.aggregators.acoustic_encoder_decoder import AcousticEncoderDecoderAggregator
 from zeebeez.utils import ALL_ACOUSTIC_PROPS
 
 
@@ -278,7 +278,7 @@ def plot_maps(agg):
 def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder+decoder'):
 
     agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
-    agg = PARDAggregator.load(agg_file)
+    agg = AcousticEncoderDecoderAggregator.load(agg_file)
 
     plot_maps(agg)
     # plot_raw_dists()

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 from lasp.plots import multi_plot
 
-from zeebeez.aggregators.pard import PARDAggregator
+from zeebeez.aggregators.acoustic_encoder_decoder import AcousticEncoderDecoderAggregator
 from zeebeez.utils import ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, REDUCED_ACOUSTIC_PROPS
 
 
@@ -22,7 +22,7 @@ def draw_encoder_perfs(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/t
     hf.close()
 
     agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
-    agg = PARDAggregator.load(agg_file)
+    agg = AcousticEncoderDecoderAggregator.load(agg_file)
 
     i = agg.df.decomp == 'self+cross_locked'
 
@@ -143,7 +143,7 @@ def draw_lags_vs_perf(data_dir='/auto/tdrive/mschachter/data'):
     max_lag = full_lags_ms.max()
 
     agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
-    agg = PARDAggregator.load(agg_file)
+    agg = AcousticEncoderDecoderAggregator.load(agg_file)
 
     print 'keys=',agg.df.keys()
 
@@ -218,7 +218,7 @@ def build_graph(bird='GreBlu9508M', block='Site4', segment='Call1', hemi='L', ap
 
     # read the aggregator file
     agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
-    agg = PARDAggregator.load(agg_file)
+    agg = AcousticEncoderDecoderAggregator.load(agg_file)
 
     i = (agg.df.decomp == 'self+cross_locked_lim_-%d_%d' % (int(lags_absmax), int(lags_absmax))) & (agg.df.bird == bird) & (agg.df.block == block) & \
         (agg.df.segment == segment) & (agg.df.hemi == hemi)
