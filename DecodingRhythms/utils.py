@@ -18,8 +18,8 @@ COLOR_RED_SPIKE_RATE = '#E90027'
 COLOR_PURPLE_LFP_CROSS = '#863198'
 COLOR_CRIMSON_SPIKE_SYNC = '#610B0B'
 
-def set_font():
-    font = {'family':'normal', 'weight':'bold', 'size':16}
+def set_font(size=16):
+    font = {'family':'normal', 'weight':'bold', 'size':size}
     matplotlib.rc('font', **font)
 
 

@@ -1,5 +1,6 @@
 import os
 import operator
+from copy import deepcopy
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,7 +17,7 @@ from neosound.sound_manager import SoundManager
 from DecodingRhythms.utils import set_font, get_this_dir
 
 from zeebeez.aggregators.biosound import AggregateBiosounds
-from zeebeez.utils import ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES
+from zeebeez.utils import ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES, ACOUSTIC_FUND_PROPS
 
 
 def get_syllable_props(agg, stim_id, syllable_order, data_dir):
@@ -269,24 +270,37 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
 def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     aprops = ALL_ACOUSTIC_PROPS
-    Xz,good_indices = agg.remove_duplicates(acoustic_props=aprops)
+    Xz,good_indices = agg.remove_duplicates()
+
     i = np.zeros(len(agg.df), dtype='bool')
     i[good_indices] = True
 
-    df = agg.df[i]
-    dur = (df.end_time - df.start_time).values * 1e3
+    dur = (agg.df.end_time - agg.df.start_time).values * 1e3
     dur_q1 = np.percentile(dur, 1)
     dur_q5 = np.percentile(dur, 5)
     dur_q25 = np.percentile(dur, 25)
     dur_q50 = np.percentile(dur, 50)
 
+    # get rid of syllables outside of a desired duration range
     dur_thresh = 40
-    i = (dur > dur_thresh) & (dur < 400)
+    i &= (dur > dur_thresh) & (dur < 400)
 
-    print '# of samples: %d' % i.sum()
+    # get rid of syllables where no fundamental could be estimated (they should already be removed...)
+    fund = agg.Xraw[:, agg.acoustic_props.index('fund')]
+    i &= fund > 0
+
+    Xraw = np.zeros([i.sum(), len(aprops)])
+    for k,aprop in enumerate(aprops):
+        Xraw[:, k] = agg.Xraw[i, agg.acoustic_props.index(aprop)]
+
+    Xz = deepcopy(Xraw)
+    Xz -= Xz.mean(axis=0)
+    Xz /= Xz.std(axis=0, ddof=1)
+
+    print '# of valid samples: %d' % i.sum()
 
     # compute the correlation matrix
-    C = np.corrcoef(Xz.T)
+    C = np.corrcoef(Xraw.T)
 
     # build an undirected graph from the correlation matrix
     g = nx.Graph()
@@ -308,7 +322,7 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     # nx.draw(g, pos, labels={aprop:aprop for aprop in aprops})
     # plt.show()
 
-    # nx.write_gexf(g, '/tmp/acoustic_feature_graph.gexf')
+    nx.write_gexf(g, '/tmp/acoustic_feature_graph.gexf')
 
     print 'Acoustic Feature Clusters:'
     for grp in sorted(nx.connected_components(g), key=len, reverse=True):
@@ -322,7 +336,7 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     aprop_lbls = [ACOUSTIC_PROP_NAMES[aprop] for aprop in aprops]
 
     # plot data matrix
-    absmax = np.abs(Xz).max()
+    absmax = np.abs(Xraw).max()
     absmax = 4
     ax = plt.subplot(gs[0, :40])
     plt.imshow(Xz, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
@@ -350,7 +364,7 @@ def plot_meantime_stuff(agg):
     durs = agg.df.end_time - agg.df.start_time
 
     i = (durs > 0.040) & (durs < 0.400)
-    aprops = list(agg.acoustic_props)
+    aprops = agg.acoustic_props
     mti = aprops.index('meantime')
     sti = aprops.index('stdtime')
     xi = agg.df.xindex[i].values
@@ -374,6 +388,81 @@ def plot_meantime_stuff(agg):
     plt.show()
 
 
+def plot_nofund(agg, data_dir='/auto/tdrive/mschachter/data'):
+
+    spec_colormap()
+
+    aprops = ALL_ACOUSTIC_PROPS
+    Xz, good_indices = agg.remove_duplicates(acoustic_props=aprops)
+
+    stim_durs = agg.df.end_time.values - agg.df.start_time.values
+    good_indices = [gi for gi in good_indices if stim_durs[gi] > 0.040 and stim_durs[gi] < 0.450]
+
+    stims = [(stim_id, order, stim_type) for stim_id, order, stim_type in zip(agg.df.stim_id[good_indices],
+                                                                              agg.df.syllable_order[good_indices],
+                                                                              agg.df.stim_type[good_indices])]
+
+    plt.figure()
+    plt.hist(stim_durs[good_indices], bins=25)
+    plt.show()
+
+    fund_i = agg.acoustic_props.index('fund')
+    funds = np.array([agg.Xraw[xindex, fund_i] for xindex in agg.df.xindex[good_indices]])
+
+    print 'funds.min=%f, q1=%f, q2=%f' % (funds.min(), np.percentile(funds, 1), np.percentile(funds, 2))
+
+    no_fund = np.where(funds <= 0)[0]
+    yes_fund = np.where(funds > 0)[0]
+    print 'no_fund=', no_fund
+
+    plt.figure()
+    plt.hist(funds, bins=20)
+    plt.title('funds')
+    # plt.show()
+
+    # np.random.seed(1234567)
+    # np.random.shuffle(no_fund)
+    # np.random.shuffle(yes_fund)
+
+    # get syllable properties for some examples of syllables with and without fundamental frequencies
+    set_font(10)
+    figsize = (23, 10)
+    fig = plt.figure(figsize=figsize)
+    fig.subplots_adjust(wspace=0.35, hspace=0.35, left=0.05, right=0.95)
+
+    num_syllables = 5
+    no_fund_i = no_fund[:num_syllables]
+    yes_fund_i = yes_fund[:num_syllables]
+
+    gs = plt.GridSpec(2, num_syllables)
+    for k in range(num_syllables):
+
+        fi = no_fund_i[k]
+        f = funds[fi]
+        stim_id,stim_order,stim_type = stims[fi]
+        sprops = get_syllable_props(agg, stim_id, stim_order, data_dir)
+
+        ax = plt.subplot(gs[0, k])
+        si = sprops['spec_si']
+        ei = sprops['spec_ei']
+        plot_spectrogram(sprops['spec_t'][si:ei], sprops['spec_freq'], sprops['spec'][:, si:ei], ax=ax,
+                         colormap='SpectroColorMap', colorbar=False)
+        plt.title('%d_%d (%s), fund=%0.2f' % (stim_id, stim_order, stim_type, f))
+
+        fi = yes_fund_i[k]
+        f = funds[fi]
+        stim_id, stim_order, stim_type = stims[fi]
+        sprops = get_syllable_props(agg, stim_id, stim_order, data_dir)
+
+        ax = plt.subplot(gs[1, k])
+        si = sprops['spec_si']
+        ei = sprops['spec_ei']
+        plot_spectrogram(sprops['spec_t'][si:ei], sprops['spec_freq'], sprops['spec'][:, si:ei], ax=ax,
+                         colormap='SpectroColorMap', colorbar=False)
+        plt.title('%d_%d (%s), fund=%0.2f' % (stim_id, stim_order, stim_type, f))
+
+    plt.show()
+
 if __name__ == '__main__':
 
     set_font()
@@ -382,6 +471,8 @@ if __name__ == '__main__':
     agg = AggregateBiosounds.load(agg_file)
 
     # plot_syllable_comps(agg)
-    # plot_acoustic_stats(agg)
-    plot_meantime_stuff(agg)
+    plot_acoustic_stats(agg)
+    # plot_meantime_stuff(agg)
+
+    # plot_nofund(agg)
 
