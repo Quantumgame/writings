@@ -30,7 +30,7 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
     se_file = os.path.join(tdir, 'StimEvent_%s_%s_%s_%s.h5' % (bird,block,segment,hemi))
     print 'Loading %s...' % se_file
     se = StimEventTransform.load(se_file, rep_types_to_load=['raw'])
-    se.zscore('raw')
+    se.zscore_neural_data('raw')
     se.segment_stims_from_biosound(bs_file)
 
     # load the pairwise CF transform
