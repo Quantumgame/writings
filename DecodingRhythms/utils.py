@@ -365,8 +365,8 @@ def clean_region(reg):
         return '?'
     if reg.startswith('L2'):
         return 'L2'
-    if reg == 'CM':
-        return '?'
+    if reg.startswith('CM'):
+        return 'CM'
     return reg
 
 

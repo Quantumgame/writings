@@ -12,7 +12,7 @@ from zeebeez.utils import ACOUSTIC_PROP_NAMES
 
 def draw_curves(agg):
 
-    aprops = ['maxAmp', 'sal', 'meanspect', 'entropytime']
+    aprops = ['entropytime', 'sal', 'meanspect', 'maxAmp']
     freqs = [49, 165]
     decomps = (('spike_rate', -1), ('full_psds', freqs[0]), ('full_psds', freqs[1]))
 
@@ -24,25 +24,25 @@ def draw_curves(agg):
         nrows = 5
         ncols = 3
 
-    perf_thresh = 0.95
+    perf_thresh = 0.10
     top_tuning_cuves = dict()
     for k,aprop in enumerate(aprops):
         for j,(decomp,f) in enumerate(decomps):
 
             i = (agg.df.decomp == decomp) & (agg.df.freq == f) & (agg.df.aprop == aprop)
             assert i.sum() > 0, 'aprop=%s, decomp=%s, freq=%d' % (aprop, decomp, f)
-            perf = agg.df.mse_nonlin[i].values / agg.df.mse_mean[i].values
-            perf[np.isnan(perf)] = 1.
-            perf[np.isinf(perf)] = 1.
+            perf = agg.df.r2[i].values
+            assert np.sum(np.isnan(perf)) == 0
+            assert np.sum(np.isinf(perf)) == 0
 
-            pi = perf < perf_thresh
+            pi = perf > perf_thresh
             xindex = agg.df.xindex[i][pi]
             if len(xindex) == 0:
                 print 'No good curves for aprop=%s, decomp=%s, freq=%d' % (aprop, decomp, f)
                 continue
 
             lst = zip(xindex, perf[pi])
-            lst.sort(key=operator.itemgetter(1))
+            lst.sort(key=operator.itemgetter(1), reverse=True)
             xindex = [x[0] for x in lst]
 
             cx = agg.curve_x[xindex, :]
@@ -75,9 +75,10 @@ def draw_curves(agg):
 
     topn = 30
 
-    xticks = {'meanspect':([1, 3, 5], ['1', '3', '5']),
-              'maxAmp':([0.1, 0.4, 0.7], ['0.1', '0.4', '0.7']),
-              'sal':([0.3, 0.6, 0.8], ['0.3', '0.6', '0.8']),
+    xticks = {'meanspect':([2, 4], ['2', '4']),
+              'maxAmp':([0.2, 0.4], ['0.2', '0.4']),
+              'sal':([0.5, 0.7], ['0.5', '0.7']),
+              'entropytime':([0.90, 0.94, 0.98], ['0.90', '0.94', '0.98'])
              }
 
     clrs = {('spike_rate', -1):COLOR_RED_SPIKE_RATE, ('full_psds', 49):'k', ('full_psds', 165):'g'}
@@ -100,22 +101,41 @@ def draw_curves(agg):
             if aprop == 'meanspect':
                 cx *= 1e-3
             n = min(topn, cx.shape[0])
+            plt.axhline(0, c='k')
             for x,y in zip(cx[:n, :], tc[:n, :]):
                 c = clrs[(decomp, f)]
                 plt.plot(x, y, '-', c=c, linewidth=1.0, alpha=0.7)
-                plt.xlabel(ACOUSTIC_PROP_NAMES[aprop])
+
+                xlbl = ACOUSTIC_PROP_NAMES[aprop]
+                if aprop == 'meanspect':
+                    xlbl += ' (kHz)'
+                elif aprop == 'entropytime':
+                    xlbl += '(bits)'
+
+                plt.xlabel(xlbl)
+
                 if decomp.endswith('rate'):
-                    ylbl = 'Spike Rate (Hz)'
+                    ylbl = 'Spike Rate\n(z-scored)'
                     if k == 0:
-                        plt.title('Spike Rate')
+                        plt.title('Spike Rate', fontweight='bold')
                 elif decomp.endswith('psds'):
                     if k == 0:
-                        plt.title('LFP Power (%d Hz)' % f)
+                        plt.title('LFP Power (%d Hz)' % f, fontweight='bold')
                     ylbl = 'LFP Power'
+
                 plt.ylabel(ylbl)
                 if aprop in xticks:
                     plt.xticks(xticks[aprop][0], xticks[aprop][1])
+
             plt.axis('tight')
+            if aprop == 'entropytime':
+                plt.xlim(0.89, 0.98)
+            else:
+                plt.xlim([x.min() * 1.20, x.max() * 0.9])
+            if decomp.endswith('rate'):
+                plt.ylim(-1.5, 1.5)
+            elif decomp.endswith('psds'):
+                plt.ylim(-1., 1.)
 
     fname = os.path.join(get_this_dir(), 'figure.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
