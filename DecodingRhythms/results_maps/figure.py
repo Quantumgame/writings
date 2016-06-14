@@ -4,15 +4,13 @@ import h5py
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.interpolate import griddata
 
 from lasp.plots import multi_plot, custom_legend
 from lasp.colormaps import magma
 
 from DecodingRhythms.utils import set_font, clean_region, get_this_dir
-from zeebeez.aggregators.lfp_and_spike_psd_decoders import AggregateLFPAndSpikePSDDecoder
-from zeebeez.aggregators.acoustic_encoder_decoder import AcousticEncoderDecoderAggregator
-from zeebeez.utils import ALL_ACOUSTIC_PROPS
+from zeebeez.aggregators.single_electrode_decoder import SingleElectrodeDecoderAggregator
+from zeebeez.utils import ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_NAMES
 
 
 def get_freqs_and_lags():
@@ -23,77 +21,6 @@ def get_freqs_and_lags():
     hf.close()
 
     return freqs,lags
-
-
-def export_perf_and_weight_and_loc_data(agg, data_dir='/auto/tdrive/mschachter/data'):
-
-    edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data+dist.csv'))
-
-    freqs,lags = get_freqs_and_lags()
-
-    font = {'family':'normal', 'weight':'bold', 'size':10}
-    plt.matplotlib.rc('font', **font)
-
-    data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(),
-            'electrode':list(), 'region':list(), 'freq':list(), 'dist_midline':list(), 'dist_l2a':list(),
-            'encoder_r2':list()}
-
-    for k,aprop in enumerate(ALL_ACOUSTIC_PROPS):
-        data['eperf_ind_%s' % aprop] = list()
-        data['eweight_ind_%s' % aprop] = list()
-        data['dweight_%s' % aprop] = list()
-
-    for (bird,block,segment,hemi),gdf in agg.df.groupby(['bird', 'block', 'segment', 'hemi']):
-        bstr = '%s_%s_%s_%s' % (bird,hemi,block,segment)
-        ii = (gdf.decomp == 'full_psds')
-        assert ii.sum() == 1
-        wkey = gdf[ii]['wkey'].values[0]
-        iindex = gdf[ii]['iindex'].values[0]
-
-        index2electrode = agg.index2electrode[iindex]
-
-        lfp_eperf = agg.encoder_perfs[wkey]
-        lfp_eperf_ind = agg.encoder_perfs_ind[wkey]
-        lfp_eweights_ind = agg.encoder_weights_ind[wkey]
-
-        lfp_decoder_weights = agg.decoder_weights[wkey]
-        lfp_decoder_perfs = agg.decoder_perfs[wkey]
-
-        for k,e in enumerate(index2electrode):
-
-            ei = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == e)
-            assert ei.sum() == 1
-            reg = clean_region(edata.region[ei].values[0])
-            dist_l2a = edata.dist_l2a[ei].values[0]
-            dist_midline = edata.dist_midline[ei].values[0]
-
-            if bird == 'GreBlu9508M':
-                dist_l2a *= 4
-
-            for j,f in enumerate(freqs):
-
-                enc_r2 = lfp_eperf[k, j]
-
-                data['bird'].append(bird)
-                data['block'].append(block)
-                data['segment'].append(segment)
-                data['hemi'].append(hemi)
-                data['electrode'].append(e)
-                data['region'].append(reg)
-                data['freq'].append(int(f))
-                data['dist_midline'].append(dist_midline)
-                data['dist_l2a'].append(dist_l2a)
-                data['encoder_r2'].append(enc_r2)
-
-                for m,aprop in enumerate(ALL_ACOUSTIC_PROPS):
-                    eperf_ind = lfp_eperf_ind[k, j, m]
-                    eweight_ind = lfp_eweights_ind[k, j, m]
-                    dweight = lfp_decoder_weights[k, j, m]
-                    data['eperf_ind_%s' % aprop].append(eperf_ind)
-                    data['eweight_ind_%s' % aprop].append(eweight_ind)
-                    data['dweight_%s' % aprop].append(dweight)
-
-    return pd.DataFrame(data)
 
 
 def plot_raw_dists(data_dir='/auto/tdrive/mschachter/data'):
@@ -128,69 +55,79 @@ def plot_raw_dists(data_dir='/auto/tdrive/mschachter/data'):
     plt.show()
 
 
-def plot_maps(agg):
+def plot_maps(agg, data_dir='/auto/tdrive/mschachter/data'):
+
+    edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data+dist.csv'))
 
     data = {'bird':list(), 'block':list(), 'segment':list(), 'hemi':list(),
-            'electrode':list(), 'region':list(), 'freq':list(), 'dist_midline':list(), 'dist_l2a':list(),
-            'encoder_r2':list()}
+            'electrode':list(), 'reg':list(), 'dm':list(), 'dl':list(),
+            'aprop':list(), 'r2':list()}
 
-    df = export_perf_and_weight_and_loc_data(agg)
-
-    print 'dist_l2a: min=%f, max=%f' % (df.dist_l2a.min(), df.dist_l2a.max())
-    print 'dist_midline: min=%f, max=%f' % (df.dist_midline.min(), df.dist_midline.max())
-
-    gx,gy = np.linspace(0.0, 2.5), np.linspace(-1.45, 1.05, 100)
-    gridX, gridY = np.meshgrid(gx, gy)
-
+    df = agg.df
     # encoder performance maps
-    aprops_to_show = ALL_ACOUSTIC_PROPS
-    electrode_props = list()
-    for f in sorted(df.freq.unique()):
-        i = df.freq == f
+    aprops_to_show = ['stdtime', 'entropytime', 'maxAmp', 'sal', 'meanspect', 'skewspect']
 
-        all_cols = dict()
-        all_cols['dm'] = df.dist_midline[i].values
-        all_cols['dl'] = df.dist_l2a[i].values
-        all_cols['r2'] = df.encoder_r2[i].values
-        all_cols['reg'] = df.region[i].values
-        for aprop in aprops_to_show:
-            eperf = df[i]['eperf_ind_%s' % aprop].values
-            ew = df[i]['eweight_ind_%s' % aprop].values
-            all_cols[aprop] = ew
-            all_cols['%s_perf' % aprop] = eperf
+    # build a dataset that makes it easy to plot single decoder performance
+    g = df.groupby(['bird', 'block', 'segment', 'hemi', 'electrode', 'aprop'])
+    for (bird,block,segment,hemi,electrode,aprop),gdf in g:
 
-        df_f = pd.DataFrame(all_cols)
-        gi = (df_f.dm < 2.5) & ~np.isnan(df_f.dm) & ~np.isnan(df_f.dl) & (df_f.r2 > 0)
-        df_f = df_f[gi]
-        electrode_props.append({'f':int(f), 'df':df_f})
+        assert len(gdf) == 1
 
-    def _plot_map(_pdata, _ax, _prop, _cmap, _maxval, _bgcolor=None, _perf_alpha=False, _plot_region=False, _msize=8):
+        ei = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == electrode)
+        assert ei.sum() == 1
+        reg = clean_region(edata.region[ei].values[0])
+        dist_l2a = edata.dist_l2a[ei].values[0]
+        dist_midline = edata.dist_midline[ei].values[0]
+
+        if bird == 'GreBlu9508M':
+            dist_l2a *= 4
+
+        data['bird'].append(bird)
+        data['block'].append(block)
+        data['segment'].append(segment)
+        data['hemi'].append(hemi)
+        data['dm'].append(dist_midline)
+        data['dl'].append(dist_l2a)
+        data['r2'].append(gdf.r2.values[0])
+        data['reg'].append(reg)
+        data['electrode'].append(electrode)
+        data['aprop'].append(aprop)
+       
+    df = pd.DataFrame(data)
+    i = ~np.isnan(df.dm) & ~np.isnan(df.dl) & ~np.isnan(df.r2) & (df.r2 > 0)
+    df = df[i]
+    print df.describe()
+
+    def _plot_map(_pdata, _ax, _cmap, _maxval, _bgcolor=None, _perf_alpha=False, _plot_region=False, _msize=60):
         if _bgcolor is not None:
             _ax.set_axis_bgcolor(_bgcolor)
-        _pval = _pdata['df'][_prop].values
+        _pval = _pdata['df'].r2.values
         _x = _pdata['df'].dm.values
         _y = _pdata['df'].dl.values
-        _regs = _pdata['df']['reg'].values
+        _regs = _pdata['df'].reg.values
 
         plt.sca(_ax)
         _alpha = np.ones([len(_pval)])
         if _perf_alpha:
-            _alpha = _pdata['df']['%s_perf' % _prop].values
+            _alpha = _pdata['df'].r2.values
             _alpha /= _alpha.max()
             _alpha[_alpha > 0.9] = 1.
             _clrs = _cmap(_pval / _maxval)
         else:
             _clrs = _cmap(_pval / _maxval)
 
+        plt.scatter(_x, _y, c=_pval, marker='o', cmap=_cmap, vmin=0, s=_msize, alpha=0.8)
+        plt.xlabel('Dist to Midline (mm)')
+        plt.ylabel('Dist to L2A (mm)')
+        plt.colorbar(label='Decoder R2')
+        plt.xlim(0, 2.5)
+        plt.ylim(-1, 1)
+        """
         for k,(_xx,_yy) in enumerate(zip(_x, _y)):
             plt.plot(_xx, _yy, 'o', c=_clrs[k], alpha=_alpha[k], markersize=_msize)
-            # plt.text(_xx, _yy, _regs[k], fontsize=8, color='w', alpha=0.7)
-
-        plt.title('f=%d' % _pdata['f'])
-
-    absmax = dict()
-    for aprop in aprops_to_show:
-        absmax[aprop] = np.abs(df['eweight_ind_%s' % aprop]).max()
+            if _plot_region:
+                plt.text(_xx, _yy, _regs[k], fontsize=8, color='w', alpha=0.7)
+        """
 
     def rb_cmap(x):
         assert np.abs(x).max() <= 1
@@ -203,87 +140,34 @@ def plot_maps(agg):
 
         return _rgb
 
-    max_r2 = 0.40
-    """
-    def _plot_r2_map(_pdata, _ax): _plot_map(_pdata, _ax, 'r2', magma, _maxval=max_r2, _bgcolor='black')
-    multi_plot(electrode_props, _plot_r2_map, nrows=3, ncols=4, figsize=(23, 13))
-    plt.suptitle('Encoder Performance (R2)')
-    plt.show()
+    figsize = (23, 13)
+    fig = plt.figure(figsize=figsize)
+    fig.subplots_adjust(left=0.05, right=0.95, hspace=0.25, wspace=0.25)
+    nrows = 2
+    ncols = 3
+    for k, aprop in enumerate(aprops_to_show):
+        ax = plt.subplot(nrows, ncols, k+1)
+        i = df.aprop == aprop
+        max_r2 = df[i].r2.max()
+        print 'max_r2=%0.2f' % max_r2
+        _plot_map({'df':df[i]}, ax, magma, max_r2, _bgcolor='k', _perf_alpha=False, _plot_region=False)
+        plt.title(ACOUSTIC_PROP_NAMES[aprop])
 
-    fname = os.path.join(get_this_dir(), 'r2_map_allfreq.png')
-    plt.savefig(fname, facecolor='w', edgecolor='none')
-    """
-
-    """
-    for aprop in aprops_to_show:
-        def _plot_aprop_map(_pdata, _ax): _plot_map(_pdata, _ax, aprop, rb_cmap, _maxval=absmax[aprop], _perf_alpha=True)
-        multi_plot(electrode_props, _plot_aprop_map, nrows=3, ncols=4, figsize=(23, 13))
-        plt.suptitle('%s Univariate Encoder Weights' % aprop)
-        fname = os.path.join(get_this_dir(), 'map_allfreq_%s.png' % aprop)
-        plt.savefig(fname, facecolor='w', edgecolor='none')
-    """
-
-    """
-    edict = [e for e in electrode_props if e['f'] == 33][0]
-
-    # make a plot for just saliency at 33Hz
-    aprops = {'sal':'Saliency', 'meanspect':'Spectral Mean', 'maxAmp':'Maximum Amplitude'}
-
-    set_font()
-    for aprop,aname in aprops.items():
-        figsize = (12, 10)
-        fig = plt.figure(figsize=figsize)
-        ax = plt.subplot(111)
-        ax.set_axis_bgcolor('black')
-        _plot_map(edict, ax, aprop, rb_cmap, _maxval=absmax[aprop], _perf_alpha=True, _msize=12)
-        plt.xlabel('Distance from midline (mm)')
-        plt.ylabel('Distance from L2A (mm)')
-        plt.title('%s Encoder Weights (33Hz)' % aname)
-
-        fname = os.path.join(get_this_dir(), '%s_encoder_weights.svg' % aprop)
-        plt.savefig(fname, facecolor='w', edgecolor='none')
-
-    plt.show()
-    """
-
-    """
-    # make a plot just for r2 at 33 Hz
-    set_font()
-    edict = [e for e in electrode_props if e['f'] == 33][0]
-    figsize = (23, 10)
-    plt.figure(figsize=figsize)
-    gs = plt.GridSpec(1, 100)
-
-    ax = plt.subplot(gs[50:])
-    ax.set_axis_bgcolor('black')
-    pval = edict['df']['r2'].values
-    pval /= max_r2
-    regs = edict['df']['reg'].values
-    x = edict['df'].dm.values
-    y = edict['df'].dl.values
-    for k, (_xx, _yy) in enumerate(zip(x, y)):
-        plt.plot(_xx, _yy, 'o', c=magma(pval[k]), alpha=0.9, markersize=8)
-        plt.text(_xx, _yy, regs[k], fontsize=8, color='w', alpha=0.7)
-
-    plt.xlabel('Distance from LH (mm)')
-    plt.ylabel('Distance from L2A (mm)')
-    """
-
-    fname = os.path.join(get_this_dir(), 'r2_map.svg')
+    fname = os.path.join(get_this_dir(), 'single_electrode_decoder_r2.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
 
-    # plt.show()
+    plt.show()
 
 
 def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder+decoder'):
 
-    agg_file = os.path.join(data_dir, 'aggregate', 'pard.h5')
-    agg = AcousticEncoderDecoderAggregator.load(agg_file)
+    agg_file = os.path.join(data_dir, 'aggregate', 'single_electrode_decoder.h5')
+    agg = SingleElectrodeDecoderAggregator.load(agg_file)
 
     plot_maps(agg)
     # plot_raw_dists()
 
 
 if __name__ == '__main__':
-    # set_font()
+    set_font()
     draw_figures()
