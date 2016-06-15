@@ -14,7 +14,8 @@ def draw_figures(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     decomps = ['spike_rate', 'full_psds']
 
-    aprops = ['entropytime', 'sal', 'meanspect', 'maxAmp', 'stdtime']
+    # aprops = ['entropytime', 'sal', 'meanspect', 'maxAmp', 'stdtime']
+    aprops = ['stdtime', 'maxAmp', 'meanspect', 'cvfund', 'sal', 'entropytime']
     curves_by_prop = dict()
     for aprop in aprops:
         for decomp in decomps:
@@ -54,8 +55,7 @@ def draw_figures(agg, data_dir='/auto/tdrive/mschachter/data'):
             else:
                 plt.xlabel('# of Neurons')
                 plt.ylabel('Decoder R2 (Spike Rate)')
-                plt.xlim(1, 64)
-
+                plt.xlim(1, 60)
 
     fname = os.path.join(get_this_dir(), 'figure.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
