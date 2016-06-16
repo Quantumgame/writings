@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from lasp.signal import bandpass_filter
 from lasp.sound import plot_spectrogram, spec_colormap
-from utils import get_full_data
+from DecodingRhythms.utils import get_full_data
 from zeebeez.aggregators.tuning_curve import TuningCurveAggregator
 
 
@@ -41,47 +41,53 @@ def draw_tuning_curves(data_dir='/auto/tdrive/mschachter/data'):
 def draw_raw_lfp():
 
     spec_colormap()
-    d = get_full_data('GreBlu9508M', 'Site4', 'Call1', 'L', 287)
+    d = get_full_data('GreBlu9508M', 'Site4', 'Call1', 'L', 284)
 
-    the_lfp = d['lfp'][2, :, :]
+    ntrials = 5
+    trial_indices = range(10)
+    np.random.shuffle(trial_indices)
 
-    nelectrodes,nt = the_lfp.shape
+    the_lfp = d['lfp'][trial_indices[:ntrials], :, :]
+
+    ntrials2, nelectrodes,nt = the_lfp.shape
     bp_lfp = np.zeros_like(the_lfp)
     # bandpass from 95-105Hz
-    for n in range(nelectrodes):
-        bp_lfp[n, :] = bandpass_filter(the_lfp[n, :], d['lfp_sample_rate'], 95., 105.)
+    for k in range(ntrials):
+        for n in range(nelectrodes):
+            bp_lfp[k, n, :] = bandpass_filter(the_lfp[k, n, :], d['lfp_sample_rate'], 30., 80.)
 
     bp_lfp = bp_lfp**2
-
     lfp_t = np.arange(nt) / d['lfp_sample_rate']
 
     figsize = (23, 13)
     fig = plt.figure(figsize=figsize)
 
-    gs = plt.GridSpec(3, 1)
+    gs = plt.GridSpec(2 + ntrials, 1)
 
     ax = plt.subplot(gs[0, 0])
     plot_spectrogram(d['spec_t'], d['spec_freq'], d['spec'], ax=ax, colormap='SpectroColorMap', colorbar=True)
 
+    the_lfp = the_lfp.mean(axis=0)
     ax = plt.subplot(gs[1, 0])
     absmax = np.abs(the_lfp).max()
     plt.imshow(the_lfp, interpolation='nearest', aspect='auto', cmap=plt.cm.seismic, vmin=-absmax, vmax=absmax,
                extent=(lfp_t.min(), lfp_t.max(), 0, nelectrodes))
     plt.colorbar()
 
-    ax = plt.subplot(gs[2, 0])
-    absmax = np.abs(bp_lfp).max()
-    plt.imshow(bp_lfp, interpolation='nearest', aspect='auto', cmap=plt.cm.afmhot_r, vmin=0, vmax=absmax,
-               extent=(lfp_t.min(), lfp_t.max(), 0, nelectrodes))
-    plt.colorbar()
+    for k in range(ntrials):
+        ax = plt.subplot(gs[2+k, 0])
+        absmax = np.abs(bp_lfp[k, :, :]).max()
+        plt.imshow(bp_lfp[k, :, :], interpolation='nearest', aspect='auto', cmap=plt.cm.afmhot_r, vmin=0, vmax=absmax,
+                   extent=(lfp_t.min(), lfp_t.max(), 0, nelectrodes))
+        plt.colorbar()
 
     plt.show()
 
 
 def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
 
-    draw_tuning_curves()
-    # draw_raw_lfp()
+    # draw_tuning_curves()
+    draw_raw_lfp()
 
 
 if __name__ == '__main__':

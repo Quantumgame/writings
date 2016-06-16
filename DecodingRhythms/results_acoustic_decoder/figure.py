@@ -68,104 +68,65 @@ def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
     df.to_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'), header=True, index=False)
 
 
-def export_pairwise_decoder_weights(agg, data_dir='/auto/tdrive/mschachter/data'):
-    freqs, lags = get_freqs_and_lags()
+def export_weight_ds(agg, data_dir='/auto/tdrive/mschachter/data'):
 
+    freqs,lags = get_freqs_and_lags()
+
+    assert isinstance(agg, AcousticEncoderDecoderAggregator)
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data+dist.csv'))
 
-    wdata = {'bird': list(), 'block': list(), 'segment': list(), 'hemi': list(),
-             'electrode1': list(), 'electrode2': list(), 'cell1':list(), 'cell2':list(),
-             'region1': list(), 'region2': list(), 'r2':list(),
-             'aprop': list(), 'w': list(), 'dist': list(), 'decomp':list()}
+    data = {'bird': list(), 'block': list(), 'segment': list(), 'hemi': list(),
+            'electrode': list(), 'reg': list(), 'dm': list(), 'dl': list(),
+            'aprop': list(), 'r2': list(), 'f':list(), 'w':list()}
 
-    decomps = ['full_psds+full_cfs', 'spike_rate+spike_sync']
+    aprops = ALL_ACOUSTIC_PROPS
+    nprops = len(aprops)
 
-    for decomp in decomps:
+    i = agg.df.decomp == 'full_psds'
+    g = agg.df[i].groupby(['bird', 'block', 'segment', 'hemi'])
+    for (bird, block, segment, hemi), gdf in g:
 
-        i = agg.df.decomp == decomp
-        assert i.sum() > 0
+        assert len(gdf) == 1
+        wkey = gdf.wkey.values[0]
+        index2electrode = agg.index2electrode[wkey]
+        nelectrodes = len(index2electrode)
+        nfreqs = len(freqs)
 
-        assert isinstance(agg, AcousticEncoderDecoderAggregator)
+        dweights = agg.decoder_weights[wkey]
+        assert dweights.shape == (nelectrodes, nfreqs, nprops), "dweights.shape=%s" % str(dweights.shape)
 
-        lags_i = np.abs(lags) < 6
+        dperfs = agg.decoder_perfs[wkey]
+        assert len(dperfs) == nprops
 
-        aprops = ALL_ACOUSTIC_PROPS
+        for k,e in enumerate(index2electrode):
 
-        e2e_dists = get_e2e_dists()
+            ei = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == e)
+            assert ei.sum() == 1
+            reg = clean_region(edata.region[ei].values[0])
+            dist_l2a = edata.dist_l2a[ei].values[0]
+            dist_midline = edata.dist_midline[ei].values[0]
 
-        df = agg.df[i]
-        g = df.groupby(['bird', 'block', 'segment', 'hemi'])
-        for (bird, block, seg, hemi), gdf in g:
+            if bird == 'GreBlu9508M':
+                dist_l2a *= 4
 
-            assert len(gdf) == 1
-            wkey = gdf['wkey'].values[0]
-            index2electrode = agg.index2electrode[wkey]
-            index2cell = agg.index2cell[wkey]
-            cell_index2electrode = agg.cell_index2electrode[wkey]
+            for j,f in enumerate(freqs):
+                for m,aprop in enumerate(aprops):
 
-            electrode2reg = dict()
-            for e in index2electrode:
-                ei = (edata.bird == bird) & (edata.block == block) & (edata.hemisphere == hemi) & (edata.electrode == e)
-                assert ei.sum() == 1
-                electrode2reg[e] = clean_region(edata.region[ei].values[0])
+                    data['bird'].append(bird)
+                    data['block'].append(block)
+                    data['segment'].append(segment)
+                    data['hemi'].append(hemi)
+                    data['electrode'].append(e)
+                    data['reg'].append(reg)
+                    data['dm'].append(dist_midline)
+                    data['dl'].append(dist_l2a)
+                    data['aprop'].append(aprop)
+                    data['r2'].append(dperfs[m])
+                    data['f'].append(int(f))
+                    data['w'].append(dweights[k, j, m])
 
-            dweights = agg.decoder_weights[wkey]
-            dperfs = agg.decoder_perfs[wkey]
-
-            if 'cfs' in decomp:
-                for k,e1 in enumerate(index2electrode):
-
-                    for j in range(k):
-                        e2 = index2electrode[j]
-
-                        for n,aprop in enumerate(aprops):
-                            w = np.abs(dweights[k, j, lags_i, n]).sum()
-
-                            wdata['bird'].append(bird)
-                            wdata['block'].append(block)
-                            wdata['segment'].append(seg)
-                            wdata['hemi'].append(hemi)
-                            wdata['electrode1'].append(e1)
-                            wdata['electrode2'].append(e2)
-                            wdata['cell1'].append(-1)
-                            wdata['cell2'].append(-1)
-                            wdata['region1'].append(electrode2reg[e1])
-                            wdata['region2'].append(electrode2reg[e2])
-                            wdata['aprop'].append(aprop)
-                            wdata['w'].append(w)
-                            wdata['dist'].append(e2e_dists[(bird,block,hemi)][(e1, e2)])
-                            wdata['decomp'].append(decomp)
-                            wdata['r2'].append(dperfs[n])
-
-            elif 'sync' in decomp:
-                for k,c1 in enumerate(index2cell):
-                    for j in range(k):
-                        c2 = index2cell[j]
-                        e1 = cell_index2electrode[c1]
-                        e2 = cell_index2electrode[c2]
-
-                        for n, aprop in enumerate(aprops):
-                            w = np.abs(dweights[k, j, n]).sum()
-
-                            wdata['bird'].append(bird)
-                            wdata['block'].append(block)
-                            wdata['segment'].append(seg)
-                            wdata['hemi'].append(hemi)
-                            wdata['electrode1'].append(e1)
-                            wdata['electrode2'].append(e2)
-                            wdata['cell1'].append(c1)
-                            wdata['cell2'].append(c2)
-                            wdata['region1'].append(electrode2reg[e1])
-                            wdata['region2'].append(electrode2reg[e2])
-                            wdata['aprop'].append(aprop)
-                            wdata['w'].append(w)
-                            wdata['dist'].append(e2e_dists[(bird, block, hemi)][(e1, e2)])
-                            wdata['decomp'].append(decomp)
-                            wdata['r2'].append(dperfs[n])
-
-    wdf = pd.DataFrame(wdata)
-
-    return wdf
+    df = pd.DataFrame(data)
+    df.to_csv(os.path.join(data_dir, 'aggregate', 'decoder_weights_for_glm.csv'), header=True, index=False)
 
 
 def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all=True):
@@ -309,11 +270,13 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg = AcousticEncoderDecoderAggregator.load(agg_file)
 
     # ###### these two functions write a csv file for decoder weights and draw barplots for decoder performance
-    export_decoder_datasets_for_glm(agg)
-    draw_decoder_perf_barplots(show_all=True)
+    # export_decoder_datasets_for_glm(agg)
+    # draw_decoder_perf_barplots(show_all=True)
 
     # ###### these two functions draw the relationship between pairwise decoder weights and distance
     # draw_pairwise_weights_vs_dist(agg)
+
+    export_weight_ds(agg)
 
 
 if __name__ == '__main__':
