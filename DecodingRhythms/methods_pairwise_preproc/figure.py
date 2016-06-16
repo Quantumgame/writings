@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from lasp.signal import coherency
 
 from methods_preproc.figure import get_full_data
-from utils import set_font, get_this_dir
+from utils import set_font, get_this_dir, get_full_data
 
 
 def draw_figures():
