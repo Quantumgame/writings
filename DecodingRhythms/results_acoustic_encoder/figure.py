@@ -551,13 +551,13 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg = AcousticEncoderDecoderAggregator.load(agg_file)
 
     # ###### figure with encoder effects per frequency
-    # plot_avg_psd_encoder_weights(agg, decomp='full_psds')
+    plot_avg_psd_encoder_weights(agg, decomp='full_psds')
 
     # ###### figure with encoder effects per lag
     # plot_avg_pairwise_encoder_weights(agg)
 
     # ###### write a csv file out for analysis in R
-    export_psd_encoder_datasets_for_glm(agg)
+    # export_psd_encoder_datasets_for_glm(agg)
 
     # draw_encoder_perfs(agg)
     # draw_all_encoder_perfs_and_decoder_weights(agg)
