@@ -17,7 +17,7 @@ from neosound.sound_manager import SoundManager
 from DecodingRhythms.utils import set_font, get_this_dir
 
 from zeebeez.aggregators.biosound import AggregateBiosounds
-from zeebeez.utils import ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES, ACOUSTIC_FUND_PROPS
+from zeebeez.utils import USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES, ACOUSTIC_FUND_PROPS
 
 
 def get_syllable_props(agg, stim_id, syllable_order, data_dir):
@@ -28,7 +28,7 @@ def get_syllable_props(agg, stim_id, syllable_order, data_dir):
     start_time = agg.df[i].start_time.values[0] - wave_pad
     end_time = agg.df[i].end_time.values[0] + wave_pad
     xindex = agg.df[i].xindex.values[0]
-    aprops = {aprop: agg.Xraw[xindex, k] for k, aprop in enumerate(ALL_ACOUSTIC_PROPS)}
+    aprops = {aprop: agg.Xraw[xindex, k] for k, aprop in enumerate(USED_ACOUSTIC_PROPS)}
     aprops['start_time'] = start_time
     aprops['end_time'] = end_time
 
@@ -269,7 +269,7 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
 
 def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
 
-    aprops = ALL_ACOUSTIC_PROPS
+    aprops = USED_ACOUSTIC_PROPS
     Xz,good_indices = agg.remove_duplicates()
 
     i = np.zeros(len(agg.df), dtype='bool')
@@ -359,40 +359,11 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     plt.show()
 
 
-def plot_meantime_stuff(agg):
-
-    durs = agg.df.end_time - agg.df.start_time
-
-    i = (durs > 0.040) & (durs < 0.400)
-    aprops = agg.acoustic_props
-    mti = aprops.index('meantime')
-    sti = aprops.index('stdtime')
-    xi = agg.df.xindex[i].values
-
-    meantime = agg.Xraw[xi, mti]
-    stdtime = agg.Xraw[xi, sti]
-    durs = durs[i]
-
-    plt.figure()
-    ax = plt.subplot(1, 2, 1)
-    plt.plot(meantime, durs, 'ko')
-    plt.xlabel('Meantime')
-    plt.ylabel('Duration')
-
-    ax = plt.subplot(1, 2, 2)
-    plt.plot(stdtime, durs, 'ko')
-    plt.xlabel('Stdtime')
-    plt.ylabel('Duration')
-    plt.title('cc=%0.2f' % np.corrcoef(stdtime, durs)[0, 1])
-
-    plt.show()
-
-
 def plot_nofund(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     spec_colormap()
 
-    aprops = ALL_ACOUSTIC_PROPS
+    aprops = USED_ACOUSTIC_PROPS
     Xz, good_indices = agg.remove_duplicates(acoustic_props=aprops)
 
     stim_durs = agg.df.end_time.values - agg.df.start_time.values
@@ -472,7 +443,6 @@ if __name__ == '__main__':
 
     # plot_syllable_comps(agg)
     plot_acoustic_stats(agg)
-    # plot_meantime_stuff(agg)
 
     # plot_nofund(agg)
 

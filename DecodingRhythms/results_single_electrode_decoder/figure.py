@@ -10,7 +10,7 @@ from lasp.colormaps import magma
 
 from DecodingRhythms.utils import set_font, clean_region, get_this_dir
 from zeebeez.aggregators.single_electrode_decoder import SingleElectrodeDecoderAggregator
-from zeebeez.utils import ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_NAMES
+from zeebeez.utils import USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_NAMES
 
 
 def get_freqs_and_lags():
@@ -211,18 +211,18 @@ def plot_cov_mat(agg):
     # plot a covariance matrix of r2s
     g = agg.df.groupby(['bird', 'block', 'segment', 'hemi', 'electrode'])
     r2_by_aprop = dict()
-    for aprop in ALL_ACOUSTIC_PROPS:
+    for aprop in USED_ACOUSTIC_PROPS:
         r2_by_aprop[aprop] = list()
     for (bird, block, segment, hemi, electrode), gdf in g:
 
-        assert len(gdf) == len(ALL_ACOUSTIC_PROPS)
-        for aprop in ALL_ACOUSTIC_PROPS:
+        assert len(gdf) == len(USED_ACOUSTIC_PROPS)
+        for aprop in USED_ACOUSTIC_PROPS:
             i = gdf.aprop == aprop
             assert i.sum() == 1
             r2_by_aprop[aprop].append(gdf.r2[i].values[0])
 
-    X = np.zeros([len(ALL_ACOUSTIC_PROPS), len(r2_by_aprop['sal'])])
-    for k,aprop in enumerate(ALL_ACOUSTIC_PROPS):
+    X = np.zeros([len(USED_ACOUSTIC_PROPS), len(r2_by_aprop['sal'])])
+    for k,aprop in enumerate(USED_ACOUSTIC_PROPS):
         X[k, :] = r2_by_aprop[aprop]
 
     C = np.corrcoef(X)
@@ -230,9 +230,9 @@ def plot_cov_mat(agg):
     fig = plt.figure()
     fig.subplots_adjust(top=0.98, bottom=0.15)
     plt.imshow(C, interpolation='nearest', aspect='auto', vmin=-1, vmax=1, cmap=plt.cm.seismic, origin='lower')
-    nprops = len(ALL_ACOUSTIC_PROPS)
-    plt.xticks(range(nprops), ALL_ACOUSTIC_PROPS, rotation=90)
-    plt.yticks(range(nprops), ALL_ACOUSTIC_PROPS)
+    nprops = len(USED_ACOUSTIC_PROPS)
+    plt.xticks(range(nprops), USED_ACOUSTIC_PROPS, rotation=90)
+    plt.yticks(range(nprops), USED_ACOUSTIC_PROPS)
     plt.colorbar()
     plt.show()
 

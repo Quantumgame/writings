@@ -17,7 +17,7 @@ from zeebeez.aggregators.biosound import AggregateBiosounds
 
 from zeebeez.aggregators.acoustic_encoder_decoder import AcousticEncoderDecoderAggregator
 from zeebeez.utils import REDUCED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, \
-    ACOUSTIC_FEATURE_COLORS, ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_NAMES
+    ACOUSTIC_FEATURE_COLORS, USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_NAMES
 
 
 def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'):
@@ -93,7 +93,7 @@ def export_pairwise_encoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschach
                     data['r2'].append(r2)
                     data['dist'].append(edist)
 
-                    for ai,aprop in enumerate(ALL_ACOUSTIC_PROPS):
+                    for ai,aprop in enumerate(USED_ACOUSTIC_PROPS):
                         w = eweights[k, j, li, ai]
 
                         weight_data['bird'].append(bird)
@@ -157,7 +157,7 @@ def plot_avg_pairwise_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/dat
 
     print 'nlags=%d' % nlags
 
-    W2_by_lag = np.zeros([len(ALL_ACOUSTIC_PROPS), nlags])
+    W2_by_lag = np.zeros([len(USED_ACOUSTIC_PROPS), nlags])
     for l,lag in enumerate(lags):
         i = wdf.lag == int(lag)
         assert i.sum() > 0
@@ -172,7 +172,7 @@ def plot_avg_pairwise_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/dat
         plt.imshow(W2_by_lag, interpolation='nearest', aspect='auto', cmap=magma, vmin=0, vmax=absmax)
         plt.colorbar()
         plt.title('Mean Weights')
-        plt.yticks(np.arange(len(ALL_ACOUSTIC_PROPS)), ALL_ACOUSTIC_PROPS)
+        plt.yticks(np.arange(len(USED_ACOUSTIC_PROPS)), USED_ACOUSTIC_PROPS)
         plt.xticks(np.arange(nlags), ['%d' % x for x in lags])
 
         plt.show()
@@ -305,7 +305,7 @@ def get_encoder_weights_squared(agg, decomp, data_dir='/auto/tdrive/mschachter/d
 
     # compute the average encoder weights by frequency
     r2_thresh = 0.05
-    Wsq_by_freq = np.zeros([len(ALL_ACOUSTIC_PROPS), len(freqs)])
+    Wsq_by_freq = np.zeros([len(USED_ACOUSTIC_PROPS), len(freqs)])
     for j, f in enumerate(freqs):
         i = (wdf.freq == int(f)) & (wdf.eperf > r2_thresh)
         ii = wdf.xindex[i].values
@@ -313,7 +313,7 @@ def get_encoder_weights_squared(agg, decomp, data_dir='/auto/tdrive/mschachter/d
 
     # compute the average encoder weights by region
     regs = ['L2', 'CMM', 'CML', 'L1', 'L3', 'NCM']
-    Wsq_by_reg = np.zeros([len(ALL_ACOUSTIC_PROPS), len(regs)])
+    Wsq_by_reg = np.zeros([len(USED_ACOUSTIC_PROPS), len(regs)])
     for j, reg in enumerate(regs):
         i = wdf.region == reg
         ii = wdf.xindex[i].values
@@ -413,7 +413,7 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data', d
     ax = plt.subplot(gs[45:100, :pwidth])
     plt.imshow(Wsq_by_freq, origin='upper', interpolation='nearest', aspect='auto', vmin=0, cmap=magma)
     plt.xticks(range(len(freqs)), ['%d' % int(f) for f in freqs])
-    aprop_lbls = [ACOUSTIC_PROP_NAMES[ALL_ACOUSTIC_PROPS[k]] for k in aprop_order]
+    aprop_lbls = [ACOUSTIC_PROP_NAMES[USED_ACOUSTIC_PROPS[k]] for k in aprop_order]
     plt.yticks(range(len(aprop_lbls)), aprop_lbls)
     plt.xlabel('LFP Frequency (Hz)')
     plt.colorbar(label='Normalized Encoder Effect')
@@ -518,7 +518,7 @@ def draw_all_encoder_perfs_and_decoder_weights(agg, aprops=('sal', 'q2', 'maxAmp
         lfp_decoder_perfs = agg.decoder_perfs[wkey]
 
         for k,aprop in enumerate(aprops):
-            ai = ALL_ACOUSTIC_PROPS.index(aprop)
+            ai = USED_ACOUSTIC_PROPS.index(aprop)
             lfp_weights = lfp_decoder_weights[:, :, ai]
             dstr = '%0.2f (%s)' % (lfp_decoder_perfs[ai], aprop)
             plist.append({'type':'decoder', 'X':lfp_weights, 'title':dstr})

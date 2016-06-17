@@ -7,7 +7,7 @@ from DecodingRhythms.utils import set_font, get_this_dir
 from lasp.colormaps import viridis
 from lasp.sound import plot_spectrogram, spec_colormap
 from utils import get_full_data
-from zeebeez.utils import ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES
+from zeebeez.utils import USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES
 
 
 def plot_full_data(d, syllable_index):
@@ -89,7 +89,7 @@ def plot_full_data(d, syllable_index):
 
     # plot the biosound properties
     sprops = d['syllable_props'][syllable_index]
-    aprops = ALL_ACOUSTIC_PROPS
+    aprops = USED_ACOUSTIC_PROPS
 
     vals = [sprops[a] for a in aprops]
     ax = plt.subplot(gs[:top_height, (left_width+5):])

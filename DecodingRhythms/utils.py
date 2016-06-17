@@ -14,7 +14,7 @@ from lasp.timefreq import power_spectrum_jn
 from zeebeez.transforms.biosound import BiosoundTransform
 from zeebeez.transforms.pairwise_cf import PairwiseCFTransform
 from zeebeez.transforms.stim_event import StimEventTransform
-from zeebeez.utils import ALL_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT
+from zeebeez.utils import USED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT
 
 COLOR_BLUE_LFP = '#0068A5'
 COLOR_YELLOW_SPIKE = '#F0DB00'
@@ -412,7 +412,7 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
     bdir = os.path.join(data_dir, bird)
     tdir = os.path.join(bdir, 'transforms')
 
-    aprops = ALL_ACOUSTIC_PROPS
+    aprops = USED_ACOUSTIC_PROPS
 
     # load the BioSound
     bs_file = os.path.join(tdir, 'BiosoundTransform_%s.h5' % bird)

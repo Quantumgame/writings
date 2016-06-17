@@ -14,7 +14,7 @@ from DecodingRhythms.utils import set_font, get_this_dir, clean_region, COLOR_RE
 
 from zeebeez.aggregators.acoustic_encoder_decoder import AcousticEncoderDecoderAggregator
 from zeebeez.utils import REDUCED_ACOUSTIC_PROPS, ROSTRAL_CAUDAL_ELECTRODES_LEFT, ROSTRAL_CAUDAL_ELECTRODES_RIGHT, \
-    ACOUSTIC_FEATURE_COLORS, ALL_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES
+    ACOUSTIC_FEATURE_COLORS, USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES
 
 
 def get_freqs_and_lags():
@@ -49,7 +49,7 @@ def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
         wkey = gdf['wkey'].values[0]
         dperf = agg.decoder_perfs[wkey]
 
-        for k,aprop in enumerate(ALL_ACOUSTIC_PROPS):
+        for k,aprop in enumerate(USED_ACOUSTIC_PROPS):
 
             r2 = dperf[k]
 
@@ -79,7 +79,7 @@ def export_weight_ds(agg, data_dir='/auto/tdrive/mschachter/data'):
             'electrode': list(), 'reg': list(), 'dm': list(), 'dl': list(),
             'aprop': list(), 'r2': list(), 'f':list(), 'w':list()}
 
-    aprops = ALL_ACOUSTIC_PROPS
+    aprops = USED_ACOUSTIC_PROPS
     nprops = len(aprops)
 
     i = agg.df.decomp == 'full_psds'
@@ -131,7 +131,7 @@ def export_weight_ds(agg, data_dir='/auto/tdrive/mschachter/data'):
 
 def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all=True):
 
-    aprops_to_display = list(ALL_ACOUSTIC_PROPS)
+    aprops_to_display = list(USED_ACOUSTIC_PROPS)
 
     if not show_all:
         decomps = ['spike_rate', 'full_psds']
@@ -262,6 +262,7 @@ def draw_pairwise_weights_vs_dist(agg):
     plt.savefig(fname, facecolor='w', edgecolor='none')
 
     plt.show()
+
 
 
 def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder+decoder'):
