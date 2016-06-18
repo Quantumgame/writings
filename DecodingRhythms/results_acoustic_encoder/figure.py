@@ -331,10 +331,14 @@ def reorder_by_row_sum(W):
     return Wr,[x[0] for x in new_order]
 
 
-def get_lfp_and_spike_perfs_for_boxplot(agg):
+def get_lfp_and_spike_perfs_for_boxplot(agg, lfp_decomp='full_psds'):
 
     freqs, lags = get_freqs_and_lags()
-    g = agg.df.groupby(['bird', 'block', 'segment', 'hemi', 'decomp'])
+
+    i = (agg.df.decomp == 'spike_rate') | (agg.df.decomp == lfp_decomp)
+    df = agg.df[i]
+
+    g = df.groupby(['bird', 'block', 'segment', 'hemi', 'decomp'])
 
     assert isinstance(agg, AcousticEncoderDecoderAggregator)
 
@@ -361,12 +365,12 @@ def get_lfp_and_spike_perfs_for_boxplot(agg):
     return pd.DataFrame(pdata)
 
 
-def plot_lfp_and_spike_perf_boxplot(agg, ax=None):
+def plot_lfp_and_spike_perf_boxplot(agg, ax=None, lfp_decomp='full_psds'):
 
     if ax is None:
         ax = plt.gca()
 
-    df = get_lfp_and_spike_perfs_for_boxplot(agg)
+    df = get_lfp_and_spike_perfs_for_boxplot(agg, lfp_decomp=lfp_decomp)
     freqs, lags = get_freqs_and_lags()
 
     bp_data = dict()
@@ -407,7 +411,7 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data', d
     # plot the performance boxplots by frequency
     freqs = list(sorted(wdf.freq.unique()))
     ax = plt.subplot(gs[:35, :pwidth])
-    plot_lfp_and_spike_perf_boxplot(agg, ax)
+    plot_lfp_and_spike_perf_boxplot(agg, ax, lfp_decomp=decomp)
 
     # plot the average encoder effect sizes
     ax = plt.subplot(gs[45:100, :pwidth])
@@ -551,7 +555,7 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg = AcousticEncoderDecoderAggregator.load(agg_file)
 
     # ###### figure with encoder effects per frequency
-    plot_avg_psd_encoder_weights(agg, decomp='full_psds')
+    plot_avg_psd_encoder_weights(agg, decomp='onewin_psds')
 
     # ###### figure with encoder effects per lag
     # plot_avg_pairwise_encoder_weights(agg)

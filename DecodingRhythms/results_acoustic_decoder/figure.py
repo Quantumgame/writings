@@ -68,7 +68,7 @@ def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
     df.to_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'), header=True, index=False)
 
 
-def export_weight_ds(agg, data_dir='/auto/tdrive/mschachter/data'):
+def export_weight_ds(agg, data_dir='/auto/tdrive/mschachter/data', decomp='full_psds'):
 
     freqs,lags = get_freqs_and_lags()
 
@@ -82,7 +82,7 @@ def export_weight_ds(agg, data_dir='/auto/tdrive/mschachter/data'):
     aprops = USED_ACOUSTIC_PROPS
     nprops = len(aprops)
 
-    i = agg.df.decomp == 'full_psds'
+    i = agg.df.decomp == decomp
     g = agg.df[i].groupby(['bird', 'block', 'segment', 'hemi'])
     for (bird, block, segment, hemi), gdf in g:
 
@@ -129,12 +129,12 @@ def export_weight_ds(agg, data_dir='/auto/tdrive/mschachter/data'):
     df.to_csv(os.path.join(data_dir, 'aggregate', 'decoder_weights_for_glm.csv'), header=True, index=False)
 
 
-def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all=True):
+def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all=True, decomp='full_psds'):
 
     aprops_to_display = list(USED_ACOUSTIC_PROPS)
 
     if not show_all:
-        decomps = ['spike_rate', 'full_psds']
+        decomps = ['spike_rate', decomp]
         sub_names = ['Spike Rate', 'LFP PSD']
         sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP]
     else:
@@ -151,12 +151,12 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all
             i = (df_me.decomp == decomp) & (df_me.aprop == aprop)
             perfs = df_me.r2[i].values
             bd[decomp] = perfs
-        bprop_data.append({'bd':bd, 'lfp_mean':bd['full_psds'].mean(), 'aprop':aprop})
+        bprop_data.append({'bd':bd, 'lfp_mean':bd[decomp].mean(), 'aprop':aprop})
 
     bprop_data.sort(key=operator.itemgetter('lfp_mean'), reverse=True)
 
-    lfp_r2 = [bdict['bd']['full_psds'].mean() for bdict in bprop_data]
-    lfp_r2_std = [bdict['bd']['full_psds'].std(ddof=1) for bdict in bprop_data]
+    lfp_r2 = [bdict['bd'][decomp].mean() for bdict in bprop_data]
+    lfp_r2_std = [bdict['bd'][decomp].std(ddof=1) for bdict in bprop_data]
 
     spike_r2 = [bdict['bd']['spike_rate'].mean() for bdict in bprop_data]
     spike_r2_std = [bdict['bd']['spike_rate'].std(ddof=1) for bdict in bprop_data]
@@ -264,7 +264,6 @@ def draw_pairwise_weights_vs_dist(agg):
     plt.show()
 
 
-
 def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder+decoder'):
 
     agg_file = os.path.join(data_dir, 'aggregate', 'acoustic_encoder_decoder.h5')
@@ -272,7 +271,7 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
 
     # ###### these two functions write a csv file for decoder weights and draw barplots for decoder performance
     export_decoder_datasets_for_glm(agg)
-    draw_decoder_perf_barplots(show_all=True)
+    draw_decoder_perf_barplots(show_all=False, decomp='onewin_psds')
 
     # ###### these two functions draw the relationship between pairwise decoder weights and distance
     # draw_pairwise_weights_vs_dist(agg)
