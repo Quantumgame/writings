@@ -13,7 +13,7 @@ from DecodingRhythms.utils import clean_region, COLOR_RED_SPIKE_RATE, COLOR_CRIM
 
 def get_encoder_perf_data_for_psd(agg, ein='rate'):
 
-    i = (agg.df.encoder_input == ein) & (agg.df.encoder_output == 'psd')
+    i = (agg.df.encoder_input == ein) & (agg.df.encoder_output == 'psd') & (agg.df.decomp == 'full')
 
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data+dist.csv'))
 
@@ -22,7 +22,7 @@ def get_encoder_perf_data_for_psd(agg, ein='rate'):
              'dist_l2a': list(), 'dist_midline': list()}
 
     for wkey in agg.df.wkey[i].values:
-        bird, block, segment, hemi, ein2, eout2 = wkey.split('_')
+        bird, block, segment, hemi, ein2, eout2, decomp = wkey.split('_')
 
         eperfs = agg.encoder_perfs[wkey]
         index2electrode = agg.index2electrode[wkey]
@@ -75,7 +75,7 @@ def get_encoder_weight_data_for_psd(agg, include_sync=True, write_to_file=True):
         assert len(gdf) == 1
 
         # get the electrode and cell indices corresponding to this site
-        wkey = '%s_%s_%s_%s_%s_%s' % (bird, block, segment, hemi, 'both', 'psd')
+        wkey = '%s_%s_%s_%s_%s_%s_full' % (bird, block, segment, hemi, 'both', 'psd')
         index2cell = agg.index2cell[wkey]
         index2electrode = agg.index2electrode[wkey]
         cell_index2electrode = agg.cell_index2electrode[wkey]
@@ -106,9 +106,9 @@ def get_encoder_weight_data_for_psd(agg, include_sync=True, write_to_file=True):
              'same_electrode':list(), 'cells_same_electrode':list(),
              }
 
-    i = (agg.df.encoder_input == 'both') & (agg.df.encoder_output == 'psd')
+    i = (agg.df.encoder_input == 'both') & (agg.df.encoder_output == 'psd') & (agg.df.decomp == 'full')
     for wkey in agg.df.wkey[i].values:
-        bird, block, segment, hemi, ein2, eout2 = wkey.split('_')
+        bird, block, segment, hemi, ein2, eout2, decomp = wkey.split('_')
 
         eperfs = agg.encoder_perfs[wkey]
         eweights = agg.encoder_weights[wkey]
@@ -254,8 +254,8 @@ def draw_rate_weight_by_dist(agg):
     wdf = get_encoder_weight_data_for_psd(agg, include_sync=False, write_to_file=False)
 
     # plot the average encoder weight as a function of distance from predicted electrode
-    clrs = {49:'k', 165:'g'}
-    for f in [49, 165]:
+    clrs = {33:'k', 165:'g'}
+    for f in [33, 165]:
         i = ~np.isnan(wdf.dist_from_electrode.values) & (wdf.r2 > 0.20) & (wdf.dist_from_electrode > 0) & (wdf.f == f)
 
         x = wdf.dist_from_electrode[i].values
@@ -266,16 +266,16 @@ def draw_rate_weight_by_dist(agg):
     plt.xlabel('Distance From Predicted Electrode (um)')
     plt.ylabel('Spike Rate Effect Size')
     plt.axis('tight')
-    leg = custom_legend(colors=[clrs[49], clrs[165]], labels=['49Hz', '165Hz'])
+    leg = custom_legend(colors=[clrs[33], clrs[165]], labels=['33Hz', '165Hz'])
     plt.legend(handles=leg, loc='lower left')
 
 def draw_rate_weight_by_same(agg):
     wdf = get_encoder_weight_data_for_psd(agg, include_sync=False, write_to_file=False)
 
     # plot the average encoder weight as a function of distance from predicted electrode
-    clrs = {49: 'k', 165: 'g'}
+    clrs = {33: 'k', 165: 'g'}
     vals = dict()
-    for f in [49, 165]:
+    for f in [33, 165]:
         i = ~np.isnan(wdf.dist_from_electrode.values) & (wdf.r2 > 0.20) & (wdf.f == f)
         df = wdf[i]
 
@@ -292,7 +292,7 @@ def draw_rate_weight_by_same(agg):
     figsize = (5, 3)
     plt.figure(figsize=figsize)
 
-    plt.bar([0, 0.5], vals[49][:2], yerr=vals[49][2:], width=0.45, color=clrs[49], alpha=0.7, ecolor='k')
+    plt.bar([0, 0.5], vals[33][:2], yerr=vals[33][2:], width=0.45, color=clrs[33], alpha=0.7, ecolor='k')
     plt.bar([1.5, 2.0], vals[165][:2], yerr=vals[165][2:], width=0.45, color=clrs[165], alpha=0.7, ecolor='k')
     plt.xticks([])
 

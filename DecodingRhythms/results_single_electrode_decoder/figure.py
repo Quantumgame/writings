@@ -12,6 +12,7 @@ from DecodingRhythms.utils import set_font, clean_region, get_this_dir
 from zeebeez.aggregators.single_electrode_decoder import SingleElectrodeDecoderAggregator
 from zeebeez.utils import USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_NAMES
 
+APROPS_TO_SHOW = ['maxAmp', 'meanspect', 'cvfund', 'sal', 'entropytime']
 
 def get_freqs_and_lags():
     #TODO hack
@@ -104,7 +105,7 @@ def plot_maps(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     df = agg.df
     # encoder performance maps
-    aprops_to_show = ['stdtime', 'maxAmp', 'meanspect', 'cvfund', 'sal']
+    aprops_to_show = APROPS_TO_SHOW
 
     # build a dataset that makes it easy to plot single decoder performance
     g = df.groupby(['bird', 'block', 'segment', 'hemi', 'electrode', 'aprop'])
@@ -155,13 +156,14 @@ def plot_maps(agg, data_dir='/auto/tdrive/mschachter/data'):
         else:
             _clrs = _cmap(_pval / _maxval)
 
+        print 'xy=',zip(_x,_y)
         plt.scatter(_x, _y, c=_pval, marker='o', cmap=_cmap, vmin=0, s=_msize, alpha=0.6)
         plt.xlabel('Dist to Midline (mm)')
         plt.ylabel('Dist to L2A (mm)')
-        cbar = plt.colorbar(label='Decoder R2')
-        _new_ytks = ['%0.2f' % float(_yt.get_text()) for _yt in cbar.ax.get_yticklabels()]
+        _cbar = plt.colorbar(label='Decoder R2')
+        _new_ytks = ['%0.2f' % float(_yt.get_text()) for _yt in _cbar.ax.get_yticklabels()]
         print '_new_ytks=',_new_ytks
-        cbar.ax.set_yticklabels(_new_ytks)
+        _cbar.ax.set_yticklabels(_new_ytks)
         # print 'ytks=',_ytks
         plt.xlim(0, 2.5)
         plt.ylim(-1, 1)
@@ -239,7 +241,7 @@ def plot_cov_mat(agg):
 
 def plot_r2_region_prop(ax=None, data_dir='/auto/tdrive/mschachter/data'):
 
-    aprops_to_show = ['stdtime', 'maxAmp', 'meanspect', 'cvfund', 'sal']
+    aprops_to_show = APROPS_TO_SHOW
     regs = ['CM', 'L1', 'L2', 'L3', 'NCM']
 
     df = pd.read_csv(os.path.join(data_dir, 'aggregate', 'single_electrode_decoder.csv'))
@@ -268,11 +270,12 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg_file = os.path.join(data_dir, 'aggregate', 'single_electrode_decoder.h5')
     agg = SingleElectrodeDecoderAggregator.load(agg_file)
 
+    export_ds(agg)
     plot_maps(agg)
     # plot_raw_dists()
     # plot_cov_mat(agg)
     # plot_r2_region_prop()
-    # export_ds(agg)
+
     plt.show()
 
 

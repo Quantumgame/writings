@@ -6,6 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from DecodingRhythms.utils import set_font, get_this_dir
+from results_single_electrode_decoder.figure import APROPS_TO_SHOW
 from zeebeez.aggregators.ensemble_decoder import EnsembleDecoderAggregator
 from zeebeez.utils import ACOUSTIC_PROP_NAMES
 
@@ -14,8 +15,7 @@ def draw_figures(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     decomps = ['spike_rate', 'full_psds']
 
-    # aprops = ['entropytime', 'sal', 'meanspect', 'maxAmp', 'stdtime']
-    aprops = ['stdtime', 'maxAmp', 'meanspect', 'cvfund', 'sal', 'entropytime']
+    aprops = APROPS_TO_SHOW
     curves_by_prop = dict()
     for aprop in aprops:
         for decomp in decomps:

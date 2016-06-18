@@ -374,17 +374,17 @@ def plot_lfp_and_spike_perf_boxplot(agg, ax=None, lfp_decomp='full_psds'):
     freqs, lags = get_freqs_and_lags()
 
     bp_data = dict()
+    i = df.f == -1
+    bp_data['Spike\nRate'] = df.r2[i].values
     for f in freqs:
         i = df.f == f
         bp_data['%d' % f] = df.r2[i].values
-    i = df.f == -1
-    bp_data['Spike\nRate'] = df.r2[i].values
 
-    group_names = ['%d' % f for f in freqs]
-    group_names.append('Spike\nRate')
+    group_names = ['Spike\nRate']
+    group_names.extend(['%d' % f for f in freqs])
 
-    group_colors = [COLOR_BLUE_LFP]*len(freqs)
-    group_colors.append(COLOR_RED_SPIKE_RATE)
+    group_colors = [COLOR_RED_SPIKE_RATE]
+    group_colors.extend([COLOR_BLUE_LFP]*len(freqs))
 
     boxplot_with_colors(bp_data, group_names, ax=ax, group_colors=group_colors, box_alpha=0.95)
     plt.ylim(0, 0.5)
@@ -402,17 +402,19 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data', d
     print 'Wsq_by_freq.shape=',Wsq_by_freq.shape
     Wsq_by_freq,aprop_order = reorder_by_row_sum(Wsq_by_freq)
 
-    figsize = (23, 10)
+    figsize = (23, 13)
     fig = plt.figure(figsize=figsize)
+    fig.subplots_adjust(top=0.95, bottom=0.02, right=0.99, left=0.05, hspace=0.25, wspace=0.25)
     gs = plt.GridSpec(100, 100)
 
     pwidth = 45
 
     # plot the performance boxplots by frequency
     freqs = list(sorted(wdf.freq.unique()))
-    ax = plt.subplot(gs[:35, :pwidth])
+    ax = plt.subplot(gs[55:95, 62:98])
     plot_lfp_and_spike_perf_boxplot(agg, ax, lfp_decomp=decomp)
 
+    """
     # plot the average encoder effect sizes
     ax = plt.subplot(gs[45:100, :pwidth])
     plt.imshow(Wsq_by_freq, origin='upper', interpolation='nearest', aspect='auto', vmin=0, cmap=magma)
@@ -421,6 +423,7 @@ def plot_avg_psd_encoder_weights(agg, data_dir='/auto/tdrive/mschachter/data', d
     plt.yticks(range(len(aprop_lbls)), aprop_lbls)
     plt.xlabel('LFP Frequency (Hz)')
     plt.colorbar(label='Normalized Encoder Effect')
+    """
 
     fname = os.path.join(get_this_dir(), 'average_encoder_weights.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
@@ -555,7 +558,7 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg = AcousticEncoderDecoderAggregator.load(agg_file)
 
     # ###### figure with encoder effects per frequency
-    plot_avg_psd_encoder_weights(agg, decomp='onewin_psds')
+    plot_avg_psd_encoder_weights(agg, decomp='full_psds')
 
     # ###### figure with encoder effects per lag
     # plot_avg_pairwise_encoder_weights(agg)
