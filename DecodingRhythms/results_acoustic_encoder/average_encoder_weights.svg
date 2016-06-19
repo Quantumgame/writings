@@ -37,15 +37,15 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1378"
-     inkscape:window-height="820"
+     inkscape:window-width="1387"
+     inkscape:window-height="709"
      id="namedview1094"
      showgrid="false"
      inkscape:zoom="0.3178744"
-     inkscape:cx="968.46905"
-     inkscape:cy="206.49718"
-     inkscape:window-x="97"
-     inkscape:window-y="566"
+     inkscape:cx="1122.1259"
+     inkscape:cy="128.31279"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <defs
@@ -3088,7 +3088,7 @@
            style="stroke-linecap:butt;stroke-linejoin:round" />
       </defs>
       <g
-         transform="matrix(0.16,0,0,-0.16,1269.4079,928.22778)"
+         transform="matrix(0.24,0,0,-0.24,1239.5879,934.30653)"
          id="g899"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <use
@@ -3686,7 +3686,7 @@
            style="stroke-linecap:butt;stroke-linejoin:round" />
       </defs>
       <g
-         transform="matrix(0,-0.16,-0.16,0,1010.6809,745.19486)"
+         transform="matrix(0,-0.24,-0.24,0,1009.0172,767.74424)"
          id="g1067"
          style="stroke-linecap:butt;stroke-linejoin:round">
         <use

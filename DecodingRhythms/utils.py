@@ -25,6 +25,8 @@ COLOR_CRIMSON_SPIKE_SYNC = '#610B0B'
 def set_font(size=16):
     font = {'family':'normal', 'weight':'bold', 'size':size}
     matplotlib.rc('font', **font)
+    matplotlib.rc('axes', labelsize=24)
+    matplotlib.rc('axes', titleweight='bold')
 
 
 def get_this_dir():

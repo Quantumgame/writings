@@ -68,8 +68,8 @@ def reorder_by_row_sum(W):
 
 def draw_curves(agg):
 
-    aprops = ['entropytime', 'sal', 'meanspect', 'maxAmp']
-    freqs = [0, 33, 165]
+    aprops = ['maxAmp', 'meanspect', 'entropytime', 'sal']
+    freqs = [0, 33, 182]
     decomps = (('spike_rate', -1), ('full_psds', freqs[0]), ('full_psds', freqs[1]), ('full_psds', freqs[2]))
 
     # get top tuning cuves for each acoustic prop
@@ -140,7 +140,7 @@ def draw_curves(agg):
               'entropytime':([0.90, 0.94, 0.98], ['0.90', '0.94', '0.98'])
              }
 
-    clrs = {('spike_rate', -1):COLOR_RED_SPIKE_RATE, ('full_psds', 0):'k', ('full_psds', 33):'k', ('full_psds', 165):'k'}
+    clrs = {('spike_rate', -1):COLOR_RED_SPIKE_RATE, ('full_psds', 0):'k', ('full_psds', 33):'k', ('full_psds', 182):'k'}
 
     for k, aprop in enumerate(aprops):
         for j, (decomp, f) in enumerate(decomps):

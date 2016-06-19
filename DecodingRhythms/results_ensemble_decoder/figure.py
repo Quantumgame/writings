@@ -51,10 +51,10 @@ def draw_figures(agg, data_dir='/auto/tdrive/mschachter/data'):
 
             if decomp == 'full_psds':
                 plt.xlabel('# of Electrodes')
-                plt.ylabel('Decoder R2 (LFP PSD)')
+                plt.ylabel('R2 (LFP PSD)')
             else:
                 plt.xlabel('# of Neurons')
-                plt.ylabel('Decoder R2 (Spike Rate)')
+                plt.ylabel('R2 (Spike Rate)')
                 plt.xlim(1, 60)
 
     fname = os.path.join(get_this_dir(), 'figure.svg')

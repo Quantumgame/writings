@@ -17,7 +17,8 @@ from neosound.sound_manager import SoundManager
 from DecodingRhythms.utils import set_font, get_this_dir
 
 from zeebeez.aggregators.biosound import AggregateBiosounds
-from zeebeez.utils import USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES, ACOUSTIC_FUND_PROPS
+from zeebeez.utils import USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES, ACOUSTIC_FUND_PROPS, \
+    ACOUSTIC_PROP_FULLNAMES, CALL_TYPE_NAMES
 
 
 def get_syllable_props(agg, stim_id, syllable_order, data_dir):
@@ -67,7 +68,7 @@ def get_syllable_props(agg, stim_id, syllable_order, data_dir):
     return {'wave_t':wave_t, 'wave':wave, 'wave_si':wave_si, 'wave_ei':wave_ei, 
             'ps_freq':ps_freq, 'ps':ps, 'amp_env':amp_env,
             'spec_t':spec_t, 'spec_freq':spec_freq, 'spec':spec, 'spec_si':spec_si, 'spec_ei':spec_ei,
-            'aprops':aprops
+            'spec_sample_rate':spec_sr, 'aprops':aprops
             }
 
 
@@ -163,17 +164,11 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
     ax = plt.subplot(gs[0, :sp_width])
     plt.plot((wave_t[wave_si:wave_ei] - start_time)*1e3, wave[wave_si:wave_ei], 'k-', linewidth=2.)
     plt.plot((wave_t[wave_si:wave_ei] - start_time)*1e3, amp_env[wave_si:wave_ei], 'r-', linewidth=4., alpha=0.7)
-    # meantime = aprops['meantime']*1e3
-    stdtime = aprops['stdtime']*1e3
-    # plt.axvline(meantime, color='r', linestyle='--', linewidth=3.0, alpha=0.9)
-    # plt.axvline(meantime-stdtime, color='r', linestyle='--', linewidth=3.0, alpha=0.8)
-    # plt.axvline(meantime+stdtime, color='r', linestyle='--', linewidth=3.0, alpha=0.8)
     plt.xlabel('Time (ms)')
     plt.ylabel('Waveform')
     plt.axis('tight')
 
-    # aprops_to_get = ['meantime', 'stdtime', 'skewtime', 'kurtosistime', 'entropytime', 'maxAmp']
-    aprops_to_get = ['stdtime', 'skewtime', 'kurtosistime', 'entropytime', 'maxAmp']
+    aprops_to_get = ['skewtime', 'kurtosistime', 'entropytime', 'maxAmp']
     units = ['s', '', '', 'bits', '']
     ax = plt.subplot(gs[0, sp_width:(sp_width+18)])
     txt_space = 0.1
@@ -198,6 +193,7 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
         plt.axvline(aprops[aprop]*1e-3, color='#606060', linestyle='--', linewidth=3.0, alpha=0.9)
         # plt.text(aprops[aprop]*1e-3 - 0.6, 3000., aprop, fontsize=14)
     plt.ylabel("Power")
+    plt.yticks([])
     plt.xlabel('Frequency (kHz)')
     plt.axis('tight')
 
@@ -230,19 +226,33 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
         full_spec_freq, full_spec, centers, propvals, stypes = aprop_specs[aprop]
 
         ax = plt.subplot(gs[k, (sp_width+20):])
-        full_spec_t = np.arange(full_spec.shape[1])
+        full_spec_t = np.arange(full_spec.shape[1]) / sprops['spec_sample_rate']
         plot_spectrogram(full_spec_t, full_spec_freq*1e-3, full_spec, ax, colormap='SpectroColorMap', colorbar=False)
         for c,st in zip(centers,stypes):
-            plt.text(c, 7., st, fontsize=20)
+            plt.text(c, 7., CALL_TYPE_NAMES[st], fontsize=20)
         pstrs = list()
         for p in propvals:
             if p > 10:
-                pstrs.append('%d' % p)
+                if aprop == 'meanspect':
+                    pstrs.append('%d Hz' % p)
+                else:
+                    pstrs.append('%d' % p)
             else:
                 pstrs.append('%0.3f' % p)
-        plt.xticks(centers, pstrs)
-        plt.xlabel(ACOUSTIC_PROP_NAMES[aprop])
+        for c,p in zip(centers,pstrs):
+            plt.text(c, 6, p, fontsize=20)
+        # plt.xticks(centers, pstrs)
+        plt.xticks([])
         plt.ylabel('Frequency (kHz)')
+
+        scale_t = (full_spec_t.max()*0.95) - np.linspace(0, 0.050, 20)
+        scale_y = np.zeros_like(scale_t) + 3
+        plt.plot(scale_t, scale_y, 'k-', linewidth=4.0)
+        plt.text(scale_t.min(), 2.0, '50ms', fontsize=20, fontweight='bold')
+
+        upper_right_x = np.percentile(full_spec_t, 80)
+        upper_right_y = 7
+        plt.title(ACOUSTIC_PROP_FULLNAMES[aprop], fontsize=22)
 
     aprops_to_get = ['fund', 'fund2', 'sal', 'voice2percent', 'maxfund', 'minfund', 'cvfund']
     units = ['Hz', 'Hz', '', '', 'Hz', 'Hz', 'Hz']
@@ -268,9 +278,11 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
 
 
 def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
-
-    aprops = USED_ACOUSTIC_PROPS
-    Xz,good_indices = agg.remove_duplicates()
+    aprops = ['fund', 'maxfund', 'minfund', 'cvfund', 'fund2', 'voice2percent',
+              'sal', 'entropyspect',
+              'meanspect', 'q1', 'q2', 'q3', 'skewspect', 'stdspect', 'kurtosisspect',
+              'skewtime', 'kurtosistime', 'entropytime', 'maxAmp']
+    Xz,good_indices = agg.remove_duplicates(aprops=aprops)
 
     i = np.zeros(len(agg.df), dtype='bool')
     i[good_indices] = True
@@ -363,7 +375,9 @@ def plot_nofund(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     spec_colormap()
 
-    aprops = USED_ACOUSTIC_PROPS
+    aprops = ['fund', 'maxfund', 'minfund', 'cvfund', 'fund2', 'voice2percent',
+               'stdspect', 'skewspect', 'kurtosisspect', 'entropyspect', 'sal',
+               'meanspect', 'q1', 'q2', 'q3', 'skewtime', 'kurtosistime', 'entropytime', 'maxAmp']
     Xz, good_indices = agg.remove_duplicates(acoustic_props=aprops)
 
     stim_durs = agg.df.end_time.values - agg.df.start_time.values

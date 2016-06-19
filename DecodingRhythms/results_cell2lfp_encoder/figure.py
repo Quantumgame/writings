@@ -227,26 +227,28 @@ def draw_perf_by_freq(agg, data_dir='/auto/tdrive/mschachter/data'):
             i = df[ein].f == f
             r2 = df[ein].r2[i].values
             bp_data[f].append(r2)
-            flat_data[ein].append([r2.mean(), r2.std() / np.sqrt(i.sum())])
+            flat_data[ein].append([r2.mean(), r2.std()])
 
-    """
     grouped_boxplot(bp_data, group_names=[int(f) for f in agg.freqs], subgroup_names=['Rate', 'Rate+Sync'],
                     subgroup_colors=[COLOR_RED_SPIKE_RATE, COLOR_CRIMSON_SPIKE_SYNC],
-                    box_width=0.6, box_spacing=1.0)
-    """
+                    box_width=0.8, box_spacing=1.0)
 
     clrs = {'rate':COLOR_RED_SPIKE_RATE, 'both':COLOR_CRIMSON_SPIKE_SYNC}
     for k,ein in enumerate(etypes):
         perf = np.array(flat_data[ein])
 
-        plt.errorbar(agg.freqs, perf[:, 0], yerr=perf[:, 1], c=clrs[ein], linewidth=8.0, elinewidth=5.0,
-                     ecolor='k', alpha=0.6, capthick=0.)
+        # plt.errorbar(agg.freqs, perf[:, 0], yerr=perf[:, 1], c=clrs[ein], linewidth=8.0, elinewidth=5.0,
+        #              ecolor='k', alpha=0.6, capthick=0.)
+        ax = plt.gca()
+        xmin,xmax = ax.get_xlim()
 
-    plt.legend(['Rate', 'Rate+Sync'], loc='upper right')
+        plt.plot(np.linspace(xmin, xmax, len(agg.freqs)), perf[:, 0], c=clrs[ein], linewidth=8.0, alpha=0.7)
+
+    # plt.legend(['Rate', 'Rate+Sync'], loc='upper right')
     plt.xlabel('LFP Frequency (Hz)')
-    plt.ylabel('Mean Spike->LFP Encoder Performance (R2)')
+    plt.ylabel('Mean Spike->LFP Encoder R2')
     plt.axis('tight')
-    plt.ylim(0, 1)
+    plt.ylim(0, 0.8)
 
 
 def draw_rate_weight_by_dist(agg):
@@ -254,8 +256,8 @@ def draw_rate_weight_by_dist(agg):
     wdf = get_encoder_weight_data_for_psd(agg, include_sync=False, write_to_file=False)
 
     # plot the average encoder weight as a function of distance from predicted electrode
-    clrs = {33:'k', 165:'g'}
-    for f in [33, 165]:
+    clrs = {33:'k', 182:'g'}
+    for f in [33, 182]:
         i = ~np.isnan(wdf.dist_from_electrode.values) & (wdf.r2 > 0.20) & (wdf.dist_from_electrode > 0) & (wdf.f == f)
 
         x = wdf.dist_from_electrode[i].values
@@ -266,16 +268,16 @@ def draw_rate_weight_by_dist(agg):
     plt.xlabel('Distance From Predicted Electrode (um)')
     plt.ylabel('Spike Rate Effect Size')
     plt.axis('tight')
-    leg = custom_legend(colors=[clrs[33], clrs[165]], labels=['33Hz', '165Hz'])
+    leg = custom_legend(colors=[clrs[33], clrs[182]], labels=['33Hz', '182Hz'])
     plt.legend(handles=leg, loc='lower left')
 
 def draw_rate_weight_by_same(agg):
     wdf = get_encoder_weight_data_for_psd(agg, include_sync=False, write_to_file=False)
 
     # plot the average encoder weight as a function of distance from predicted electrode
-    clrs = {33: 'k', 165: 'g'}
+    clrs = {33: 'k', 182: 'g'}
     vals = dict()
-    for f in [33, 165]:
+    for f in [33, 182]:
         i = ~np.isnan(wdf.dist_from_electrode.values) & (wdf.r2 > 0.20) & (wdf.f == f)
         df = wdf[i]
 
@@ -293,7 +295,7 @@ def draw_rate_weight_by_same(agg):
     plt.figure(figsize=figsize)
 
     plt.bar([0, 0.5], vals[33][:2], yerr=vals[33][2:], width=0.45, color=clrs[33], alpha=0.7, ecolor='k')
-    plt.bar([1.5, 2.0], vals[165][:2], yerr=vals[165][2:], width=0.45, color=clrs[165], alpha=0.7, ecolor='k')
+    plt.bar([1.5, 2.0], vals[182][:2], yerr=vals[182][2:], width=0.45, color=clrs[182], alpha=0.7, ecolor='k')
     plt.xticks([])
 
 

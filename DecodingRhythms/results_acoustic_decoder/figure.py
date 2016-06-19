@@ -129,18 +129,18 @@ def export_weight_ds(agg, data_dir='/auto/tdrive/mschachter/data', decomp='full_
     df.to_csv(os.path.join(data_dir, 'aggregate', 'decoder_weights_for_glm.csv'), header=True, index=False)
 
 
-def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all=True, decomp='full_psds'):
+def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all=True):
 
     aprops_to_display = list(USED_ACOUSTIC_PROPS)
 
     if not show_all:
-        decomps = ['spike_rate', decomp]
+        decomps = ['spike_rate', 'full_psds']
         sub_names = ['Spike Rate', 'LFP PSD']
         sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP]
     else:
-        decomps = ['spike_rate', 'full_psds', 'spike_rate+spike_sync', 'full_psds+full_cfs']
-        sub_names = ['Spike Rate', 'LFP PSD', 'Spike Rate + Sync', 'LFP PSD + CFs']
-        sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, COLOR_CRIMSON_SPIKE_SYNC, COLOR_PURPLE_LFP_CROSS]
+        decomps = ['spike_rate', 'full_psds', 'spike_rate+spike_sync']
+        sub_names = ['Spike Rate', 'LFP PSD', 'Spike Rate + Sync']
+        sub_clrs = [COLOR_RED_SPIKE_RATE, COLOR_BLUE_LFP, COLOR_CRIMSON_SPIKE_SYNC]
 
     df_me = pd.read_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'))
     bprop_data = list()
@@ -151,19 +151,17 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all
             i = (df_me.decomp == decomp) & (df_me.aprop == aprop)
             perfs = df_me.r2[i].values
             bd[decomp] = perfs
-        bprop_data.append({'bd':bd, 'lfp_mean':bd[decomp].mean(), 'aprop':aprop})
+        bprop_data.append({'bd':bd, 'lfp_mean':bd['full_psds'].mean(), 'aprop':aprop})
 
     bprop_data.sort(key=operator.itemgetter('lfp_mean'), reverse=True)
 
-    lfp_r2 = [bdict['bd'][decomp].mean() for bdict in bprop_data]
-    lfp_r2_std = [bdict['bd'][decomp].std(ddof=1) for bdict in bprop_data]
+    lfp_r2 = [bdict['bd']['full_psds'].mean() for bdict in bprop_data]
+    lfp_r2_std = [bdict['bd']['full_psds'].std(ddof=1) for bdict in bprop_data]
 
     spike_r2 = [bdict['bd']['spike_rate'].mean() for bdict in bprop_data]
     spike_r2_std = [bdict['bd']['spike_rate'].std(ddof=1) for bdict in bprop_data]
 
     if show_all:
-        pairwise_r2 = [bdict['bd']['full_psds+full_cfs'].mean() for bdict in bprop_data]
-        pairwise_r2_std = [bdict['bd']['full_psds+full_cfs'].std(ddof=1) for bdict in bprop_data]
         spike_sync_r2 = [bdict['bd']['spike_rate+spike_sync'].mean() for bdict in bprop_data]
         spike_sync_r2_std = [bdict['bd']['spike_rate+spike_sync'].std(ddof=1) for bdict in bprop_data]
 
@@ -178,9 +176,8 @@ def draw_decoder_perf_barplots(data_dir='/auto/tdrive/mschachter/data', show_all
         bar_width = 0.2
 
     bar_data = [(spike_r2, spike_r2_std), (lfp_r2, lfp_r2_std)]
-    if len(decomps) == 4:
+    if len(decomps) == 3:
         bar_data.append( (spike_sync_r2, spike_sync_r2_std) )
-        bar_data.append( (pairwise_r2, pairwise_r2_std) )
 
     bar_x = np.arange(len(lfp_r2))
     for k,(br2,bstd) in enumerate(bar_data):
@@ -271,7 +268,7 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
 
     # ###### these two functions write a csv file for decoder weights and draw barplots for decoder performance
     export_decoder_datasets_for_glm(agg)
-    draw_decoder_perf_barplots(show_all=True, decomp='full_psds')
+    draw_decoder_perf_barplots(show_all=True)
 
     # ###### these two functions draw the relationship between pairwise decoder weights and distance
     # draw_pairwise_weights_vs_dist(agg)
