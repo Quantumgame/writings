@@ -229,7 +229,7 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
         full_spec_t = np.arange(full_spec.shape[1]) / sprops['spec_sample_rate']
         plot_spectrogram(full_spec_t, full_spec_freq*1e-3, full_spec, ax, colormap='SpectroColorMap', colorbar=False)
         for c,st in zip(centers,stypes):
-            plt.text(c, 7., CALL_TYPE_NAMES[st], fontsize=20)
+            plt.text(c/sprops['spec_sample_rate'], 7., CALL_TYPE_NAMES[st], fontsize=20)
         pstrs = list()
         for p in propvals:
             if p > 10:
@@ -279,8 +279,8 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
 
 def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     aprops = ['fund', 'maxfund', 'minfund', 'cvfund', 'fund2', 'voice2percent',
-              'sal', 'entropyspect',
-              'meanspect', 'q1', 'q2', 'q3', 'skewspect', 'stdspect', 'kurtosisspect',
+              'stdspect', 'kurtosisspect', 'sal', 'entropyspect',
+              'meanspect', 'q1', 'q2', 'q3', 'skewspect',
               'skewtime', 'kurtosistime', 'entropytime', 'maxAmp']
     Xz,good_indices = agg.remove_duplicates(aprops=aprops)
 
@@ -455,8 +455,8 @@ if __name__ == '__main__':
     agg_file = '/auto/tdrive/mschachter/data/aggregate/biosound.h5'
     agg = AggregateBiosounds.load(agg_file)
 
-    # plot_syllable_comps(agg)
-    plot_acoustic_stats(agg)
+    plot_syllable_comps(agg)
+    # plot_acoustic_stats(agg)
 
     # plot_nofund(agg)
 

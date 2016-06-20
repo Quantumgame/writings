@@ -57,6 +57,15 @@ def draw_r2(agg, ax=None):
     plt.xlabel('Frequency (Hz)')
 
 
+def export_ds(agg):
+
+    data = {'bird': list(), 'block': list(), 'segment': list(), 'hemi': list(),
+            'electrode': list(), 'region':list(), 'dist_l2a':list(), 'dist_midline':list(),
+            'cell_index': list(), 'aprop': list(), 'freq': list(), 'r2': list()}
+
+    i = (agg.df.decomp == 'full_psds') | (agg.df.decomp == 'spike_rate')
+
+
 def reorder_by_row_sum(W):
     n = W.shape[0]
     rsum = W.sum(axis=1)
@@ -69,7 +78,7 @@ def reorder_by_row_sum(W):
 def draw_curves(agg):
 
     aprops = ['maxAmp', 'meanspect', 'entropytime', 'sal']
-    freqs = [0, 33, 182]
+    freqs = [0, 33, 165]
     decomps = (('spike_rate', -1), ('full_psds', freqs[0]), ('full_psds', freqs[1]), ('full_psds', freqs[2]))
 
     # get top tuning cuves for each acoustic prop
@@ -140,7 +149,7 @@ def draw_curves(agg):
               'entropytime':([0.90, 0.94, 0.98], ['0.90', '0.94', '0.98'])
              }
 
-    clrs = {('spike_rate', -1):COLOR_RED_SPIKE_RATE, ('full_psds', 0):'k', ('full_psds', 33):'k', ('full_psds', 182):'k'}
+    clrs = {('spike_rate', -1):COLOR_RED_SPIKE_RATE, ('full_psds', 0):'k', ('full_psds', 33):'k', ('full_psds', 165):'k'}
 
     for k, aprop in enumerate(aprops):
         for j, (decomp, f) in enumerate(decomps):
@@ -205,13 +214,52 @@ def draw_curves(agg):
     plt.show()
 
 
+def draw_best_freqs(agg):
+
+    best_freqs = dict()
+
+    for decomp,f in [('spike_rate', -1),]:
+
+        i = (agg.df.decomp == 'spike_rate') & (agg.df.freq == f) & (agg.df.aprop == 'meanspect')
+        assert i.sum() > 0, 'aprop=%s, decomp=%s, freq=%d' % ('meanspect', decomp, f)
+        r2 = agg.df.r2[i].values
+        r2_thresh = 0.05
+        xi = agg.df.xindex[i][r2 > r2_thresh]
+
+        bfreqs = list()
+        cx = agg.curve_x[xi, :]
+        tc = agg.tuning_curves[xi, :]
+        for x,y in zip(cx,tc):
+            ii = x > 2200.
+            maxi = y[ii].argmax()
+            bfreqs.append(x[ii][maxi])
+
+        bfreqs = np.array(bfreqs)
+        best_freqs[(decomp,f)] = bfreqs
+
+        nlow = np.sum(bfreqs < 2500)
+        nmid = np.sum((bfreqs > 2500) & (bfreqs < 3500))
+        nhigh = np.sum((bfreqs > 3500) & (bfreqs < 4500))
+        print nlow
+
+        n = float(len(bfreqs))
+        t = 'n=%d, nlow=%d (%0.2f), nmid=%d (%0.2f), nhigh=%d (%0.2f)' % (n, nlow, nlow/n, nmid, nmid/n, nhigh, nhigh/n)
+
+        plt.figure()
+        plt.hist(bfreqs, bins=20, color='c', alpha=0.7)
+        plt.xlabel('Best Frequency (Hz)')
+        plt.title('%s freq=%d | %s' % (decomp, f, t))
+        plt.axis('tight')
+
+
 def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
 
     agg_file = os.path.join(data_dir, 'aggregate', 'tuning_curve.h5')
     agg = TuningCurveAggregator.load(agg_file)
 
-    draw_curves(agg)
+    # draw_curves(agg)
     # draw_r2(agg)
+    draw_best_freqs(agg)
     plt.show()
 
 

@@ -6,7 +6,7 @@ import numpy as np
 from DecodingRhythms.utils import set_font, get_this_dir
 from lasp.colormaps import viridis
 from lasp.sound import plot_spectrogram, spec_colormap
-from utils import get_full_data
+from DecodingRhythms.utils import get_full_data
 from zeebeez.utils import USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_COLORS_BY_TYPE, ACOUSTIC_PROP_NAMES
 
 
