@@ -11,15 +11,16 @@ from DecodingRhythms.utils import clean_region, COLOR_RED_SPIKE_RATE, COLOR_CRIM
     get_e2e_dists
 
 
-def get_encoder_perf_data_for_psd(agg, ein='rate'):
+def get_encoder_perf_data_for_psd(agg):
 
-    i = (agg.df.encoder_input == ein) & (agg.df.encoder_output == 'psd') & (agg.df.decomp == 'full')
+    i = (agg.df.encoder_input == 'rate') | (agg.df.encoder_input == 'both')
+    i &= (agg.df.encoder_output == 'psd') & (agg.df.decomp == 'full')
 
     edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data+dist.csv'))
 
     pdata = {'bird': list(), 'block': list(), 'segment': list(), 'hemi': list(),
              'electrode': list(), 'region': list(), 'f': list(), 'r2': list(),
-             'dist_l2a': list(), 'dist_midline': list()}
+             'dist_l2a': list(), 'dist_midline': list(), 'ein':list()}
 
     for wkey in agg.df.wkey[i].values:
         bird, block, segment, hemi, ein2, eout2, decomp = wkey.split('_')
@@ -44,6 +45,7 @@ def get_encoder_perf_data_for_psd(agg, ein='rate'):
                 pdata['segment'].append(segment)
                 pdata['hemi'].append(hemi)
                 pdata['electrode'].append(e)
+                pdata['ein'].append(ein2)
 
                 pdata['region'].append(reg)
                 pdata['dist_l2a'].append(dist_l2a)
@@ -53,7 +55,7 @@ def get_encoder_perf_data_for_psd(agg, ein='rate'):
                 pdata['r2'].append(eperfs[k, j])
 
     df = pd.DataFrame(pdata)
-    df.to_csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_perfs_%s.csv' % ein, index=False)
+    df.to_csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_perfs.csv', index=False, header=True)
 
     return df
 
@@ -271,6 +273,7 @@ def draw_rate_weight_by_dist(agg):
     leg = custom_legend(colors=[clrs[33], clrs[182]], labels=['33Hz', '182Hz'])
     plt.legend(handles=leg, loc='lower left')
 
+
 def draw_rate_weight_by_same(agg):
     wdf = get_encoder_weight_data_for_psd(agg, include_sync=False, write_to_file=False)
 
@@ -300,6 +303,9 @@ def draw_rate_weight_by_same(agg):
 
 
 def draw_figures(agg, data_dir='/auto/tdrive/mschachter/data'):
+
+    get_encoder_perf_data_for_psd(agg)
+    return
 
     figsize = (23, 8)
     fig = plt.figure(figsize=figsize)

@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from DecodingRhythms.utils import COLOR_RED_SPIKE_RATE, set_font, get_this_dir
+from DecodingRhythms.utils import COLOR_RED_SPIKE_RATE, set_font, get_this_dir, get_electrode_dict
 from lasp.colormaps import magma
 from zeebeez.aggregators.tuning_curve import TuningCurveAggregator
 from zeebeez.utils import ACOUSTIC_PROP_NAMES, USED_ACOUSTIC_PROPS
@@ -57,13 +57,39 @@ def draw_r2(agg, ax=None):
     plt.xlabel('Frequency (Hz)')
 
 
-def export_ds(agg):
+def export_ds(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     data = {'bird': list(), 'block': list(), 'segment': list(), 'hemi': list(),
             'electrode': list(), 'region':list(), 'dist_l2a':list(), 'dist_midline':list(),
-            'cell_index': list(), 'aprop': list(), 'freq': list(), 'r2': list()}
+            'aprop': list(), 'freq': list(), 'r2': list(), 'cell_index':list()}
 
     i = (agg.df.decomp == 'full_psds') | (agg.df.decomp == 'spike_rate')
+    df = agg.df[i]
+
+    edict = get_electrode_dict()
+
+    g = df.groupby(['bird', 'block', 'segment', 'hemi', 'electrode', 'freq', 'aprop', 'cell_index'])
+
+    for (bird,block,segment,hemi,e,freq,aprop,cell_index),gdf in g:
+
+        assert len(gdf) == 1, "len(gdf)=%d" % len(gdf)
+        eprops = edict[(bird,block,hemi,e)]
+
+        data['bird'].append(bird)
+        data['block'].append(block)
+        data['segment'].append(segment)
+        data['hemi'].append(hemi)
+        data['electrode'].append(e)
+        data['region'].append(eprops['region'])
+        data['dist_l2a'].append(eprops['dist_l2a'])
+        data['dist_midline'].append(eprops['dist_midline'])
+        data['aprop'].append(aprop)
+        data['freq'].append(freq)
+        data['cell_index'].append(cell_index)
+        data['r2'].append(gdf.r2.values[0])
+
+    df = pd.DataFrame(data)
+    df.to_csv(os.path.join(data_dir, 'aggregate', 'tuning_curve_for_glm.csv'), header=True, index=False)
 
 
 def reorder_by_row_sum(W):
@@ -259,7 +285,8 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
 
     # draw_curves(agg)
     # draw_r2(agg)
-    draw_best_freqs(agg)
+    # draw_best_freqs(agg)
+    export_ds(agg)
     plt.show()
 
 

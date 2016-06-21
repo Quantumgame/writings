@@ -3,22 +3,18 @@ library(nlme)
 library(effects)
 
 d = read.csv('/auto/tdrive/mschachter/data/aggregate/decoder_perfs_for_glm.csv')
-d$decomp = relevel(d$decomp, 'spike_rate')
-d$aprop = relevel(d$aprop, 'stdtime')
 
-i = d$r2 > 0
-m = lm(r2 ~ aprop*decomp, data=subset(d, i))
+i = (d$decomp == 'full_psds') | (d$decomp == 'spike_rate') | (d$decomp == 'spike_rate+spike_sync')
+i = i & (d$r2 >= 0)
+d = subset(d, i)
+d$decomp = factor(d$decomp)
+
+m = lm(r2 ~ aprop:decomp, data=d)
 
 Anova(m)
 summary(m)
 
-
-m = lm(r2 ~ aprop + decomp, data=d)
-Anova(m)
-summary(m)
-
-effect("aprop", m)
-effect("decomp", m)
+effect("aprop:decomp", m)
 
 i_psd = d$decomp == 'full_psds'
 i_pcf = d$decomp == 'full_psds+full_cfs'

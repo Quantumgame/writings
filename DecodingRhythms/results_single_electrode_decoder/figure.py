@@ -10,7 +10,8 @@ from lasp.colormaps import magma
 
 from DecodingRhythms.utils import set_font, clean_region, get_this_dir
 from zeebeez.aggregators.single_electrode_decoder import SingleElectrodeDecoderAggregator
-from zeebeez.utils import USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_NAMES
+from zeebeez.utils import USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_NAMES, REGION_COLORS, REGION_NAMES_SHORT, \
+    REGION_COLORS_SHORT
 
 APROPS_TO_SHOW = ['maxAmp', 'meanspect', 'cvfund', 'sal', 'entropytime']
 
@@ -156,13 +157,13 @@ def plot_maps(agg, data_dir='/auto/tdrive/mschachter/data'):
         else:
             _clrs = _cmap(_pval / _maxval)
 
-        print 'xy=',zip(_x,_y)
+        print 'xy=', zip(_x, _y)
         plt.scatter(_x, _y, c=_pval, marker='o', cmap=_cmap, vmin=0, s=_msize, alpha=0.6)
         plt.xlabel('Dist to Midline (mm)')
         plt.ylabel('Dist to L2A (mm)')
         _cbar = plt.colorbar(label='Decoder R2')
         _new_ytks = ['%0.2f' % float(_yt.get_text()) for _yt in _cbar.ax.get_yticklabels()]
-        print '_new_ytks=',_new_ytks
+        print '_new_ytks=', _new_ytks
         _cbar.ax.set_yticklabels(_new_ytks)
         # print 'ytks=',_ytks
         plt.xlim(0, 2.5)
@@ -196,7 +197,7 @@ def plot_maps(agg, data_dir='/auto/tdrive/mschachter/data'):
         max_r2 = df[i].r2.max()
         print 'max_r2=%0.2f' % max_r2
         # _plot_map({'df':df[i]}, ax, magma, max_r2, _bgcolor='k', _perf_alpha=False, _plot_region=False)
-        _plot_map({'df': df[i]}, ax, plt.cm.afmhot_r, max_r2, _bgcolor='w', _perf_alpha=False, _plot_region=False)
+        _plot_map({'df': df[i]}, ax, _bgcolor='w',)
         plt.title(ACOUSTIC_PROP_NAMES[aprop])
 
     ax = plt.subplot(nrows, ncols, 6)
@@ -270,7 +271,7 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg_file = os.path.join(data_dir, 'aggregate', 'single_electrode_decoder.h5')
     agg = SingleElectrodeDecoderAggregator.load(agg_file)
 
-    export_ds(agg)
+    # export_ds(agg)
     plot_maps(agg)
     # plot_raw_dists()
     # plot_cov_mat(agg)

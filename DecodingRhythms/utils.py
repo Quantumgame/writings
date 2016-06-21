@@ -532,3 +532,25 @@ def get_full_data(bird, block, segment, hemi, stim_id, data_dir='/auto/tdrive/ms
             'lfp':lfp, 'spikes':spike_mat, 'lfp_sample_rate':se.lfp_sample_rate, 'psth':psth,
             'syllable_props':syllable_props, 'electrode_order':electrode_order, 'psd_freq':pcf.freqs,
             'cell_index2electrode':cell_index2electrode, 'aprops':aprops}
+
+
+def get_electrode_dict(data_dir='/auto/tdrive/mschachter/data'):
+    edata = pd.read_csv(os.path.join(data_dir, 'aggregate', 'electrode_data+dist.csv'))
+
+    edict = dict()
+
+    g = edata.groupby(['bird', 'block', 'hemisphere', 'electrode'])
+
+    for (bird,block,hemi,electrode),gdf in g:
+        assert len(gdf) == 1
+
+        reg = clean_region(gdf.region.values[0])
+        dist_l2a = gdf.dist_l2a.values[0]
+        dist_midline = gdf.dist_midline.values[0]
+
+        if bird == 'GreBlu9508M':
+            dist_l2a *= 4
+
+        edict[(bird,block,hemi,electrode)] = {'region':reg, 'dist_l2a':dist_l2a, 'dist_midline':dist_midline}
+
+    return edict
