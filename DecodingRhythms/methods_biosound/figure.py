@@ -279,7 +279,7 @@ def plot_syllable_comps(agg, stim_id=43, syllable_order=1, data_dir='/auto/tdriv
 
 def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     aprops = ['fund', 'maxfund', 'minfund', 'cvfund', 'fund2', 'voice2percent',
-              'stdspect', 'kurtosisspect', 'sal', 'entropyspect',
+              'stdspect', 'kurtosisspect', 'entropyspect', 'sal',
               'meanspect', 'q1', 'q2', 'q3', 'skewspect',
               'skewtime', 'kurtosistime', 'entropytime', 'maxAmp']
     Xz,good_indices = agg.remove_duplicates(aprops=aprops)
@@ -301,18 +301,10 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     fund = agg.Xraw[:, agg.acoustic_props.index('fund')]
     i &= fund > 0
 
-    Xraw = np.zeros([i.sum(), len(aprops)])
-    for k,aprop in enumerate(aprops):
-        Xraw[:, k] = agg.Xraw[i, agg.acoustic_props.index(aprop)]
-
-    Xz = deepcopy(Xraw)
-    Xz -= Xz.mean(axis=0)
-    Xz /= Xz.std(axis=0, ddof=1)
-
     print '# of valid samples: %d' % i.sum()
 
     # compute the correlation matrix
-    C = np.corrcoef(Xraw.T)
+    C = np.corrcoef(Xz.T)
 
     # build an undirected graph from the correlation matrix
     g = nx.Graph()
@@ -348,7 +340,6 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     aprop_lbls = [ACOUSTIC_PROP_NAMES[aprop] for aprop in aprops]
 
     # plot data matrix
-    absmax = np.abs(Xraw).max()
     absmax = 4
     ax = plt.subplot(gs[0, :40])
     plt.imshow(Xz, interpolation='nearest', aspect='auto', vmin=-absmax, vmax=absmax, cmap=plt.cm.seismic)
@@ -366,7 +357,7 @@ def plot_acoustic_stats(agg, data_dir='/auto/tdrive/mschachter/data'):
     plt.title('Acoustic Feature Correlation Matrix')
 
     fname = os.path.join(get_this_dir(), 'acoustic_data_and_corr_matrix.svg')
-    plt.savefig(fname, facecolor='w', edgecolor='none')
+    # plt.savefig(fname, facecolor='w', edgecolor='none')
 
     plt.show()
 
@@ -455,8 +446,8 @@ if __name__ == '__main__':
     agg_file = '/auto/tdrive/mschachter/data/aggregate/biosound.h5'
     agg = AggregateBiosounds.load(agg_file)
 
-    plot_syllable_comps(agg)
-    # plot_acoustic_stats(agg)
+    # plot_syllable_comps(agg)
+    plot_acoustic_stats(agg)
 
     # plot_nofund(agg)
 
