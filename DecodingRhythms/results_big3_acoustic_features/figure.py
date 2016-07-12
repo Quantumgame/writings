@@ -125,6 +125,22 @@ def draw_neural_joint_relationships(preproc_file):
     S = S[:, sub_i]
 
     ncells = X.shape[1]
+    nsamps = S.shape[0]
+
+    csv_file = '/auto/tdrive/mschachter/data/aggregate/big3_spike_rate.csv'
+    if not os.path.exists(csv_file):
+        # write out a csv file for analysis
+        cdata = {'maxAmp':list(), 'sal':list(), 'meanspect':list(), 'call_type':list(), 'cell':list(), 'spike_rate':list()}
+        for n in range(ncells):
+            for k in range(nsamps):
+                cdata['maxAmp'].append(S[k, 0])
+                cdata['sal'].append(S[k, 1])
+                cdata['meanspect'].append(S[k, 2])
+                cdata['call_type'].append(stim_type[k])
+                cdata['cell'].append(n)
+                cdata['spike_rate'].append(X[k, n])
+        cdf = pd.DataFrame(cdata)
+        cdf.to_csv(csv_file, header=True, index=False)
 
     plist = list()
     for n in range(ncells):
