@@ -562,7 +562,7 @@ def draw_tuning_curves(agg):
 
     # get top tuning cuves for each acoustic prop
     top_tuning_curves = dict()
-    perf_thresh = 0.05
+    perf_thresh = 0.10
     for k, aprop in enumerate(aprops):
         for j, (decomp, band_index) in enumerate(decomps):
             i = agg.df.decomp == decomp
@@ -617,10 +617,23 @@ def draw_tuning_curves(agg):
             all_curves = all_curves[good_i, :]
             all_curves_x = all_curves_x[good_i, :]
 
-
             alpha = deepcopy(all_perfs)
             alpha -= alpha.min()
             alpha /= alpha.max()
+
+            # sort by performance
+            lst = zip(range(len(all_perfs)), all_perfs)
+            lst.sort(key=operator.itemgetter(1), reverse=True)
+            resort_i = [x[0] for x in lst]
+
+            all_perfs = all_perfs[resort_i]
+            all_curves = all_curves[resort_i]
+            all_curves_x = all_curves_x[resort_i]
+            alpha = alpha[resort_i]
+
+            print 'all_perfs, aprop=%s, decomp=%s, band_index=%d' % (aprop, decomp, band_index)
+            for p in all_perfs:
+                print p
 
             top_tuning_curves[(aprop, decomp, band_index)] = (all_curves_x, all_curves, alpha)
 
@@ -664,7 +677,7 @@ def draw_tuning_curves(agg):
             cx, tc, alpha = top_tuning_curves[(aprop, decomp, f)]
             if aprop == 'meanspect':
                 cx *= 1e-3
-            n = min(cx.shape[0], 90)
+            n = min(cx.shape[0], topn)
             plt.axhline(0, c='k')
             for x, y, a in zip(cx[:n, :], tc[:n, :], alpha[:n]):
                 c = clrs[(decomp, f)]
