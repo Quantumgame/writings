@@ -13,8 +13,8 @@ fit_all_cells = function()
   ncells = length(unique(df$cell))
   for (k in 1:ncells)
   {
-    cat('\n')
-    cat(sprintf('Cell %d\n', k-1))
+    # cat('\n')
+    # cat(sprintf('Cell %d\n', k-1))
 
     # formulas = c("spike_rate ~ maxAmp",
     #              "spike_rate ~ sal",
@@ -41,7 +41,6 @@ fit_all_cells = function()
     # }
     
     fit_cell_glmnet(k-1, nat_spline=FALSE)
-    fit_cell_glmnet(k-1, nat_spline=TRUE)
   }
 }
 
@@ -65,40 +64,26 @@ read_cv_index = function()
 }
 
 
-fit_cell_glmnet = function(cell_num, nat_spline=TRUE)
+fit_cell_glmnet = function(cell_num, nat_spline=False)
 {
-  cell_df = subset(df, df$cell == cell_num)
+  # cell_df = subset(df, df$cell == cell_num)
+
+  dfcd = read.csv(sprintf('/tmp/cell_data_%d.csv', cell_num))
+  y = dfcd$y
   
-  if (nat_spline)
-  {
-    # cat("Using natural splines!!\n")
-    dof = 3
-    X = mat.or.vec(nrow(cell_df), dof*3)
-    # X[, 1:3] = ns(cell_df$maxAmp, dof)
-    # X[, 4:6] = ns(cell_df$sal, dof)
-    # X[, 7:9] = ns(cell_df$meanspect, dof)
-    
-    dfcd = read.csv(sprintf('/tmp/cell_data_%d.csv', cell_num))
-    X[, 1] = dfcd$x1
-    X[, 2] = dfcd$x2
-    X[, 3] = dfcd$x3
-    X[, 4] = dfcd$x4
-    X[, 5] = dfcd$x5
-    X[, 6] = dfcd$x6
-    X[, 7] = dfcd$x7
-    X[, 8] = dfcd$x8
-    X[, 9] = dfcd$x9
-    
+  if (nat_spline) {
+    X = mat.or.vec(nrow(dfcd), ncol(dfcd)*3)
+    X[, 1:3] = ns(dfcd$x0, 3)
+    X[, 4:6] = ns(dfcd$x1, 3)
+    X[, 7:9] = ns(dfcd$x2, 3)
   } else {
-    X = mat.or.vec(nrow(cell_df), 3)
-    X[, 1] = cell_df$maxAmp
-    X[, 2] = cell_df$sal
-    X[, 3] = cell_df$meanspect
+    num_features = ncol(dfcd)-1
+    X = mat.or.vec(nrow(dfcd), num_features)
+    X[, 1:num_features] = as.matrix(dfcd[, 1:num_features])
   }
   
-  y = cell_df$spike_rate
-  
   sz = dim(X)
+  # cat(sprintf('sz[1]=%d, sz[2]=%d\n', sz[1], sz[2]))
   
   cv_sets = read_cv_index()
   nfolds = length(cv_sets$train)
@@ -131,7 +116,7 @@ fit_cell_glmnet = function(cell_num, nat_spline=TRUE)
   mean_r2_glmnet = mean(r2_glmnet)
   mean_r2_test = mean(r2_test)
   
-  cat(sprintf('\tR2(glmnet)=%0.2f, R2(test)=%0.2f, nfeatures=%d, natural_spline=%d\n', mean_r2_glmnet, mean_r2_test, sz[2], nat_spline))
+  cat(sprintf('Cell %d: R2(glmnet)=%0.2f, R2(test)=%0.2f\n', cell_num, mean_r2_glmnet, mean_r2_test))
 }
 
 

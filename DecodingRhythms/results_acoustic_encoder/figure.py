@@ -552,10 +552,163 @@ def draw_all_encoder_perfs_and_decoder_weights(agg, aprops=('sal', 'q2', 'maxAmp
     plt.show()
 
 
+def draw_tuning_curves(agg):
+
+    aprops = ['maxAmp', 'meanspect', 'sal']
+    bands =range(3)
+    decomps = (('spike_rate', -1), ('full_psds', bands[0]), ('full_psds', bands[1]), ('full_psds', bands[2]))
+
+    assert isinstance(agg, AcousticEncoderDecoderAggregator)
+
+    # get top tuning cuves for each acoustic prop
+    top_tuning_curves = dict()
+    perf_thresh = 0.05
+    for k, aprop in enumerate(aprops):
+        for j, (decomp, band_index) in enumerate(decomps):
+            i = agg.df.decomp == decomp
+            assert i.sum() > 0, 'decomp=%s' % decomp
+
+            # aggregate tuning curves across sites
+            all_curves = list()
+            all_curves_x = list()
+            all_perfs = list()
+
+            for (bird,block,segment,hemi),gdf in agg.df[i].groupby(['bird', 'block', 'segment', 'hemi']):
+
+                wkey = '%s_%s_%s_%s_%s' % (bird, block, segment, hemi, decomp)
+                eperfs = agg.encoder_perfs[wkey]
+                tuning_curves = agg.tuning_curves[wkey]
+                tuning_curves_x = agg.tuning_curves_x[wkey]
+                acoustic_feature_index = list(agg.acoustic_props[0]).index(aprop)
+
+                site_perfs = list()
+                if decomp == 'spike_rate':
+                    ncells,nprops,nbins = tuning_curves.shape
+                    aprop_tc = tuning_curves[:, acoustic_feature_index, :]
+                    aprop_tc_x = tuning_curves_x[:, acoustic_feature_index, :]
+                    site_perfs.extend(eperfs)
+
+                elif decomp == 'full_psds':
+                    nelectrodes,nfreqs,nprops,nbins = tuning_curves.shape
+                    aprop_tc = tuning_curves[:, band_index, acoustic_feature_index, :]
+                    aprop_tc_x = tuning_curves_x[:, band_index, acoustic_feature_index, :]
+                    site_perfs.extend(eperfs[:, band_index])
+
+                else:
+                    continue
+
+                all_perfs.extend(site_perfs)
+                all_curves.extend(aprop_tc)
+                all_curves_x.extend(aprop_tc_x)
+
+            print 'len(all_curves)=%d' % len(all_curves)
+
+            # get rid of bad tuning curves
+            all_perfs = np.array(all_perfs)
+            all_curves = np.array(all_curves)
+            all_curves_x = np.array(all_curves_x)
+            tc_sum = np.abs(all_curves).sum(axis=1)
+            # good_i = (tc_sum > 0) & (all_perfs > perf_thresh)
+            good_i = (all_perfs > perf_thresh)
+
+            assert good_i.sum() > 0, "No good tuning curves for aprop=%s, decomp=%s, band_index=%d" % (aprop, decomp, band_index)
+
+            all_perfs = all_perfs[good_i]
+            all_curves = all_curves[good_i, :]
+            all_curves_x = all_curves_x[good_i, :]
+
+
+            alpha = deepcopy(all_perfs)
+            alpha -= alpha.min()
+            alpha /= alpha.max()
+
+            top_tuning_curves[(aprop, decomp, band_index)] = (all_curves_x, all_curves, alpha)
+
+    figsize = (23, 13)
+    fig = plt.figure(figsize=figsize)
+    fig.subplots_adjust(top=0.95, bottom=0.02, right=0.99, left=0.05, hspace=0.25, wspace=0.25)
+
+    gs = plt.GridSpec(100, 100)
+
+    offset = 55
+    wpad = 5
+    hpad = 8
+    height = int(100 / len(aprops)) - hpad
+    width = int((100 - offset) / 3.) - wpad
+
+    topn = 30
+
+    xticks = {'meanspect': ([2, 4], ['2', '4']),
+              'maxAmp': ([0.2, 0.4], ['0.2', '0.4']),
+              'sal': ([0.5, 0.7], ['0.5', '0.7']),
+              'entropytime': ([0.90, 0.94, 0.98], ['0.90', '0.94', '0.98'])
+              }
+
+    clrs = {('spike_rate', -1): COLOR_RED_SPIKE_RATE, ('full_psds', bands[0]): 'k', ('full_psds', bands[1]): 'k',
+            ('full_psds', bands[2]): 'k'}
+
+    for k, aprop in enumerate(aprops):
+        for j, (decomp, f) in enumerate(decomps):
+
+            x1 = j * (width + wpad)
+            x2 = x1 + width
+            y1 = k * (height + hpad)
+            y2 = y1 + height
+            # print 'k=%d, j=%d, x1=%d, x2=%d, y1=%d, y2=%d' % (k, j, x1, x2, y1, y2)
+
+            ax = plt.subplot(gs[y1:y2, x1:x2])
+            # plot the top n tuning curves
+            if (aprop, decomp, f) not in top_tuning_curves:
+                continue
+
+            cx, tc, alpha = top_tuning_curves[(aprop, decomp, f)]
+            if aprop == 'meanspect':
+                cx *= 1e-3
+            n = min(cx.shape[0], 90)
+            plt.axhline(0, c='k')
+            for x, y, a in zip(cx[:n, :], tc[:n, :], alpha[:n]):
+                c = clrs[(decomp, f)]
+                plt.plot(x, y, '-', c=c, linewidth=1.0, alpha=a)
+
+                xlbl = ACOUSTIC_PROP_NAMES[aprop]
+                if aprop == 'meanspect':
+                    xlbl += ' (kHz)'
+                elif aprop == 'entropytime':
+                    xlbl += '(bits)'
+
+                plt.xlabel(xlbl)
+
+                if decomp.endswith('rate'):
+                    ylbl = 'Spike Rate\n(z-scored)'
+                    if k == 0:
+                        plt.title('Spike Rate', fontweight='bold')
+                elif decomp.endswith('psds'):
+                    if k == 0:
+                        plt.title('LFP Power (%d Hz)' % f, fontweight='bold')
+                    ylbl = 'LFP Power'
+
+                plt.ylabel(ylbl)
+                if aprop in xticks:
+                    plt.xticks(xticks[aprop][0], xticks[aprop][1])
+
+            plt.axis('tight')
+            if aprop == 'entropytime':
+                plt.xlim(0.89, 0.98)
+            else:
+                plt.xlim([x.min() * 1.20, x.max() * 0.9])
+            if decomp.endswith('rate'):
+                plt.ylim(-1.5, 1.5)
+            elif decomp.endswith('psds'):
+                plt.ylim(-1., 1.)
+
+
 def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder+decoder'):
 
     agg_file = os.path.join(data_dir, 'aggregate', 'acoustic_encoder_decoder.h5')
     agg = AcousticEncoderDecoderAggregator.load(agg_file)
+
+    draw_tuning_curves(agg)
+    plt.show()
 
     # ###### figure with encoder effects per frequency
     # plot_avg_psd_encoder_weights(agg, decomp='full_psds')
@@ -564,7 +717,7 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     # plot_avg_pairwise_encoder_weights(agg)
 
     # ###### write a csv file out for analysis in R
-    export_psd_encoder_datasets_for_glm(agg)
+    # export_psd_encoder_datasets_for_glm(agg)
 
     # draw_encoder_perfs(agg)
     # draw_all_encoder_perfs_and_decoder_weights(agg)
