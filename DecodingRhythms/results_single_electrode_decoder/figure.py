@@ -13,7 +13,7 @@ from zeebeez.aggregators.single_electrode_decoder import SingleElectrodeDecoderA
 from zeebeez.utils import USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_NAMES, REGION_COLORS, REGION_NAMES_SHORT, \
     REGION_COLORS_SHORT
 
-APROPS_TO_SHOW = ['maxAmp', 'meanspect', 'cvfund', 'sal', 'entropytime']
+APROPS_TO_SHOW = ['maxAmp', 'meanspect', 'sal', 'cvfund', 'skewtime']
 
 def get_freqs_and_lags():
     #TODO hack
@@ -139,7 +139,7 @@ def plot_maps(agg, data_dir='/auto/tdrive/mschachter/data'):
     df = df[i]
     print df.describe()
 
-    def _plot_map(_pdata, _ax, _cmap, _maxval, _bgcolor=None, _perf_alpha=False, _plot_region=False, _msize=60):
+    def _plot_map(_pdata, _ax, _cmap, _maxval, _bgcolor=None, _perf_alpha=False, _plot_region=False, _msize=60, _region_only=False):
         if _bgcolor is not None:
             _ax.set_axis_bgcolor(_bgcolor)
         _pval = _pdata['df'].r2.values
@@ -157,23 +157,24 @@ def plot_maps(agg, data_dir='/auto/tdrive/mschachter/data'):
         else:
             _clrs = _cmap(_pval / _maxval)
 
-        print 'xy=', zip(_x, _y)
-        plt.scatter(_x, _y, c=_pval, marker='o', cmap=_cmap, vmin=0, s=_msize, alpha=0.6)
-        plt.xlabel('Dist to Midline (mm)')
-        plt.ylabel('Dist to L2A (mm)')
+        if not _region_only:
+            plt.scatter(_x, _y, c=_pval, marker='o', cmap=_cmap, vmin=0, s=_msize, alpha=0.6)
+
         _cbar = plt.colorbar(label='Decoder R2')
         _new_ytks = ['%0.2f' % float(_yt.get_text()) for _yt in _cbar.ax.get_yticklabels()]
-        print '_new_ytks=', _new_ytks
+        # print '_new_ytks=', _new_ytks
         _cbar.ax.set_yticklabels(_new_ytks)
+
+        plt.xlabel('Dist to Midline (mm)')
+        plt.ylabel('Dist to L2A (mm)')
         # print 'ytks=',_ytks
         plt.xlim(0, 2.5)
         plt.ylim(-1, 1)
-        """
-        for k,(_xx,_yy) in enumerate(zip(_x, _y)):
-            plt.plot(_xx, _yy, 'o', c=_clrs[k], alpha=_alpha[k], markersize=_msize)
-            if _plot_region:
-                plt.text(_xx, _yy, _regs[k], fontsize=8, color='w', alpha=0.7)
-        """
+
+        if _plot_region:
+            for _k,(_xx,_yy) in enumerate(zip(_x, _y)):
+                if _regs[_k] not in ['HP', '?'] and '-' not in _regs[k]:
+                    plt.text(_xx, _yy, _regs[_k], fontsize=10, color='k', alpha=0.7)
 
     def rb_cmap(x):
         assert np.abs(x).max() <= 1
@@ -195,13 +196,15 @@ def plot_maps(agg, data_dir='/auto/tdrive/mschachter/data'):
         ax = plt.subplot(nrows, ncols, k+1)
         i = df.aprop == aprop
         max_r2 = df[i].r2.max()
-        print 'max_r2=%0.2f' % max_r2
+        print 'k=%d, %s: max_r2=%0.2f' % (k, aprop, max_r2)
         # _plot_map({'df':df[i]}, ax, magma, max_r2, _bgcolor='k', _perf_alpha=False, _plot_region=False)
-        _plot_map({'df': df[i]}, ax, _bgcolor='w',)
+        _plot_map({'df': df[i]}, ax, plt.cm.afmhot_r, max_r2,_bgcolor='w',)
         plt.title(ACOUSTIC_PROP_NAMES[aprop])
 
-    ax = plt.subplot(nrows, ncols, 6)
-    plot_r2_region_prop(ax)
+    # ax = plt.subplot(nrows, ncols, 6)
+    # _plot_map({'df': df[df.aprop == 'maxAmp']}, ax, plt.cm.afmhot_r, 1., _bgcolor='w', _plot_region=True, _region_only=True)
+
+    # plot_r2_region_prop(ax)
 
     fname = os.path.join(get_this_dir(), 'single_electrode_decoder_r2.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')

@@ -275,7 +275,7 @@ def draw_rate_weight_by_dist(agg):
         plot_mean_from_scatter(x, y, bins=4, num_smooth_points=200, alpha=0.7, color=clrs[f], ecolor='#b5b5b5', bin_by_quantile=False)
 
     plt.xlabel('Distance From Predicted Electrode (um)')
-    plt.ylabel('Spike Rate Effect Size')
+    plt.ylabel('Spike Rate Weight^2')
     plt.axis('tight')
     freq_clrs = [clrs[f] for f in freqs]
     leg = custom_legend(colors=freq_clrs, labels=band_labels)

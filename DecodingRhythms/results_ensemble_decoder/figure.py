@@ -14,7 +14,7 @@ def draw_figures(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     decomps = ['spike_rate', 'full_psds']
 
-    aprops = ['maxAmp', 'meanspect', 'skewspect', 'sal', 'skewtime']
+    aprops = ['maxAmp', 'meanspect', 'sal', 'skewspect', 'skewtime']
     curves_by_prop = dict()
     for aprop in aprops:
         for decomp in decomps:
