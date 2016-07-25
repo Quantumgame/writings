@@ -567,6 +567,7 @@ def draw_feature_improvements(agg, ax=None):
     aprops.remove('maxAmp')
     aprops.remove('sal')
     aprops.remove('meanspect')
+    aprops.remove('stdtime')
 
     feature_improvement_data = {'wkey':list(), 'aprop':list(), 'band':list(), 'improvement':list()}
     for j, (decomp, band_index) in enumerate(decomps):
