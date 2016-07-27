@@ -1,0 +1,118 @@
+\chapter{Methods}
+
+Electrophysiological methods and acoustic analyses are fully described in [Elie2015a] and [Elie2015b] respectively and are summarized here in the first sections of the methods. Then we describe in detail the computational methods used for the calculation of local field potentials (LFPs), the power spectra and the encoding and decoding analyses. All animal procedures were approved by the Animal Care and Use Committee of the University of California Berkeley, and were in accordance with the NIH guidelines regarding the care and use of animals for experimental procedures.
+
+\subsection{Animals}
+
+The animal subjects studied were adult and juvenile zebra finches (Taeniopygia guttata) from the colonies of the Theunissen and Bentley labs (University of California, Berkeley, USA) (Figure 1a). The electrophysiology experiments described below involved four male and two female adults from the Theunissen lab colony. The acoustic recordings described in the next subsection involved twenty-three birds (eight adult males, seven adult females, four female chicks, four male chicks). Six adults (three males, three females) were borrowed from the Bentley lab.
+The electrophysiology subjects were housed in unisex cages and allowed to interact freely with their cagemates. All subjects were in the same room and were could interact visually acoustically. The acoustic recordings were performed on pair-bonded adults housed in groups of 2-3 pairs. Chicks were housed with their parents and siblings.
+    
+\subsection{Zebra Finch Vocalization Types}
+
+Zebra finches communicate using a repertoire of vocalizations that are dependent on behavioral context. Following [Zann1996], acoustic signatures and behavioral contexts were used to classify vocalizations into nine different categories (Figure 1d). A succinct description of vocalization types recorded in the experiment can be found in Table 1 of [Elie2015a], but here we summarize.
+Song is a multi-syllable vocalization emitted only by males. Songs are comprised of repeating motifs of syllables, and in the dataset used, have a duration of 1424 +/- 983ms. There are two types of monosyllabic affiliative calls used to maintain contact. Distance calls are loud, used when not in visual contact, and longer in duration (169 +/- 49ms) than Tet calls, emitted when in visual contact during hopping movements, with a duration of 81 +/- 16ms. Nest calls are soft monosyllabic vocalizations emitted by zebra finches looking for a nest or constructing a nest. With a duration of 95 +/- 75ms, they are similar to Tets.
+Zebra finches emit two types of calls when they are acting out aggressively or being attacked. Wsst calls are noisy (broadband) and often long (503 +/- 499ms) calls emitted by a zebra finch when it is being aggressive. Distress calls are long (452 +/- 377ms), loud, and high-pitched vocalizations emitted by a zebra finch when escaping from an aggressive cage-mate. Both types of vocalizations can be mono or polysyllabic.
+Juvenile zebra finches emit two types of calls. Long tonal calls are the precursor to the adult distance calls; they are loud, long (durations of 184 +/- 63ms) and monosyllabic, emitted when the chick is separated from it’s siblings or parents. Begging calls are emitted when a juvenile zebra finch is begging for food from a parent, it is loud, long (duration of 382 +/- 289ms), and monosyllabic.
+
+\subsection{Electrophysiology and Histology}
+
+    Twenty-four hours before recording, the subject was deeply anaesthetized with isoflurane, injected topically with lidocaine, and a head-holding fixture was cemented into the skull. On recording day, the subject was fasted for one hour, anaesthetized with isoflurane, head-fixed in a stereotaxic device, and two rectangular openings were made over the auditory area of each hemisphere. An electrode array with two columns of eight tungsten electrodes was lowered into each hemisphere (Figure 1b,c). Electrodes were coated in DiI powder so that their path through the tissue could be analyzed post-experiment. The electrodes ran rostral-caudal lengthwise in eight rows, with two columns that ran medial-lateral.
+    During the experiment, the subject was placed in a soundproof chamber and electrode arrays were independently lowered. Probe stimuli were used to determine visually whether the areas were auditory. Once a reliable site was found, a stimulus protocol was played over speakers within the chamber (described in next subsection). When the stimulus protocol was complete, the electrodes were lowered deeper by at least 100 microns before playing the protocol again at the next site.
+Once the recordings were finished, typically after 4-5 recording sites, the subject was killed with an overdose of isoflurane, the brain was removed and fixed with paraformaldehyde. Coronal slices of 20 microns were made with a cryostat and Nissl stained. The slices were examined under a microscope and the DiI tracts were used to determine electrode penetration through anatomical regions. Six auditory areas were differentiated: three regions of field L (L1, L2, L3), caudomedial and caudolateral mesopallium (CMM and CML), and caudomedial nidopallium (NCM).
+
+\subsection{Stimulus Protocol}
+
+    The vocalizations of ten individuals (three adult females, three adult males, four chicks) were used in the stimulus protocol. The vocalizations of four of the individuals (one male adult, one female adult, one male chick, one female chick) were played at each recording site, and three of each vocalization type were randomly selected from the other birds to be played. Each vocalization was played on average 10 times, randomly interleaved with other vocalizations. The protocol lasted an average of one hour. Monosyllabic vocalizations such as Distance and Tet calls were played with 3-4 renditions in series with inter-syllable intervals chosen to match what was observed naturally.
+
+\subsection{Syllable Segmentation}
+
+For this work we segmented all call types into syllables. The amplitude envelope of the series of call syllables was used for the segmentation. First the spectrogram was computed, and then the standard deviation of power across frequencies was computed at each time point to produce a time-varying amplitude envelope. Syllables began when the amplitude envelope exceeded a threshold value set to the 2nd percentile of the amplitude envelope distribution for all syllables. The syllable was marked as completed when the amplitude envelope subsequently dropped below this threshold. Syllables separated by 20ms or less were considered as one event. Songs and Begging calls were segmented as well. 
+
+\subsection{Acoustic Features}
+
+    We utilized bioacoustic methods to quantify acoustic features of each syllable, referred to as “Predefined Acoustical Features” and described extensively in the Methods of [Elie2015b] and summarized here. The 20 acoustic features fall into three different categories - temporal, spectral, and time-varying fundamental features.
+    Temporal features were computed from the temporal envelope of the syllable. The temporal envelope was computed by rectifying the syllable’s raw sound pressure waveform and low-pass filtering with a cutoff frequency of 20 Hz. The temporal envelope was normalized by its sum, turning it into a probability distribution. The mean (Mean T), standard deviation (Std T), skew (Skew T), kurtosis (Kurt T), and entropy (Ent T) were computed and used as features. The peak amplitude of the syllable was computed as the peak of the non-normalized temporal envelope, and labeled as Max A.
+Spectral features were computed from the spectral envelope, which is the power spectrum computed from the raw syllable sound pressure waveform. The spectral envelope was normalized by its sum, and the mean (Mean S), standard deviation (Std S), skew (Skew S), kurtosis (Kurt S) and entropy (Ent S) were computed. In addition, the 25th, 50th, and 75th percentile of the distribution were computed, and labeled as Q1, Q2, and Q3, respectively.
+Time-varying fundamental features were computed from the spectrogram of the syllable and other properties. A feature was computed to quantify the “pitchiness” of the syllable called the saliency. To compute this feature, first the auto-covariance of the raw sound pressure waveform was computed. The peak in the auto-covariance at non-zero lag was found, and and the saliency was then computed as the ratio between that peak value and the value of the auto-covariance at lag zero. The saliency feature was labeled as Saliency.
+    For all syllables with a saliency greater than 0.5, a time-varying fundamental frequency was computed by fitting the power spectrum at a time point within the syllable with that of an idealized harmonic stack. Deviations from this idealized harmonic stack were used to quantify inharmonic properties, such as the presence of a second peak in the spectrum not explained by the stack. This “double voice phenomenon” was the result of the two syrinxes of the singing bird producing two distinct sounds simultaneously. The second fundamental frequency in this situations was computed as the acoustic feature Pk 2, and the acoustic feature 2nd V was defined as the percent of time a second voice was found. Other acoustic features describing the time-varying fundamental are the maximum, minimum, mean, and coefficient of variation in the fundamental frequency over time, labeled Max F0, Min F0, Mean F0, CV F0, respectively.
+
+\subsection{LFP Power Spectrum Calculation}
+    
+    The local field potential was recorded with a sample rate of 381 Hz, limiting the maximum frequency of analysis to 190 Hz. The LFP on each electrode was z-scored across time for the duration of a stimulus protocol. The LFP was analyzed starting from the onset of a syllable, and the window of analysis was extended to 30ms following the syllable offset. Syllables of duration less than 40ms or more than 400ms were excluded from analysis.
+    We will denote the z-scored LFP conditioned on a stimulus s, for trial m, electrode k as ukm(t, s). We computed the LFP power spectrum from the Gaussian-windowed short-time Fourier Transform (STFT). The time points in the spectrogram were spaced by an increment of  = 5ms. The window size was W=0.060, 60ms. The frequency spacing was constant across stimuli due to the fixed window size, equal to f = 9.78 Hz, and ranged from 0 to 185 Hz. The value of the STFT, centered at time  and frequency f was computed as:
+zkm(, f, s)=t=1Texp(-(t-)22W) exp(i2ft) ukm(t, s)
+
+where i=-1, T is the duration of the stimulus in number of time points at sample rate fs = 381 Hz, and W was chosen such that 95% of the mass of the Gaussian was contained in the window:
+
+W=W6
+
+From the complex-valued STFT, we averaged power across  windowed segments, of which there were TW=floor(TW), to get the power spectrum for electrode k, trial m, stimulus s:
+
+xkm(f, s)=1TW=1TWzkm(, f, s)2
+
+Once the power spectra were computed for each trial, they were averaged across trials to produce an average power spectrum for stimulus s.
+
+
+\subsection{LFP Pairwise Coherency Function Calculation}
+
+    To explore pairwise information in the LFP, we computed a normalized cross correlation function called the coherency [Hsu2004]. To compute the coherency between signals ukm(t, s) and ujm(t, s)  on electrodes k and j, we first computed their autocorrelation functions (ACFs) and cross correlation function (CF), conditioned on stimulus s, for trial m. Then the Fourier transform of the ACFs and CF were taken, and the coherency was computed for stimulus s and time lag  as:
+
+ckjm(, s)=IFFTFFTCFkj(, s)| FFTACFk(, s) |  | FFTACFj(, s) |
+
+where IFFT is the inverse Fourier Transform. Twenty-one lags were used,  ranged from -26ms to 26ms. In practice small values of the ACFs made the quantity in parenthesis very high, and so a threshold was placed on the lowest values of the ACFs, prior to dividing. For these points we set ckj(, s)=0.  Once the coherency functions were computed for each trial, they were averaged across trials to produce an average coherency function for stimulus s.
+
+\subsection{Population Spike Rate and Spike Synchrony}
+
+    The spike rate for cell i, trial m, stimulus s, was computed as the number of spikes divided by the duration of the stimulus. Let Nim(s) be the number of spikes that occur during stimulus s, trial m, for cell i. Then the spike rate is given as:
+
+rim(s)=Nim(s)duration of s
+
+The spike rate for cell i was averaged across trials to produce an average spike rate ri(s), and the the population spike rate vector for stimulus s was defined as the vector of average spike rates for Q cells recorded at a given site:
+
+r(s)=[r1(s)    rQ(s)]
+
+    To compute spike rate synchrony for stimulus s, trial m, between cells i and j, we first binned the spike trains for i and j using a bin size of 3ms. Spike synchrony was computed as:
+
+mij(s)=\# of bins where both i and j spiked Nim(s)  Njm(s)
+
+Spike synchrony was then averaged across trials to produce an average synchrony ij(s).
+
+\subsection{Encoder and Decoder Dataset Construction}
+
+    We used an encoding approach to determine what acoustic features drove individual neural responses, and a decoding approach to determine how much information about acoustic features was contained in ensemble activity. We defined the vector y(s) to be a collection of neural states, associated with stimulus s. y(s) was comprised of one or more of the following neural states: the multi-electrode LFP power spectra, (“LFP PSD”), the pairwise coherency at all lags for all electrode pairs (“Pairwise CFs”), the population spike rate vector (“Spike Rate”), or the pairwise synchrony for all pairs of neurons (“Spike Sync”). We defined a vector x(s) to be a collection of acoustic features associated with stimulus s.
+    The encoder attempts to predict a single scalar neural feature yi(s) from the vector of acoustic features x(s). The acoustic features are chosen by the experimenter and precede the neural response, they have the potential to causally induce changes in the neural state. The decoder attempts to predict a single acoustic feature xj(s) from the neural feature vector y(s).     
+The dataset was constructed from one run of a stimulus protocol on a recording site. Each stimulus protocol typically contained around 130 vocalizations randomly presented 10 times each. After segmentation and trial averaging, there were roughly D=700 samples. Each protocol contained vocalizations from eleven different birds - seven adults and four chicks. 
+
+\subsection{Optimization and Cross Validation}
+
+The decoder tries to predict a single acoustic feature xj(s) from a vector of neural responses y(s). We define the matrix Y to be of size DxM, where D is the number of syllables in the dataset, and M is the number of neural features for a given representation. We define the matrix X to contain D rows and 1 column, each row contains value of the acoustic feature xj(s) for a different syllable s. For the LFP PSD neural features, M=192 (16 electrodes x 12 frequency bands), for the LFP CFs, M=2520 ((16\^2 - 16) / 2) electrode pairs, 21 time lags)). For the Spike Rate neural features, there were typically 25-35 cells per site, so M ranged from 25-35, while for the spike synchrony features, M ranged from 300 to 595. The vector y was always z-scored prior to fitting, as was each column of X.
+    Regression finds optimal linear model weights w and scalar intercept b that minimize the sum of squares error between the model prediction and the actual data:
+
+LX, y, w=|| (Xw+b)-y ||2
+
+Given the high dimensionality of some of our feature spaces, it was important to regularize values of w, so that we did not overfit the data. We utilized Ridge regression with scikits.learn to do this regularization. Ridge regression computes the optimal weight vector w as:
+
+w=(XTX- I)-1 XTy
+
+the value is a user-defined hyperparameter, high values of force weights towards zero.
+The value of the hyperparameter  is found using a cross-validated approach. Our goal was to find a value for that maximized generalization performance. We searched 50 values of , chosen from a logarithmically spaced set that ranged from 10-2 to 106. For each candidate value of , we divided the data into a training and validation set 50 different times, and trained the model on the training set to find a set of weights w, evaluating the performance on the test set. The value of  that had the best average performance on the 50 test sets was chosen as the optimal . We trained a final model on the entire dataset using the optimal , to produce a final set of weights used for analysis.
+Vocalizations within the same call category for the same bird can be highly correlated, and may produce very similar neural responses. This could artificially inflate the performance. To control for this, the validation set was comprised of the vocalizations of two randomly chosen adults and two randomly chosen juveniles from the 11 birds in the dataset. The validation set always had at least one example of each call type.
+We used the R2 averaged across validation sets as a performance measure for our data. The formula for R2 is given as:
+
+R2=Lnull-LLnull
+
+where Lnull is the sum of squares error for a model that only tries to predict y with the intercept term b. It is well known that the R2 increases when the number of features M increases, but this does not apply to the R2 computed on validation sets, which enabled us to compare model performance between models with different numbers of parameters.
+
+\subsection{Spike Rate to LFP Power Encoder}
+
+In addition to trying to predict neural features from acoustic features, we also build an encoder that attempted to predict LFP power for a given frequency and electrode from the population spike rate vector and spike synchrony features. The dataset construction was the same as described for the relationship between neural and acoustic features, but each row of the data matrix X was comprised of the population spike rate vector for a given stimulus, or in addition, the spike synchrony between each pair of cells. Each element of the dependent variable vector y was comprised of the LFP power for a given frequency and electrode. A separate encoder was trained for each frequency/electrode combination.
+
+\subsection{Tuning Curves and Generalized Additive Encoder}
+
+    We fit nonlinear tuning curves to determine the relationship between an acoustic and neural feature. To build the tuning curve between an acoustic feature xjand neural feature yk, we first binned the values of xj across stimuli into evenly spaced bins. We then computed the mean and standard error of yk for each bin. The mean and standard error as a function of the acoustic feature value were then fit with a cubic spline, and the spline was evaluated for 50 evenly spaced values that spanned the range of xj to produce the final tuning curve. This process was performed using a cross validation procedure identical to that used for the encoders and decoders. The number of bins was used as a hyperparameter, taking on the value of 5, 7, 10, or 12. The R2 was computed across 25 validation sets and averaged to produce a performance measure, and the number of bins that gave the best validation performance was chosen as the optimal hyperparameter.
+The tuning curves produce a nonlinear estimate of the spike rate or LFP power given an acoustic feature value. To build a final encoder for spike rate or LFP power, we performed a Ridge regression as described in the previous section on the z-scored output of the tuning curves, to produce a final estimate of the spike rate or LFP power. A model of this type is commonly referred to as a Generalized Additive Model [Hastie1990].
+
+\subsection{Ensemble Decoding Analysis}
+
+We computed the decoder performance for each acoustic feature as a function of the number of electrodes. To do this, we combined data for each site across hemispheres, giving a total of 32 electrodes per recording site. For each site, a number of electrodes was selected ranging from 1, 4, 8, up to 32 in increments of 4. Once the number of electrodes was selected, up to fifty different combinations of that number of electrodes were selected from the site data. A decoder was trained on each combination, using cross validated Ridge regression decoder methods described in previous sections. The validation R2 was computed for each electrode combination, and the mean R2 across combinations was reported as the performance for that site given the number of electrodes specified.
+

@@ -8,4 +8,54 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\chapternumberline {1}Introduction}{1}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{Bibliography}{4}
+\contentsline {chapter}{\chapternumberline {2}Predicting Spikes and LFP from Acoustic Features}{4}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.1}Acoustic Features Covary and Cluster}{4}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.2}Spikes and LFP Driven by Amplitude, Temporal Entropy, Mean Spectral Frequency, Saliency}{5}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chapternumberline {3}Decoding Acoustic Features from the Neural Ensemble}{8}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.1}Regional Specificity in Decoding Performance}{8}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.2}Ensemble Decoding Performs Best for Amplitude and Spectral Features}{9}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chapternumberline {4}The Relationship between Spikes and LFP}{10}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {4.1}LFP Power is a Mix of Local Population Spike Rate and Synchrony}{10}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chapternumberline {5}Going Recurrent: Predicting the Time-varying LFP}{12}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chapternumberline {6}Discussion}{13}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chapternumberline {7}Methods}{15}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Animals}{15}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Zebra Finch Vocalization Types}{15}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Electrophysiology and Histology}{16}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Stimulus Protocol}{17}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Syllable Segmentation}{17}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Acoustic Features}{17}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{LFP Power Spectrum Calculation}{18}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{LFP Pairwise Coherency Function Calculation}{18}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Population Spike Rate and Spike Synchrony}{19}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Encoder and Decoder Dataset Construction}{19}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Optimization and Cross Validation}{20}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Spike Rate to LFP Power Encoder}{21}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Tuning Curves and Generalized Additive Encoder}{21}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Ensemble Decoding Analysis}{21}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Bibliography}{22}
