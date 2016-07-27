@@ -1,5 +1,7 @@
 #! /bin/sh
 
+rm *.bak *.aux *.dvi *.lof *.bbl *.bcf *.log *.lot *.xml
+
 latex thesis && \
 biber thesis && \
 latex thesis && \
