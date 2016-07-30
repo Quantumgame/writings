@@ -6,21 +6,36 @@ library(effects)
 # LFP Encoder Performance Analysis
 #######################################
 
-d = read.csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_perfs.csv')
-i = (d$region != '?') & (d$region != 'HP') & (d$region != 'L') & (d$r2 >= 0)
+d = read.csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_perfs_both.csv')
+i = (d$region != '?') & (d$region != 'HP') & (d$region != 'L') & (d$r2 > 0)
 
 d = subset(d, i)
 d$f = as.factor(d$f)
 d$electrode = as.factor(d$electrode)
 d$region = factor(d$region)
 
-# m = lm(r2 ~ f:region + f:ein, data=d)
-m = lm(r2 ~ region + f:ein, data=d)
+drate = subset(d, d$ein == 'rate')
+m = lm(r2 ~ region, data=drate)
 Anova(m)
 summary(m)
+effect("region", m)
 
-effect('region', m)
-effect('f:ein', m)
+m = lm(r2 ~ f, data=drate)
+Anova(m)
+summary(m)
+effect("f", m)
+
+
+dboth = subset(d, d$ein == 'both')
+m = lm(r2 ~ region, data=dboth)
+Anova(m)
+summary(m)
+effect("region", m)
+
+m = lm(r2 ~ f, data=dboth)
+Anova(m)
+summary(m)
+effect("f", m)
 
 
 #######################################

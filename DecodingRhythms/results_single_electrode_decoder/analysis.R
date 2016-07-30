@@ -8,25 +8,53 @@ d = subset(d, i)
 d$region = factor(d$region)
 d$electrode = factor(d$electrode)
 
-m = lm(r2 ~ aprop:region, data=d)
-Anova(m)
-summary(m)
-
-effect("aprop:region", m)
-
 unique_aprops = unique(d$aprop)
 for (k in 1:length(unique_aprops))
 {
   i = d$aprop == unique_aprops[k]
   di = subset(d, i)
   
-  print('\n')
-  print('\n')
-  print(sprintf("-------------------------%s --------------------------", unique_aprops[k]))
-  m = lm(r2 ~ region + dist_l2a + dist_midline, data=di)
-  Anova(m)
-  print(summary(m))
+  cat(sprintf("-------------------------%s --------------------------\n", unique_aprops[k]))
+  
+  m1 = lm(r2 ~ region, data=di)
+  s1 = summary(m1)
+  
+  # m2 = lm(r2 ~ dist_l2a + dist_midline, data=di)
+  # s2 = summary(m2)
+  
+  cat(sprintf('Region R2=%0.2f\n', s1$adj.r.squared))
+  s1$adj.r.squared
 }
 
+i = d$aprop == 'maxAmp'
+di = subset(d, i)
+m = lm(r2 ~ region, data=di)
+s = summary(m)
+cat(sprintf('N=%d\n', nrow(di)))
+effect('region', m)
+Anova(m)
 
+i = d$aprop == 'meanspect'
+di = subset(d, i)
+m = lm(r2 ~ region, data=di)
+s = summary(m)
+cat(sprintf('N=%d\n', nrow(di)))
+effect('region', m)
+Anova(m)
+
+i = d$aprop == 'sal'
+di = subset(d, i)
+m = lm(r2 ~ region, data=di)
+s = summary(m)
+cat(sprintf('N=%d\n', nrow(di)))
+effect('region', m)
+Anova(m)
+
+i = d$aprop == 'skewtime'
+di = subset(d, i)
+m = lm(r2 ~ region, data=di)
+s = summary(m)
+cat(sprintf('N=%d\n', nrow(di)))
+effect('region', m)
+Anova(m)
 

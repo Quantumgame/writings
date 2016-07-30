@@ -6,6 +6,7 @@ import numpy as np
 import operator
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.stats import ttest_rel
 
 from lasp.plots import custom_legend, compute_mean_from_scatter
 
@@ -66,6 +67,61 @@ def export_decoder_datasets_for_glm(agg, data_dir='/auto/tdrive/mschachter/data'
 
     print 'decomps=',df.decomp.unique()
     df.to_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'), header=True, index=False)
+
+
+def decoder_perf_stats(data_dir='/auto/tdrive/mschachter/data'):
+
+    df = pd.read_csv(os.path.join(data_dir, 'aggregate', 'decoder_perfs_for_glm.csv'))
+
+    decomps = ['full_psds', 'spike_rate', 'spike_rate+spike_sync']
+
+    aprops = ['maxAmp', 'meanspect', 'q2', 'q3', 'skewspect', 'q1', 'entropytime', 'entropyspect', 'skewtime',
+              'sal', 'maxfund', 'cvfund', 'minfund', 'stdspect', 'fund', 'kurtosisspect', 'kurtosistime',
+              'voice2percent', 'fund2']
+
+    r2_vals_by_aprop = dict()
+    for aprop in aprops:
+
+        r2_vals = dict()
+        for decomp in decomps:
+            r2_vals[decomp] = list()
+
+        i = (df.aprop == aprop) & (df.r2 > 0) & ~np.isnan(df.r2)
+        g = df[i].groupby(['bird', 'block', 'segment', 'hemi'])
+        for (bird, block, segment, hemi), gdf in g:
+            if len(gdf) != len(decomps):
+                print "Missing data for aprop=%s, (%s,%s,%s,%s), len(gdf)=%d" % (aprop, bird, block, segment, hemi, len(gdf))
+                continue
+
+            for decomp in decomps:
+                ii = gdf.decomp == decomp
+                assert ii.sum() == 1
+                r2_vals[decomp].append(gdf[ii].r2.values[0])
+
+        r2_vals_by_aprop[aprop] = r2_vals
+
+    for aprop in aprops:
+
+        r2_vals = r2_vals_by_aprop[aprop]
+
+        lfp_r2 = np.array(r2_vals['full_psds'])
+        spike_r2 = np.array(r2_vals['spike_rate'])
+        sync_r2 = np.array(r2_vals['spike_rate+spike_sync'])
+
+        lfp_vs_spike_t,lfp_vs_spike_p = ttest_rel(lfp_r2, spike_r2)
+        lfp_vs_sync_t, lfp_vs_sync_p = ttest_rel(lfp_r2, sync_r2)
+        spike_vs_sync_t, spike_vs_sync_p = ttest_rel(spike_r2, sync_r2)
+
+        print '----------- %s ------------' % aprop
+
+        print 'N=%d' % len(lfp_r2)
+        print 'lfp_r2 = %0.2f +/- %0.2f' % (lfp_r2.mean(), lfp_r2.std(ddof=1))
+        print 'spike_r2 = %0.2f +/- %0.2f' % (spike_r2.mean(), spike_r2.std(ddof=1))
+        print 'sync_r2 = %0.2f +/- %0.2f' % (sync_r2.mean(), sync_r2.std(ddof=1))
+
+        print 'LFP vs Spike: t=%0.6f, p=%0.6f' % (lfp_vs_spike_t, lfp_vs_spike_p)
+        print 'LFP vs Spike+Sync: t=%0.6f, p=%0.6f' % (lfp_vs_sync_t, lfp_vs_sync_p)
+        print 'Spike vs Spike+Sync: t=%0.6f, p=%0.6f' % (spike_vs_sync_t, spike_vs_sync_p)
 
 
 def export_weight_ds(agg, data_dir='/auto/tdrive/mschachter/data', decomp='full_psds'):
@@ -269,7 +325,8 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
 
     # ###### these two functions write a csv file for decoder weights and draw barplots for decoder performance
     export_decoder_datasets_for_glm(agg)
-    draw_decoder_perf_barplots(show_all=True)
+    decoder_perf_stats()
+    # draw_decoder_perf_barplots(show_all=True)
 
     # ###### these two functions draw the relationship between pairwise decoder weights and distance
     # draw_pairwise_weights_vs_dist(agg)

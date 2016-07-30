@@ -3,8 +3,10 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+from scipy.stats import ttest_rel
 
-from lasp.plots import grouped_boxplot, plot_mean_from_scatter, custom_legend
+from lasp.plots import grouped_boxplot, plot_mean_from_scatter, custom_legend, compute_mean_from_scatter
 
 from zeebeez.aggregators.cell2lfp_encoder import Cell2LFPEncoderAggregator
 from DecodingRhythms.utils import clean_region, COLOR_RED_SPIKE_RATE, COLOR_CRIMSON_SPIKE_SYNC, set_font, get_this_dir, \
@@ -58,7 +60,10 @@ def get_encoder_perf_data_for_psd(agg, ein=None):
                 pdata['r2'].append(eperfs[k, j])
 
     df = pd.DataFrame(pdata)
-    df.to_csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_perfs.csv', index=False, header=True)
+    if ein is not None:
+        df.to_csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_perfs_%s.csv' % ein, index=False, header=True)
+    else:
+        df.to_csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_perfs_both.csv', index=False, header=True)
 
     return df
 
@@ -215,6 +220,32 @@ def get_encoder_weight_data_for_psd(agg, include_sync=True, write_to_file=True):
     return wdf
 
 
+def stats(agg, data_dir='/auto/tdrive/mschachter/data'):
+    df = get_encoder_perf_data_for_psd(agg)
+
+    for f in df.f.unique():
+        i = (df.r2 > 0) & (df.f == f)
+        g = df[i].groupby(['bird', 'block', 'segment', 'hemi', 'electrode'])
+
+        r2_rate = list()
+        r2_both = list()
+        for (bird,block,segment,hemi,electrode),gdf in g:
+            if len(gdf) != 2:
+                # print "len(gdf)=%d, %s,%s,%s,%s,%d" % (len(gdf), bird, block, segment, hemi, electrode)
+                continue
+
+            i = gdf.ein == 'rate'
+            r2_rate.append(gdf.r2[i].values[0])
+
+            i = gdf.ein == 'both'
+            r2_both.append(gdf.r2[i].values[0])
+
+        r2_rate = np.array(r2_rate)
+        r2_both = np.array(r2_both)
+        tstat,pval = ttest_rel(r2_rate, r2_both)
+        print '%d Hz: N=%d, r2_rate=%0.2f, r2_both=%0.2f, tstat=%0.6f, pval=%0.6f' % (f, len(r2_rate), r2_rate.mean(), r2_both.mean(), tstat, pval)
+
+
 def draw_perf_by_freq(agg, data_dir='/auto/tdrive/mschachter/data'):
 
     etypes = ['rate', 'both']
@@ -254,7 +285,7 @@ def draw_perf_by_freq(agg, data_dir='/auto/tdrive/mschachter/data'):
     plt.xlabel('LFP Frequency (Hz)')
     plt.ylabel('Spike->LFP Encoder R2')
     plt.axis('tight')
-    plt.ylim(0, 0.8)
+    plt.ylim(0, 1.0)
     plt.xlim(0, 9)
 
 
@@ -262,24 +293,51 @@ def draw_rate_weight_by_dist(agg):
 
     wdf = get_encoder_weight_data_for_psd(agg, include_sync=False, write_to_file=False)
 
+    def exp_func(_x, _a, _b, _c):
+        return _a * np.exp(-_b * _x) + _c
+
     # plot the average encoder weight as a function of distance from predicted electrode
     freqs = [15, 55, 135]
     band_labels = ['0-30Hz', '30-80Hz', '80-190Hz']
     clrs = {15:'k', 55:'r', 135:'b'}
     for f in freqs:
-        i = ~np.isnan(wdf.dist_from_electrode.values) & (wdf.r2 > 0.20) & (wdf.dist_from_electrode > 0) & (wdf.f == f)
+        i = ~np.isnan(wdf.dist_from_electrode.values) & (wdf.r2 > 0.05) & (wdf.dist_from_electrode > 0) & (wdf.f == f)
 
         x = wdf.dist_from_electrode[i].values
         y = (wdf.w[i].values)**2
 
-        plot_mean_from_scatter(x, y, bins=4, num_smooth_points=200, alpha=0.7, color=clrs[f], ecolor='#b5b5b5', bin_by_quantile=False)
+        popt, pcov = curve_fit(exp_func, x, y)
 
-    plt.xlabel('Distance From Predicted Electrode (um)')
-    plt.ylabel('Spike Rate Weight^2')
+        ypred = exp_func(x, *popt)
+        ysqerr = (y - ypred)**2
+        sstot = np.sum((y - y.mean())**2)
+        sserr = np.sum(ysqerr)
+        r2 = 1. - (sserr / sstot)
+
+        print 'f=%dHz, a=%0.6f, space_const=%0.6f, bias=%0.6f, r2=%0.2f: ' % (f, popt[0], 1. / popt[1], popt[2], r2)
+
+        npts = 100
+        xreg = np.linspace(x.min()+1e-1, x.max()-1e-1, npts)
+        yreg = exp_func(xreg, *popt)
+
+        # approximate sqrt(err) with a cubic spline for plotting
+        err_xcenter, err_ymean, err_yerr, err_ymean_cs = compute_mean_from_scatter(x, np.sqrt(ysqerr), bins=4,
+                                                                                   num_smooth_points=npts)
+        # yerr = err_ymean_cs(xreg)
+
+        # plt.plot(x, y, 'ko', alpha=0.7)
+        plt.plot(xreg, yreg, clrs[f], alpha=0.7, linewidth=5.0)
+        # plt.errorbar(xreg, yreg, yerr=err_ymean, c=clrs[f], alpha=0.7, linewidth=5.0, ecolor='#b5b5b5')
+        # plt.show()
+
+        # plot_mean_from_scatter(x, y, bins=4, num_smooth_points=200, alpha=0.7, color=clrs[f], ecolor='#b5b5b5', bin_by_quantile=False)
+
+    plt.xlabel('Distance From Predicted Electrode (mm)')
+    plt.ylabel('Encoder Weight^2')
     plt.axis('tight')
     freq_clrs = [clrs[f] for f in freqs]
     leg = custom_legend(colors=freq_clrs, labels=band_labels)
-    plt.legend(handles=leg, loc='lower left')
+    plt.legend(handles=leg, loc='lower right')
 
 
 def draw_rate_weight_by_same(agg):
@@ -317,7 +375,7 @@ def draw_rate_weight_by_same(agg):
 
 def draw_figures(agg, data_dir='/auto/tdrive/mschachter/data'):
 
-    get_encoder_perf_data_for_psd(agg)
+    stats(agg)
 
     figsize = (23, 8)
     fig = plt.figure(figsize=figsize)

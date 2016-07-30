@@ -23,14 +23,32 @@ def draw_figures(agg, data_dir='/auto/tdrive/mschachter/data'):
     g = agg.df.groupby(['bird', 'block', 'segment', 'aprop', 'decomp'])
     for (bird,block,segment,aprop,decomp),gdf in g:
 
-        lst = zip(gdf.num_units.values, gdf.r2_mean.values, gdf.r2_std.values)
+        if aprop not in aprops:
+            continue
+
+        i = ~np.isnan(gdf.r2_mean) & ~np.isinf(gdf.r2_mean) & (gdf.r2_mean > 0)
+        lst = zip(gdf.num_units[i].values, gdf.r2_mean[i].values, gdf.r2_std[i].values)
         lst.sort(key=operator.itemgetter(0))
 
-        nu = [x[0] for x in lst]
-        r2 = [x[1] for x in lst]
-        r2_std = [x[2] for x in lst]
+        nu = np.array([x[0] for x in lst])
+        r2 = np.array([x[1] for x in lst])
+        r2_std = np.array([x[2] for x in lst])
 
         curves_by_prop[(decomp, aprop)].append((nu, r2, r2_std))
+
+    for decomp in decomps:
+        for aprop in aprops:
+            pcurves = curves_by_prop[(decomp, aprop)]
+
+            num_units_90 = list()
+            for nu,r2,r2_std in pcurves:
+                r2_q90 = 0.90*max(r2)
+                nu_90 = min(nu[r2 > r2_q90])
+                num_units_90.append(nu_90)
+
+            print '%s, %s: N=%d, nu90 = %0.0f +/- %0.0f' % (decomp, aprop, len(num_units_90), np.mean(num_units_90), np.std(num_units_90, ddof=1) / np.sqrt(len(num_units_90)))
+
+    return
 
     figsize = (23, 13)
     fig = plt.figure(figsize=figsize)

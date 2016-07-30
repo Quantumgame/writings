@@ -632,7 +632,7 @@ def draw_feature_improvements(agg, ax=None):
     _cbar.ax.set_yticklabels(_new_ytks)
 
 
-def tuning_curve_stats(agg, aprop='sal', map=False):
+def tuning_curve_stats(agg, map=False):
 
     assert isinstance(agg, AcousticEncoderDecoderAggregator)
 
@@ -641,49 +641,53 @@ def tuning_curve_stats(agg, aprop='sal', map=False):
     tc_df.to_csv(tc_df_file, header=True, index=False)
     decomps = [(decomp,band) for (decomp,band),gdf in tc_df.groupby(['decomp', 'band'])]
 
-    plt.figure()
-    nrows = 2
-    ncols = 2
-    for k,(decomp,band) in enumerate(decomps):
-
-        ax = plt.subplot(nrows, ncols, k + 1)
-        i = (tc_df.decomp == decomp) & (tc_df.band == band) & (tc_df.aprop == aprop) & (tc_df.r2 > 0.05) & (np.abs(tc_df.amp_slope) < 5)
-
-        slps = tc_df.amp_slope[i].values
-        n = len(slps)
-        npos = np.sum(slps > 0)
-        nneg = np.sum(slps < 0)
-
-        if map:
-            x = tc_df.dist_midline[i].values
-            y = tc_df.dist_l2a[i].values
-            plt.scatter(x, y, c=slps, marker='o', cmap=plt.cm.seismic, s=49, alpha=0.6)
-            _cbar = plt.colorbar(label='Slope')
-        else:
-            plt.hist(slps, bins=20, color='g', alpha=0.7)
-            plt.title('%s,%d, n=%d, npos=%0.2f, nneg=%0.2f' % (decomp, band, n, npos/float(n), nneg/float(n)))
-            plt.xlabel('Slope')
-            plt.axis('tight')
-
-    if aprop == 'meanspect':
+    for aprop in ['maxAmp', 'meanspect', 'sal', 'skewtime']:
         plt.figure()
-        for k, (decomp, band) in enumerate(decomps):
-            i = (tc_df.decomp == decomp) & (tc_df.band == band) & (tc_df.aprop == aprop) & (tc_df.r2 > 0.05) & (tc_df.center_freq > 0)
-            freqs = tc_df.center_freq[i].values
+        nrows = 2
+        ncols = 2
+        for k,(decomp,band) in enumerate(decomps):
+
             ax = plt.subplot(nrows, ncols, k + 1)
+            i = (tc_df.decomp == decomp) & (tc_df.band == band) & (tc_df.aprop == aprop) & (tc_df.r2 > 0.05) & (np.abs(tc_df.amp_slope) < 5)
+
+            slps = tc_df.amp_slope[i].values
+            n = len(slps)
+            npos = np.sum(slps > 0)
+            nneg = np.sum(slps < 0)
+            ntot = float(np.sum(slps != 0))
+
             if map:
                 x = tc_df.dist_midline[i].values
                 y = tc_df.dist_l2a[i].values
-                plt.scatter(x, y, c=freqs, marker='o', cmap=plt.cm.afmhot_r, s=49, alpha=0.6)
-                _cbar = plt.colorbar(label='Center Freq')
+                plt.scatter(x, y, c=slps, marker='o', cmap=plt.cm.seismic, s=49, alpha=0.6)
+                _cbar = plt.colorbar(label='Slope')
             else:
-                q25 = np.percentile(freqs, 25)
-                q50 = np.percentile(freqs, 50)
-                q75 = np.percentile(freqs, 75)
-                plt.hist(freqs, bins=20, color='g', alpha=0.7)
-                plt.title('%s,%d, n=%d, q50=%d, std=%d' % (decomp, band, len(freqs), q50, freqs.std(ddof=1)))
-                plt.xlabel('Freq')
+                plt.hist(slps[slps != 0], bins=20, color='g', alpha=0.7)
+                plt.title('%s,%d, n=%d, npos=%0.2f, nneg=%0.2f' % (decomp, band, ntot, npos/ntot, nneg/ntot))
+                plt.xlabel('Slope')
                 plt.axis('tight')
+        plt.suptitle(aprop)
+
+        if aprop == 'meanspect':
+            plt.figure()
+            for k, (decomp, band) in enumerate(decomps):
+                i = (tc_df.decomp == decomp) & (tc_df.band == band) & (tc_df.aprop == aprop) & (tc_df.r2 > 0.05) & (tc_df.center_freq > 0) & (tc_df.amp_slope != 0)
+                freqs = tc_df.center_freq[i].values
+                ax = plt.subplot(nrows, ncols, k + 1)
+                if map:
+                    x = tc_df.dist_midline[i].values
+                    y = tc_df.dist_l2a[i].values
+                    plt.scatter(x, y, c=freqs, marker='o', cmap=plt.cm.afmhot_r, s=49, alpha=0.6)
+                    _cbar = plt.colorbar(label='Center Freq')
+                else:
+                    q25 = np.percentile(freqs, 25)
+                    q50 = np.percentile(freqs, 50)
+                    q75 = np.percentile(freqs, 75)
+                    plt.hist(freqs, bins=20, color='g', alpha=0.7)
+                    plt.title('%s,%d, n=%d, q50=%d, std=%d' % (decomp, band, len(freqs), q50, freqs.std(ddof=1)))
+                    plt.xlabel('Freq')
+                    plt.axis('tight')
+            plt.suptitle(aprop)
 
     plt.show()
 
@@ -862,7 +866,8 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg_file = os.path.join(data_dir, 'aggregate', 'acoustic_encoder_decoder.h5')
     agg = AcousticEncoderDecoderAggregator.load(agg_file)
 
-    tuning_curve_stats(agg)
+    # tuning_curve_stats(agg)
+    export_psd_encoder_datasets_for_glm(agg)
 
     """
     figsize = (23, 13)

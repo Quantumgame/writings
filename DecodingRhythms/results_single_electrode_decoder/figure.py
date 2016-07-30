@@ -13,7 +13,8 @@ from zeebeez.aggregators.single_electrode_decoder import SingleElectrodeDecoderA
 from zeebeez.utils import USED_ACOUSTIC_PROPS, ACOUSTIC_PROP_NAMES, REGION_COLORS, REGION_NAMES_SHORT, \
     REGION_COLORS_SHORT
 
-APROPS_TO_SHOW = ['maxAmp', 'meanspect', 'sal', 'cvfund', 'skewtime']
+APROPS_TO_SHOW = ['maxAmp', 'meanspect', 'sal', 'skewtime']
+
 
 def get_freqs_and_lags():
     #TODO hack
@@ -201,10 +202,9 @@ def plot_maps(agg, data_dir='/auto/tdrive/mschachter/data'):
         _plot_map({'df': df[i]}, ax, plt.cm.afmhot_r, max_r2,_bgcolor='w',)
         plt.title(ACOUSTIC_PROP_NAMES[aprop])
 
-    # ax = plt.subplot(nrows, ncols, 6)
+    ax = plt.subplot(nrows, ncols, 5)
     # _plot_map({'df': df[df.aprop == 'maxAmp']}, ax, plt.cm.afmhot_r, 1., _bgcolor='w', _plot_region=True, _region_only=True)
-
-    # plot_r2_region_prop(ax)
+    plot_r2_region_prop(ax)
 
     fname = os.path.join(get_this_dir(), 'single_electrode_decoder_r2.svg')
     plt.savefig(fname, facecolor='w', edgecolor='none')
@@ -266,7 +266,10 @@ def plot_r2_region_prop(ax=None, data_dir='/auto/tdrive/mschachter/data'):
     plt.xticks(range(len(regs)), regs)
     plt.yticks(range(len(aprops_to_show)), [ACOUSTIC_PROP_NAMES[aprop] for aprop in aprops_to_show])
 
-    plt.colorbar(label='Decoder R2')
+    _cbar = plt.colorbar(label='Decoder R2')
+    _new_ytks = ['%0.2f' % float(_yt.get_text()) for _yt in _cbar.ax.get_yticklabels()]
+    # print '_new_ytks=', _new_ytks
+    _cbar.ax.set_yticklabels(_new_ytks)
 
 
 def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/mschachter/figures/encoder+decoder'):
@@ -274,8 +277,10 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data', fig_dir='/auto/tdrive/
     agg_file = os.path.join(data_dir, 'aggregate', 'single_electrode_decoder.h5')
     agg = SingleElectrodeDecoderAggregator.load(agg_file)
 
-    # export_ds(agg)
-    plot_maps(agg)
+    export_ds(agg)
+
+    # plot_maps(agg)
+
     # plot_raw_dists()
     # plot_cov_mat(agg)
     # plot_r2_region_prop()
