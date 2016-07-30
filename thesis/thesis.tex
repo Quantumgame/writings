@@ -6,6 +6,13 @@
 
 \documentclass{ucbthesis}
 \usepackage{biblatex}
+\usepackage{graphicx}
+\usepackage{bmpsize}
+\DeclareGraphicsExtensions{.pdf,.eps}
+
+\usepackage{float}
+\floatstyle{boxed} 
+\restylefloat{figure}
 
 % To compile this file, run "latex thesis", then "biber thesis"
 % (or "bibtex thesis", if the output from latex asks for that instead),
@@ -79,32 +86,17 @@ Without X, I would have never done Y, you Z?
 \clearpage
 \listoftables
 
-
-
 \end{frontmatter}
 
 \pagestyle{headings}
 
-% (Optional) \part{First Part}
+\include{decoding_rhythms}
 
-\include{intro}
-
-\include{chap1}
-
-\include{chap2}
-
-\include{chap3}
-
-\include{chap4}
-
-\include{discussion}
-
-\include{methods}
-
+\include{encoding_envelope}
 
 % \appendix
-% \chapter{More Monticello Candidates}
 
 \printbibliography
 
 \end{document}
+

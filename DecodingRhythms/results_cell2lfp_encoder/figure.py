@@ -63,7 +63,7 @@ def get_encoder_perf_data_for_psd(agg, ein=None):
     if ein is not None:
         df.to_csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_perfs_%s.csv' % ein, index=False, header=True)
     else:
-        df.to_csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_perfs_both.csv', index=False, header=True)
+        df.to_csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_perfs.csv', index=False, header=True)
 
     return df
 
@@ -387,11 +387,11 @@ def draw_figures(agg, data_dir='/auto/tdrive/mschachter/data'):
     draw_rate_weight_by_dist(agg)
 
     fname = os.path.join(get_this_dir(), 'figure.svg')
-    plt.savefig(fname, facecolor='w', edgecolor='none')
+    # plt.savefig(fname, facecolor='w', edgecolor='none')
 
     draw_rate_weight_by_same(agg)
     fname = os.path.join(get_this_dir(), 'figure_inset.svg')
-    plt.savefig(fname, facecolor='w', edgecolor='none')
+    # plt.savefig(fname, facecolor='w', edgecolor='none')
 
     plt.show()
 

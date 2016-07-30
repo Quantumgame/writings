@@ -6,7 +6,7 @@ library(effects)
 # LFP Encoder Performance Analysis
 #######################################
 
-d = read.csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_perfs_both.csv')
+d = read.csv('/auto/tdrive/mschachter/data/aggregate/lfp_encoder_perfs.csv')
 i = (d$region != '?') & (d$region != 'HP') & (d$region != 'L') & (d$r2 > 0)
 
 d = subset(d, i)
