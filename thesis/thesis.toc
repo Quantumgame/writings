@@ -12,9 +12,9 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {1.2}Introduction}{1}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.3}Results}{4}
+\contentsline {section}{\numberline {1.3}Results}{5}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Acoustic Features Covary and Cluster}{4}
+\contentsline {subsection}{Acoustic Features Covary and Cluster}{5}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{How Spikes and LFP are Driven by Amplitude, Mean Spectral Frequency, Saliency}{7}
 \defcounter {refsection}{0}\relax 
@@ -30,7 +30,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{Animals}{17}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Zebra Finch Vocalization Types}{17}
+\contentsline {subsection}{Zebra Finch Vocalization Types}{18}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{Electrophysiology and Histology}{18}
 \defcounter {refsection}{0}\relax 
@@ -44,7 +44,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{Population Spike Rate and Spike Synchrony}{21}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Encoder and Decoder Dataset Construction}{21}
+\contentsline {subsection}{Encoder and Decoder Dataset Construction}{22}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{Acoustic Feature Decoder Optimization and Cross Validation}{22}
 \defcounter {refsection}{0}\relax 
@@ -52,22 +52,22 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{Spline Basis Representation of Acoustic Features}{23}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Encoder to Predict Spikes and LFP from Acoustic Features}{23}
+\contentsline {subsection}{Encoder to Predict Spikes and LFP from Acoustic Features}{24}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{Tuning Curves}{24}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{Predicting LFP Power from Population Spike Rate}{24}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\chapternumberline {2}Encoding the Time-varying Amplitude Envelope}{25}
+\contentsline {chapter}{\chapternumberline {2}Encoding the Time-varying Amplitude Envelope}{26}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.1}Abstract}{25}
+\contentsline {section}{\numberline {2.1}Abstract}{26}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.2}Introduction}{25}
+\contentsline {section}{\numberline {2.2}Introduction}{26}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.3}Results}{25}
+\contentsline {section}{\numberline {2.3}Results}{26}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.4}Discussion}{25}
+\contentsline {section}{\numberline {2.4}Discussion}{26}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.5}Methods}{25}
+\contentsline {section}{\numberline {2.5}Methods}{26}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{Bibliography}{26}
+\contentsline {chapter}{Bibliography}{27}
