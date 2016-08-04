@@ -6,6 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from DecodingRhythms.utils import set_font, log_transform, get_this_dir
+from lasp.sound import spec_colormap, plot_spectrogram
 from lasp.timefreq import power_spectrum_jn
 from zeebeez.transforms.rnn_preprocess import RNNPreprocessTransform
 from zeebeez.utils import CALL_TYPE_COLORS
@@ -57,10 +58,31 @@ def get_env_psds(rp):
     return env_freq,env_psds,env_df
 
 
-def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
+def plot_specs_with_env(ax, rp, stim_id, trial=3):
 
-    preproc_file = os.path.join(data_dir, 'GreBlu9508M', 'preprocess', 'RNNPreprocess_GreBlu9508M_Site4_Call1_L.h5')
-    rp = RNNPreprocessTransform.load(preproc_file)
+    # plot distance call w/ amp envelope
+    i = (rp.event_df.stim_id == stim_id) & (rp.event_df.trial == trial)
+    assert i.sum() == 1
+
+    stime = rp.event_df[i].start_time.values[0]
+    etime = rp.event_df[i].end_time.values[0]
+    si = int(stime*rp.sample_rate)
+    ei = int(etime * rp.sample_rate)
+
+    spec = rp.U[si:ei, :].T
+    spec_freq = rp.spec_freq
+    spec_env = spec.sum(axis=0)
+    spec_env /= spec_env.max()
+    spec_t = np.arange(spec.shape[1]) / rp.sample_rate
+
+    spec_env *= (spec_freq.max() - spec_freq.min())
+    spec_env += spec_freq.min()
+    plot_spectrogram(spec_t, spec_freq, spec, ax=ax, ticks=True, fmax=8000., colormap='SpectroColorMap', colorbar=False)
+    plt.plot(spec_t, spec_env, 'k-', linewidth=5.0, alpha=0.7)
+    plt.axis('tight')
+
+
+def plot_temp_mods(ax, rp):
 
     env_freq, env_psds, env_df = get_env_psds(rp)
 
@@ -82,14 +104,39 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
 
     fi = env_freq < 20.
 
+    plt.sca(ax)
     clrs = [CALL_TYPE_COLORS['DC'], 'k', 'g', 'r']
-    fig = plt.figure(figsize=(13, 9), facecolor='w')
-    for k,(psd,psd_std) in enumerate(psds):
+    for k, (psd, psd_std) in enumerate(psds):
         plt.plot(env_freq[fi], psd[fi], '-', linewidth=8.0, alpha=0.7, c=clrs[k])
     plt.axis('tight')
     plt.legend(['Affiliative', 'Song', 'Begging', 'ML-Noise'])
     plt.xlabel('Temporal Modulation Frequency (Hz)')
     plt.ylabel('Power (dB)')
+
+
+def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
+
+    preproc_file = os.path.join(data_dir, 'GreBlu9508M', 'preprocess', 'RNNPreprocess_GreBlu9508M_Site4_Call1_L.h5')
+    rp = RNNPreprocessTransform.load(preproc_file)
+
+    i = rp.event_df.stim_type == 'mlnoise'
+    print 'ml noise stims: ',rp.event_df[i].stim_id.unique()
+
+    fig = plt.figure(figsize=(23, 10), facecolor='w')
+    fig.subplots_adjust(hspace=0.35, wspace=0.35, right=0.95, left=0.10)
+    gs = plt.GridSpec(3, 2)
+
+    ax = plt.subplot(gs[0, 0])
+    plot_specs_with_env(ax, rp, 287)
+
+    ax = plt.subplot(gs[1, 0])
+    plot_specs_with_env(ax, rp, 277)
+
+    ax = plt.subplot(gs[2, 0])
+    plot_specs_with_env(ax, rp, 68)
+
+    ax = plt.subplot(gs[:, 1])
+    plot_temp_mods(ax, rp)
 
     fname = os.path.join(get_this_dir(), 'figure.svg')
     plt.savefig(fname, facecolor=fig.get_facecolor(), edgecolor='none')
@@ -99,4 +146,5 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
 
 if __name__ == '__main__':
     set_font()
+    spec_colormap()
     draw_figures()
