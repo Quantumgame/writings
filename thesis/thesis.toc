@@ -4,7 +4,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{List of Figures}{iii}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{List of Tables}{vii}
+\contentsline {chapter}{List of Tables}{viii}
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\chapternumberline {1}Decoding the Rhythms of Avian Auditory LFP}{1}
 \defcounter {refsection}{0}\relax 
@@ -58,16 +58,42 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{Predicting LFP Power from Population Spike Rate}{24}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\chapternumberline {2}Encoding the Time-varying Amplitude Envelope}{26}
+\contentsline {chapter}{\chapternumberline {2}Distinct Oscillatory Subnetworks in the Zebra Finch Auditory System}{26}
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {2.1}Abstract}{26}
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {2.2}Introduction}{26}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.3}Results}{26}
+\contentsline {section}{\numberline {2.3}Results}{27}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.4}Discussion}{26}
+\contentsline {subsection}{The Temporal Modulation Spectrum of Zebra Finch Vocalizations}{27}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.5}Methods}{26}
+\contentsline {subsection}{Linear Filter Encoders Predict 5-30Hz LFP from Amplitude Envelope}{28}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{Bibliography}{27}
+\contentsline {subsection}{Two Oscillatory Subnetworks}{30}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Recurrent Neural Networks Outperform Linear Models}{31}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.4}Discussion}{31}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.5}Methods}{33}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Animals}{33}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Zebra Finch Vocalization Types}{34}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Electrophysiology and Histology}{34}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Stimulus Protocol}{35}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Sound Preprocessing}{35}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{LFP Preprocessing}{35}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Linear Encoder Fitting}{36}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Linear Filter Frequency Fitting}{36}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{Training Recurrent Neural Networks}{37}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Bibliography}{38}

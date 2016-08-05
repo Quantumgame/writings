@@ -183,6 +183,33 @@ def compute_filt_peaks(filts, lags_ms):
     return peaks
 
 
+def freq_map(agg):
+
+    lags_ms = (agg.lags / agg.sample_rate) * 1e3
+
+    i = (agg.df.cc > 0.20)
+    xi = agg.df[i].xindex.values
+    reg = agg.df[i].region.values
+    dist_l2a = agg.df[i].dist_l2a.values
+    dist_midline = agg.df[i].dist_midline.values
+    filts = agg.filters[xi, :]
+
+    cfreqs = compute_best_freq(filts, agg.sample_rate, lags_ms)
+
+    data = {'reg':reg, 'dist_l2a':dist_l2a, 'dist_midline':dist_midline, 'freq':cfreqs}
+    df = pd.DataFrame(data)
+
+    i = ~np.isnan(df.dist_l2a) & ~np.isnan(df.dist_midline) & (df.freq > 0)
+    df = df[i]
+
+    df.to_csv('/auto/tdrive/mschachter/data/aggregate/lfp_amp_env_cfreqs.csv', header=True, index=False)
+
+    plt.figure()
+    plt.scatter(df.dist_midline, df.dist_l2a, c=df.freq, cmap=plt.cm.afmhot_r, s=49)
+    plt.colorbar(label='Center Frequency')
+    plt.show()
+
+
 def stats(agg):
 
     lags_ms = (agg.lags / agg.sample_rate) * 1e3
@@ -228,7 +255,8 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
 
     # draw_filters(agg)
 
-    stats(agg)
+    # stats(agg)
+    freq_map(agg)
 
     plt.show()
 
