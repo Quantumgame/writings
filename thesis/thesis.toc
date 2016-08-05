@@ -1,99 +1,99 @@
 \boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{Contents}{ii}
+\contentsline {chapter}{Contents}{iii}{section*.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{List of Figures}{iii}
+\contentsline {chapter}{List of Figures}{iv}{section*.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{List of Tables}{viii}
+\contentsline {chapter}{List of Tables}{ix}{section*.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\chapternumberline {1}Decoding the Rhythms of Avian Auditory LFP}{1}
+\contentsline {chapter}{\chapternumberline {1}Decoding the Rhythms of Avian Auditory LFP}{1}{chapter.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.1}Abstract}{1}
+\contentsline {section}{\numberline {1.1}Abstract}{1}{section.1.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.2}Introduction}{1}
+\contentsline {section}{\numberline {1.2}Introduction}{2}{section.1.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.3}Results}{5}
+\contentsline {section}{\numberline {1.3}Results}{5}{section.1.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Acoustic Features Covary and Cluster}{5}
+\contentsline {subsection}{Acoustic Features Covary and Cluster}{5}{section*.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{How Spikes and LFP are Driven by Amplitude, Mean Spectral Frequency, Saliency}{7}
+\contentsline {subsection}{How Spikes and LFP are Driven by Amplitude, Mean Spectral Frequency, Saliency}{9}{section*.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Regional Specificity in Single Electrode Decoding Performance}{11}
+\contentsline {subsection}{Regional Specificity in Single Electrode Decoding Performance}{14}{section*.6}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Acoustic Features Decoded from Ensemble Activity}{11}
+\contentsline {subsection}{Acoustic Features Decoded from Ensemble Activity}{15}{section*.7}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{LFP Power is a Mix of Local Population Spike Rate and Synchrony}{13}
+\contentsline {subsection}{LFP Power is a Mix of Local Population Spike Rate and Synchrony}{17}{section*.8}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.4}Discussion}{16}
+\contentsline {section}{\numberline {1.4}Discussion}{19}{section.1.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.5}Methods}{17}
+\contentsline {section}{\numberline {1.5}Methods}{22}{section.1.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Animals}{17}
+\contentsline {subsection}{Animals}{22}{section*.9}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Zebra Finch Vocalization Types}{18}
+\contentsline {subsection}{Zebra Finch Vocalization Types}{23}{section*.10}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Electrophysiology and Histology}{18}
+\contentsline {subsection}{Electrophysiology and Histology}{24}{section*.11}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Stimulus Protocol}{19}
+\contentsline {subsection}{Stimulus Protocol}{25}{section*.12}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Syllable Segmentation}{19}
+\contentsline {subsection}{Syllable Segmentation}{25}{section*.13}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Acoustic Features}{19}
+\contentsline {subsection}{Acoustic Features}{25}{section*.14}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{LFP Power Spectrum Calculation}{20}
+\contentsline {subsection}{LFP Power Spectrum Calculation}{27}{section*.15}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Population Spike Rate and Spike Synchrony}{21}
+\contentsline {subsection}{Population Spike Rate and Spike Synchrony}{28}{section*.16}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Encoder and Decoder Dataset Construction}{22}
+\contentsline {subsection}{Encoder and Decoder Dataset Construction}{28}{section*.17}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Acoustic Feature Decoder Optimization and Cross Validation}{22}
+\contentsline {subsection}{Acoustic Feature Decoder Optimization and Cross Validation}{29}{section*.18}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Ensemble Decoding Analysis}{23}
+\contentsline {subsection}{Ensemble Decoding Analysis}{31}{section*.19}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Spline Basis Representation of Acoustic Features}{23}
+\contentsline {subsection}{Spline Basis Representation of Acoustic Features}{31}{section*.20}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Encoder to Predict Spikes and LFP from Acoustic Features}{24}
+\contentsline {subsection}{Encoder to Predict Spikes and LFP from Acoustic Features}{31}{section*.21}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Tuning Curves}{24}
+\contentsline {subsection}{Tuning Curves}{32}{section*.22}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Predicting LFP Power from Population Spike Rate}{24}
+\contentsline {subsection}{Predicting LFP Power from Population Spike Rate}{32}{section*.23}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\chapternumberline {2}Distinct Oscillatory Subnetworks in the Zebra Finch Auditory System}{26}
+\contentsline {chapter}{\chapternumberline {2}Distinct Oscillatory Subnetworks in the Zebra Finch Auditory System}{34}{chapter.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.1}Abstract}{26}
+\contentsline {section}{\numberline {2.1}Abstract}{34}{section.2.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.2}Introduction}{26}
+\contentsline {section}{\numberline {2.2}Introduction}{35}{section.2.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.3}Results}{27}
+\contentsline {section}{\numberline {2.3}Results}{36}{section.2.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{The Temporal Modulation Spectrum of Zebra Finch Vocalizations}{27}
+\contentsline {subsection}{The Temporal Modulation Spectrum of Zebra Finch Vocalizations}{36}{section*.24}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Linear Filter Encoders Predict 5-30Hz LFP from Amplitude Envelope}{28}
+\contentsline {subsection}{Linear Filter Encoders Predict LFP from Amplitude Envelope}{37}{section*.25}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Two Oscillatory Subnetworks}{30}
+\contentsline {subsection}{Two Oscillatory Subnetworks}{39}{section*.26}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Recurrent Neural Networks Outperform Linear Models}{31}
+\contentsline {subsection}{Recurrent Neural Networks Outperform Linear Models}{40}{section*.27}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.4}Discussion}{31}
+\contentsline {section}{\numberline {2.4}Discussion}{42}{section.2.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.5}Methods}{33}
+\contentsline {section}{\numberline {2.5}Methods}{43}{section.2.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Animals}{33}
+\contentsline {subsection}{Animals}{43}{section*.28}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Zebra Finch Vocalization Types}{34}
+\contentsline {subsection}{Zebra Finch Vocalization Types}{44}{section*.29}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Electrophysiology and Histology}{34}
+\contentsline {subsection}{Electrophysiology and Histology}{45}{section*.30}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Stimulus Protocol}{35}
+\contentsline {subsection}{Stimulus Protocol}{46}{section*.31}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Sound Preprocessing}{35}
+\contentsline {subsection}{Sound Preprocessing}{46}{section*.32}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{LFP Preprocessing}{35}
+\contentsline {subsection}{LFP Preprocessing}{47}{section*.33}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Linear Encoder Fitting}{36}
+\contentsline {subsection}{Linear Encoder Fitting}{47}{section*.34}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Linear Filter Frequency Fitting}{36}
+\contentsline {subsection}{Linear Filter Frequency Fitting}{48}{section*.35}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{Training Recurrent Neural Networks}{37}
+\contentsline {subsection}{Training Recurrent Neural Networks}{48}{section*.36}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{Bibliography}{38}
+\contentsline {chapter}{Bibliography}{50}{section*.38}

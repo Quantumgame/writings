@@ -6,6 +6,7 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
+from scipy.stats import chi2
 from sklearn.mixture import GMM
 
 from DecodingRhythms.utils import set_font, get_this_dir, log_transform
@@ -214,34 +215,44 @@ def stats(agg):
 
     lags_ms = (agg.lags / agg.sample_rate) * 1e3
 
-    i = (agg.df.cc > 0.20)
-    xi = agg.df[i].xindex.values
-    filts = agg.filters[xi, :]
+    regions_to_use = ['L1', 'L2', 'L3', 'CM', 'NCM']
+    for reg in regions_to_use:
 
-    cfreqs = compute_best_freq(filts, agg.sample_rate, lags_ms)
-    cfreqs = cfreqs[cfreqs > 0]
-    cfreqs = cfreqs.reshape([len(cfreqs), 1])
+        print '----------------  %s  ----------------' % reg
 
-    gmm1 = GMM(n_components=1)
-    gmm1.fit(cfreqs)
-    lk_null = gmm1.score(cfreqs).sum()
-    aic_null = gmm1.aic(cfreqs)
+        i = (agg.df.cc > 0.20) & (agg.df.region == reg)
+        xi = agg.df[i].xindex.values
+        filts = agg.filters[xi, :]
 
-    gmm2 = GMM(n_components=2)
-    gmm2.fit(cfreqs)
-    print 'Center frequencies of 2-component GMM:',gmm2.means_.squeeze()
-    print 'Covariances: ',np.sqrt(gmm2.covars_.squeeze())
-    lk_full = gmm2.score(cfreqs).sum()
-    aic_full = gmm2.aic(cfreqs)
+        cfreqs = compute_best_freq(filts, agg.sample_rate, lags_ms)
+        cfreqs = cfreqs[cfreqs > 0]
+        cfreqs = cfreqs.reshape([len(cfreqs), 1])
 
-    lk_rat = -2*(lk_null - lk_full)
+        gmm1 = GMM(n_components=1)
+        gmm1.fit(cfreqs)
+        lk_null = gmm1.score(cfreqs).sum()
+        aic_null = gmm1.aic(cfreqs)
 
-    print 'Null likelihood: %0.6f' % lk_null
-    print 'Full likelihood: %0.6f' % lk_full
-    print 'Likelihood Ratio: %0.6f' % lk_rat
+        gmm2 = GMM(n_components=2)
+        gmm2.fit(cfreqs)
+        print 'Center frequencies of 2-component GMM:',gmm2.means_.squeeze()
+        print 'Covariances: ',np.sqrt(gmm2.covars_.squeeze())
+        lk_full = gmm2.score(cfreqs).sum()
+        aic_full = gmm2.aic(cfreqs)
 
-    print 'Null AIC: %0.6f' % aic_null
-    print 'Full AIC: %0.6f' % aic_full
+        lk_rat = -2*(lk_null - lk_full)
+
+        chi_df = 2
+        pval = chi2.pdf(lk_rat, chi_df)
+
+        print 'Null likelihood: %0.6f' % lk_null
+        print 'Full likelihood: %0.6f' % lk_full
+        print 'Likelihood Ratio: %0.6f' % lk_rat
+        print 'p-value: %0.6f' % pval
+
+        print 'Null AIC: %0.6f' % aic_null
+        print 'Full AIC: %0.6f' % aic_full
+        print 'Relative Likelihood (N=%d): %0.6f' % (i.sum(), np.exp((aic_full - aic_null) / 2.))
 
 
 def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
@@ -255,8 +266,8 @@ def draw_figures(data_dir='/auto/tdrive/mschachter/data'):
 
     # draw_filters(agg)
 
-    # stats(agg)
-    freq_map(agg)
+    stats(agg)
+    # freq_map(agg)
 
     plt.show()
 
